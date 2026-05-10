@@ -21,31 +21,85 @@ import util.Conexao;
  */
 public class MunicipioDAO implements GenericoDAO<Municipio> {
 
-    private static final String INSERIR = "INSERT INTO municipio (nome_municipio, id_provincia) VALUES(?, ?)";
-    private static final String ACTUALIZAR = "UPDATE municipio SET nome_municipio = ?, id_provincia = ? WHERE id_municipio = ?";
-    private static final String ELIMINAR = "DETELE FROM municipio WHERE id_municipio = ?";
-    private static final String BUSCAR_POR_CODIGO = "SELECT * FROM municipio m INNER JOIN provincia p ON m.id_provincia = p.id_provincia WHERE id_municipio = ?";
-    private static final String LISTAR_TUDO = "SELECT * FROM municipio m INNER JOIN provincia p ON m.id_provincia = p.id_provincia";
-    private static final String LISTAR_POR_NOME = "SELECT * FROM municipio m INNER JOIN provincia p ON m.id_provincia = p.id_provincia WHERE m.nome_municipio LIKE ? ORDER BY m.nome_municipio";
-    private static final String LISTAR_POR_PROVINCIA = "SELECT * FROM municipio m INNER JOIN provincia p ON m.id_provincia = p.id_provincia WHERE m.id_provincia LIKE ? order by m.nome_municipio";
+    private static final int TOTAL_MUNICIPIOS_POR_PAGINA = 6;
+
+    private static final String CAMPOS_CONSULTA
+            = "m.id_municipio, "
+            + "m.nome_municipio, "
+            + "p.id_provincia, "
+            + "p.nome_provincia";
+
+    private static final String INSERIR
+            = "INSERT INTO municipio (nome_municipio, id_provincia) VALUES (?, ?)";
+
+    private static final String ACTUALIZAR
+            = "UPDATE municipio SET nome_municipio = ?, id_provincia = ? WHERE id_municipio = ?";
+
+    private static final String ELIMINAR
+            = "DELETE FROM municipio WHERE id_municipio = ?";
+
+    private static final String BUSCAR_POR_CODIGO
+            = "SELECT " + CAMPOS_CONSULTA + " "
+            + "FROM municipio m "
+            + "INNER JOIN provincia p ON m.id_provincia = p.id_provincia "
+            + "WHERE m.id_municipio = ?";
+
+    private static final String LISTAR_TUDO
+            = "SELECT " + CAMPOS_CONSULTA + " "
+            + "FROM municipio m "
+            + "INNER JOIN provincia p ON m.id_provincia = p.id_provincia "
+            + "ORDER BY m.nome_municipio";
+
+    private static final String LISTAR_POR_NOME
+            = "SELECT " + CAMPOS_CONSULTA + " "
+            + "FROM municipio m "
+            + "INNER JOIN provincia p ON m.id_provincia = p.id_provincia "
+            + "WHERE m.nome_municipio LIKE ? "
+            + "ORDER BY m.nome_municipio";
+
+    private static final String LISTAR_POR_PROVINCIA
+            = "SELECT " + CAMPOS_CONSULTA + " "
+            + "FROM municipio m "
+            + "INNER JOIN provincia p ON m.id_provincia = p.id_provincia "
+            + "WHERE m.id_provincia = ? "
+            + "ORDER BY m.nome_municipio";
+
+    private static final String CONTAR_MUNICIPIOS
+            = "SELECT COUNT(1) AS total_municipios FROM municipio";
+
+    private static final String CONSULTAR_PAGINA
+            = "SELECT " + CAMPOS_CONSULTA + " "
+            + "FROM municipio m "
+            + "INNER JOIN provincia p ON m.id_provincia = p.id_provincia "
+            + "ORDER BY m.nome_municipio "
+            + "LIMIT ? OFFSET ?";
 
     @Override
     public void save(Municipio municipio) {
-        PreparedStatement ps = null;
-        Connection conn = null;
-
         if (municipio == null) {
-            System.err.println("O valor passado não pode ser nulo.");
+            System.err.println("Erro ao INSERIR município: o objeto município não pode ser nulo.");
+            return;
         }
+
+        if (municipio.getProvincia() == null) {
+            System.err.println("Erro ao INSERIR município: a província do município não pode ser nula.");
+            return;
+        }
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(INSERIR);
+
             ps.setString(1, municipio.getNomeMunicipio());
             ps.setInt(2, municipio.getProvincia().getIdProvincia());
+
             ps.executeUpdate();
 
         } catch (SQLException ex) {
-            System.err.println("Erro ao INSERIR dados do municipio: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao INSERIR dados do município: " + ex.getLocalizedMessage());
         } finally {
             Conexao.closeConnection(conn, ps);
         }
@@ -53,22 +107,31 @@ public class MunicipioDAO implements GenericoDAO<Municipio> {
 
     @Override
     public void update(Municipio municipio) {
-        PreparedStatement ps = null;
-        Connection conn = null;
-
         if (municipio == null) {
-            System.err.println("O valor passado não pode ser nulo.");
+            System.err.println("Erro ao ACTUALIZAR município: o objeto município não pode ser nulo.");
+            return;
         }
+
+        if (municipio.getProvincia() == null) {
+            System.err.println("Erro ao ACTUALIZAR município: a província do município não pode ser nula.");
+            return;
+        }
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(ACTUALIZAR);
+
             ps.setString(1, municipio.getNomeMunicipio());
             ps.setInt(2, municipio.getProvincia().getIdProvincia());
             ps.setInt(3, municipio.getIdMunicipio());
+
             ps.executeUpdate();
 
         } catch (SQLException ex) {
-            System.err.println("Erro ao ACTUALIZAR dados do municipio: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao ACTUALIZAR dados do município: " + ex.getLocalizedMessage());
         } finally {
             Conexao.closeConnection(conn, ps);
         }
@@ -76,20 +139,24 @@ public class MunicipioDAO implements GenericoDAO<Municipio> {
 
     @Override
     public void delete(Municipio municipio) {
-        PreparedStatement ps = null;
-        Connection conn = null;
-
         if (municipio == null) {
-            System.err.println("O valor passado não pode ser nulo.");
+            System.err.println("Erro ao ELIMINAR município: o objeto município não pode ser nulo.");
+            return;
         }
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(ELIMINAR);
+
             ps.setInt(1, municipio.getIdMunicipio());
+
             ps.executeUpdate();
 
         } catch (SQLException ex) {
-            System.err.println("Erro ao ELIMINAR dados do municipio: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao ELIMINAR dados do município: " + ex.getLocalizedMessage());
         } finally {
             Conexao.closeConnection(conn, ps);
         }
@@ -97,61 +164,88 @@ public class MunicipioDAO implements GenericoDAO<Municipio> {
 
     @Override
     public Municipio findById(Integer id) {
-        PreparedStatement ps = null;
+        if (id == null) {
+            System.err.println("Erro ao BUSCAR município: o id não pode ser nulo.");
+            return null;
+        }
+
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        Municipio municipio = new Municipio();
 
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(BUSCAR_POR_CODIGO);
+
             ps.setInt(1, id);
+
             rs = ps.executeQuery();
-            if (!rs.next()) {
-                System.err.println("Não foi encontrado nenhum registro com id: " + id);
+
+            if (rs.next()) {
+                Municipio municipio = new Municipio();
+                popularComDados(municipio, rs);
+                return municipio;
             }
-            popularComDados(municipio, rs);
+
+            System.err.println("Não foi encontrado nenhum município com id: " + id);
+
         } catch (SQLException ex) {
-            System.err.println("Erro ao BUSCAR dados do municipio: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao BUSCAR dados do município: " + ex.getLocalizedMessage());
         } finally {
+            fecharResultSet(rs);
             Conexao.closeConnection(conn, ps);
         }
-        return municipio;
+
+        return null;
     }
 
     @Override
     public List<Municipio> findAll() {
-        PreparedStatement ps = null;
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Municipio> municipios = new ArrayList<>();
+
+        List<Municipio> municipios = new ArrayList<Municipio>();
+
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(LISTAR_TUDO);
+
             rs = ps.executeQuery();
+
             while (rs.next()) {
                 Municipio municipio = new Municipio();
                 popularComDados(municipio, rs);
                 municipios.add(municipio);
             }
+
         } catch (SQLException ex) {
-            System.err.println("Erro ao LER dados do municipio: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao LISTAR dados dos municípios: " + ex.getLocalizedMessage());
         } finally {
-            Conexao.closeConnection(conn);
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
         }
+
         return municipios;
     }
 
     public List<Municipio> findByNome(String nome) {
-        PreparedStatement ps = null;
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Municipio> municipios = new ArrayList<>();
+
+        List<Municipio> municipios = new ArrayList<Municipio>();
+
+        if (nome == null) {
+            nome = "";
+        }
+
         try {
             conn = Conexao.getConnection();
-
             ps = conn.prepareStatement(LISTAR_POR_NOME);
-            ps.setString(1, "%" + nome + "%");
+
+            ps.setString(1, "%" + nome.trim() + "%");
+
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -160,118 +254,160 @@ public class MunicipioDAO implements GenericoDAO<Municipio> {
                 municipios.add(municipio);
             }
 
-            if (!rs.next()) {
-                System.err.println("Não foi encontrado nenhum municipio com nome: " + nome);
+            if (municipios.isEmpty()) {
+                System.err.println("Não foi encontrado nenhum município com nome: " + nome);
             }
 
         } catch (SQLException ex) {
-            System.err.println("Erro ao ler dados do municipio: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao BUSCAR dados do município por nome: " + ex.getLocalizedMessage());
         } finally {
-            Conexao.closeConnection(conn);
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
         }
+
         return municipios;
     }
 
     public List<Municipio> findByProvincia(int provincia) {
-        PreparedStatement ps = null;
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Municipio> municipios = new ArrayList<>();
+
+        List<Municipio> municipios = new ArrayList<Municipio>();
+
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(LISTAR_POR_PROVINCIA);
+
             ps.setInt(1, provincia);
+
             rs = ps.executeQuery();
+
             while (rs.next()) {
                 Municipio municipio = new Municipio();
                 popularComDados(municipio, rs);
                 municipios.add(municipio);
             }
+
         } catch (SQLException ex) {
-            System.err.println("Erro ao ler dados municipio: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao BUSCAR municípios por província: " + ex.getLocalizedMessage());
         } finally {
-            Conexao.closeConnection(conn);
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
         }
+
         return municipios;
     }
 
     public int quantidadePagina() {
-        PreparedStatement ps = null;
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        try {
-            String sql = "SELECT COUNT(1) AS totalMunicipios FROM municipio;";
-            int quantidadePagina = 1;
-            double totalMunicipiosPorPagina = 6.0;
 
+        int quantidadePagina = 1;
+
+        try {
             conn = Conexao.getConnection();
-            ps = conn.prepareStatement(sql);
+            ps = conn.prepareStatement(CONTAR_MUNICIPIOS);
+
             rs = ps.executeQuery();
-            
+
             if (rs.next()) {
-                double totalMunicipios = rs.getDouble("totalMunicipios");
-                if (totalMunicipios > totalMunicipiosPorPagina) {
-                    double quantidadePaginaTemp = Float.parseFloat("" + (totalMunicipios / totalMunicipiosPorPagina));
-                    if (!(quantidadePaginaTemp % 2 == 0)) {
-                        quantidadePagina = new Double(quantidadePaginaTemp).intValue() + 1;
-                    } else {
-                        quantidadePagina = new Double(quantidadePaginaTemp).intValue();
-                    }
-                } else {
+                int totalMunicipios = rs.getInt("total_municipios");
+
+                quantidadePagina = (int) Math.ceil(
+                        totalMunicipios / (double) TOTAL_MUNICIPIOS_POR_PAGINA
+                );
+
+                if (quantidadePagina < 1) {
                     quantidadePagina = 1;
                 }
             }
-        } catch (Exception e) {
-            System.err.println("Erro quantidade de página município!");
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao calcular quantidade de páginas de municípios: " + ex.getLocalizedMessage());
         } finally {
-            Conexao.closeConnection(conn);
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
         }
-        return quantidadePagina();
+
+        return quantidadePagina;
     }
 
     public List<Municipio> consultarPagina(String numeroPagina) throws Exception {
-        PreparedStatement ps = null;
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
 
-        int totalMunicipioPorPagina = 6;
-        if (numeroPagina == null || (numeroPagina != null && numeroPagina.trim().isEmpty())) {
-            numeroPagina = "0";
-        }
+        List<Municipio> municipios = new ArrayList<Municipio>();
 
-        int offset = (Integer.parseInt(numeroPagina) * totalMunicipioPorPagina) - totalMunicipioPorPagina;
+        int pagina = converterNumeroPagina(numeroPagina);
+        int offset = (pagina * TOTAL_MUNICIPIOS_POR_PAGINA) - TOTAL_MUNICIPIOS_POR_PAGINA;
+
         if (offset < 0) {
             offset = 0;
         }
 
-        List<Municipio> retorno = new ArrayList<Municipio>();
-        String sql = "SELECT * FROM municipio LIMIT " + totalMunicipioPorPagina + " OFFSET " + offset + "; ";
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(CONSULTAR_PAGINA);
 
-        conn = Conexao.getConnection();
-        ps = conn.prepareStatement(sql);
-        rs = ps.executeQuery();
+            ps.setInt(1, TOTAL_MUNICIPIOS_POR_PAGINA);
+            ps.setInt(2, offset);
 
-        while (rs.next()) {
-            Municipio municipio = new Municipio();
-            popularComDados(municipio, rs);
-            retorno.add(municipio);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Municipio municipio = new Municipio();
+                popularComDados(municipio, rs);
+                municipios.add(municipio);
+            }
+
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
         }
 
-        return retorno;
+        return municipios;
     }
 
-    private void popularComDados(Municipio municipio, ResultSet rs) {
+    private int converterNumeroPagina(String numeroPagina) {
+        if (numeroPagina == null || numeroPagina.trim().isEmpty()) {
+            return 1;
+        }
+
         try {
-            municipio.setIdMunicipio(rs.getInt("m.id_municipio"));
-            municipio.setNomeMunicipio(rs.getString("m.nome_municipio"));
+            int pagina = Integer.parseInt(numeroPagina.trim());
 
-            Provincia provincia = new Provincia();
-            provincia.setIdProvincia(rs.getInt("p.id_provincia"));
-            provincia.setNomeProvincia(rs.getString("p.nome_provincia"));
-            municipio.setProvincia(provincia);
+            if (pagina < 1) {
+                return 1;
+            }
 
-        } catch (SQLException ex) {
-            System.err.println("Erro ao carregar dados do município: " + ex.getLocalizedMessage());
+            return pagina;
+
+        } catch (NumberFormatException ex) {
+            return 1;
+        }
+    }
+
+    private void popularComDados(Municipio municipio, ResultSet rs) throws SQLException {
+        municipio.setIdMunicipio(rs.getInt("id_municipio"));
+        municipio.setNomeMunicipio(rs.getString("nome_municipio"));
+
+        Provincia provincia = new Provincia();
+        provincia.setIdProvincia(rs.getInt("id_provincia"));
+        provincia.setNomeProvincia(rs.getString("nome_provincia"));
+
+        municipio.setProvincia(provincia);
+    }
+
+    private void fecharResultSet(ResultSet rs) {
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException ex) {
+                System.err.println("Erro ao fechar ResultSet: " + ex.getLocalizedMessage());
+            }
         }
     }
 }
