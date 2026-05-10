@@ -1,1 +1,77 @@
+# NETBEANS 
+
+/nbproject/private/
+/nbbuild/
+/nbdist/
+/.nb-gradle/
+
+# Arquivos temporários do NetBeans
+**/nbproject/private/
+/build/
 /dist/
+ 
+# BUILD JAVA 
+
+*.class
+*.jar
+*.war
+*.ear
+ 
+# LOGS 
+
+*.log
+ 
+# SISTEMA OPERACIONAL 
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# Linux
+*~
+ 
+# TOMCAT 
+
+/apache-tomcat*/
+/logs/
+/temp/
+/work/
+ 
+# CONFIGURAÇÕES SENSÍVEIS 
+
+# Conexão com banco
+/src/java/util/Conexao.java
+
+# Arquivos de ambiente
+.env
+.env.*
+ 
+# CACHE E TEMPORÁRIOS 
+
+/tmp/
+/temp/
+/cache/
+ 
+# IDEs 
+
+# VSCode
+.vscode/
+
+# IntelliJ
+.idea/
+*.iml
+
+# Eclipse
+.project
+.classpath
+.settings/
+ 
+# RELATÓRIOS GERADOS 
+
+*.jasper
+
+# Mantém os arquivos fonte dos relatórios
+!*.jrxml
