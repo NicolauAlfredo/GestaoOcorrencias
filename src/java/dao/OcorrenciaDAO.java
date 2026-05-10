@@ -9,12 +9,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import modelo.Autuado;
 import modelo.Autuante;
 import modelo.Municipio;
 import modelo.Ocorrencia;
+import modelo.Sexo;
 import modelo.Testemunha;
 import modelo.TipoOcorrencia;
 import util.Conexao;
@@ -25,46 +27,151 @@ import util.Conexao;
  */
 public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
 
-    private static final String INSERIR = "INSERT INTO ocorrencia (data_ocorrencia, hora_ocorrencia, descricao_ocorrencia, rua_ocorrencia, cidade_ocorrencia, bairro_ocorrencia, proximidade_ocorrencia, id_autuado, id_autuante, id_tipo_ocorrencia, id_testemunha, id_testemunha1, id_municipio) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String ACTUALIZAR = "UPDATE ocorrencia SET data_ocorrencia = ?, hora_ocorrencia = ?, descricao_ocorrencia = ?, rua_ocorrencia = ?, cidade_ocorrencia = ?, bairro_ocorrencia  = ?, proximidade_ocorrencia = ?, id_autuado = ?, id_autuante = ?, id_tipo_ocorrencia = ?, id_testemunha = ?, id_testemunha1 = ?, id_municipio = ? WHERE id_ocorrencia = ?";
-    private static final String ELIMINAR = "DELETE FROM ocorrencia WHERE id_ocorrencia = ?";
-    private static final String BUSCAR_POR_CODIGO = "SELECT * FROM ocorrencia o INNER JOIN autuado a ON o.id_autuado = a.id_autuado INNER JOIN autuante at ON o.id_autuante = at.id_autuante INNER JOIN tipo_ocorrencia t ON o.id_tipo_ocorrencia = t.id_tipo_ocorrencia INNER JOIN testemunha tt ON o.id_testemunha = tt.id_testemunha INNER JOIN municipio m ON o.id_municipio = m.id_municipio WHERE o.id_ocorrencia = ?";
-    private static final String LISTAR_TUDO = "SELECT * FROM ocorrencia o INNER JOIN autuado a ON o.id_autuado = a.id_autuado INNER JOIN autuante at ON o.id_autuante = at.id_autuante INNER JOIN tipo_ocorrencia t ON o.id_tipo_ocorrencia = t.id_tipo_ocorrencia INNER JOIN testemunha tt ON o.id_testemunha = tt.id_testemunha INNER JOIN municipio m ON o.id_municipio = m.id_municipio";
-    private static final String LISTAR_POR_AUTUADO = "SELECT * FROM ocorrencia o INNER JOIN autuado a ON o.id_autuado = a.id_autuado INNER JOIN autuante at ON o.id_autuante = at.id_autuante INNER JOIN tipo_ocorrencia t ON o.id_tipo_ocorrencia = t.id_tipo_ocorrencia INNER JOIN testemunha tt ON o.id_testemunha = tt.id_testemunha INNER JOIN municipio m ON o.id_municipio = m.id_municipio WHERE a.nome_autuado LIKE ? ORDER BY a.nome_autuado";
-    private static final String LISTAR_POR_AUTUANTE = "SELECT * FROM ocorrencia o INNER JOIN autuado a ON o.id_autuado = a.id_autuado INNER JOIN autuante at ON o.id_autuante = at.id_autuante INNER JOIN tipo_ocorrencia t ON o.id_tipo_ocorrencia = t.id_tipo_ocorrencia INNER JOIN testemunha tt ON o.id_testemunha = tt.id_testemunha INNER JOIN municipio m ON o.id_municipio = m.id_municipio WHERE at.nome_autuante LIKE ? ORDER BY at.nome_autuante";
-    private static final String LISTAR_POR_CIDADE = "SELECT * FROM ocorrencia o INNER JOIN autuado a ON o.id_autuado = a.id_autuado INNER JOIN autuante at ON o.id_autuante = at.id_autuante INNER JOIN tipo_ocorrencia t ON o.id_tipo_ocorrencia = t.id_tipo_ocorrencia INNER JOIN testemunha tt ON o.id_testemunha = tt.id_testemunha INNER JOIN municipio m ON o.id_municipio = m.id_municipio WHERE o.cidade_ocorrencia LIKE ?";
-    private static final String LISTAR_POR_DATA = "SELECT * FROM ocorrencia o INNER JOIN autuado a ON o.id_autuado = a.id_autuado INNER JOIN autuante at ON o.id_autuante = at.id_autuante INNER JOIN tipo_ocorrencia t ON o.id_tipo_ocorrencia = t.id_tipo_ocorrencia INNER JOIN testemunha tt ON o.id_testemunha = tt.id_testemunha INNER JOIN municipio m ON o.id_municipio = m.id_municipio WHERE o.data_ocorrencia LIKE ?";
-    private static final String LISTAR_POR_TESTEMUNHA = "SELECT * FROM ocorrencia o INNER JOIN autuado a ON o.id_autuado = a.id_autuado INNER JOIN autuante at ON o.id_autuante = at.id_autuante INNER JOIN tipo_ocorrencia t ON o.id_tipo_ocorrencia = t.id_tipo_ocorrencia INNER JOIN testemunha tt ON o.id_testemunha = tt.id_testemunha INNER JOIN municipio m ON o.id_municipio = m.id_municipio WHERE tt.nome_testemunha LIKE ? ORDER BY tt.nome_testemunha";
-    private static final String LISTAR_POR_TIPO = "SELECT * FROM ocorrencia o INNER JOIN autuado a ON o.id_autuado = a.id_autuado INNER JOIN autuante at ON o.id_autuante = at.id_autuante INNER JOIN tipo_ocorrencia t ON o.id_tipo_ocorrencia = t.id_tipo_ocorrencia INNER JOIN testemunha tt ON o.id_testemunha = tt.id_testemunha INNER JOIN municipio m ON o.id_municipio = m.id_municipio  WHERE t.nome_tipo_ocorrencia LIKE ? ORDER BY t.nome_tipo_ocorrencia";
+    private static final String CAMPOS_CONSULTA
+            = "o.id_ocorrencia, "
+            + "o.data_ocorrencia, "
+            + "o.hora_ocorrencia, "
+            + "o.descricao_ocorrencia, "
+            + "o.rua_ocorrencia, "
+            + "o.cidade_ocorrencia, "
+            + "o.bairro_ocorrencia, "
+            + "o.proximidade_ocorrencia, "
+            + "a.id_autuado AS autuado_id, "
+            + "a.nome_autuado AS autuado_nome, "
+            + "a.pai_autuado AS autuado_pai, "
+            + "a.mae_autuado AS autuado_mae, "
+            + "a.estado_civil_autuado AS autuado_estado_civil, "
+            + "a.data_nascimento_autuado AS autuado_data_nascimento, "
+            + "a.sexo_autuado AS autuado_sexo, "
+            + "a.bi_autuado AS autuado_bi, "
+            + "a.data_emissao_bi_autuado AS autuado_data_emissao_bi, "
+            + "a.telefone_autuado AS autuado_telefone, "
+            + "at.id_autuante AS autuante_id, "
+            + "at.nome_autuante AS autuante_nome, "
+            + "at.pai_autuante AS autuante_pai, "
+            + "at.mae_autuante AS autuante_mae, "
+            + "at.data_nascimento_autuante AS autuante_data_nascimento, "
+            + "at.sexo_autuante AS autuante_sexo, "
+            + "at.bi_autuante AS autuante_bi, "
+            + "at.data_emissao_bi_autuante AS autuante_data_emissao_bi, "
+            + "at.nip_autuante AS autuante_nip, "
+            + "at.telefone_autuante AS autuante_telefone, "
+            + "t.id_tipo_ocorrencia AS tipo_ocorrencia_id, "
+            + "t.nome_tipo_ocorrencia AS tipo_ocorrencia_nome, "
+            + "tt.id_testemunha AS testemunha_id, "
+            + "tt.nome_testemunha AS testemunha_nome, "
+            + "tt.data_nascimento_testemunha AS testemunha_data_nascimento, "
+            + "tt.sexo_testemunha AS testemunha_sexo, "
+            + "tt.bi_testemunha AS testemunha_bi, "
+            + "tt.telefone_testemunha AS testemunha_telefone, "
+            + "tt1.id_testemunha AS testemunha1_id, "
+            + "tt1.nome_testemunha AS testemunha1_nome, "
+            + "tt1.data_nascimento_testemunha AS testemunha1_data_nascimento, "
+            + "tt1.sexo_testemunha AS testemunha1_sexo, "
+            + "tt1.bi_testemunha AS testemunha1_bi, "
+            + "tt1.telefone_testemunha AS testemunha1_telefone, "
+            + "m.id_municipio AS municipio_id, "
+            + "m.nome_municipio AS municipio_nome";
+
+    private static final String BASE_SELECT
+            = "SELECT " + CAMPOS_CONSULTA + " "
+            + "FROM ocorrencia o "
+            + "INNER JOIN autuado a ON o.id_autuado = a.id_autuado "
+            + "INNER JOIN autuante at ON o.id_autuante = at.id_autuante "
+            + "INNER JOIN tipo_ocorrencia t ON o.id_tipo_ocorrencia = t.id_tipo_ocorrencia "
+            + "INNER JOIN testemunha tt ON o.id_testemunha = tt.id_testemunha "
+            + "LEFT JOIN testemunha tt1 ON o.id_testemunha1 = tt1.id_testemunha "
+            + "INNER JOIN municipio m ON o.id_municipio = m.id_municipio ";
+
+    private static final String INSERIR
+            = "INSERT INTO ocorrencia "
+            + "(data_ocorrencia, hora_ocorrencia, descricao_ocorrencia, rua_ocorrencia, "
+            + "cidade_ocorrencia, bairro_ocorrencia, proximidade_ocorrencia, "
+            + "id_autuado, id_autuante, id_tipo_ocorrencia, id_testemunha, id_testemunha1, id_municipio) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    private static final String ACTUALIZAR
+            = "UPDATE ocorrencia SET "
+            + "data_ocorrencia = ?, "
+            + "hora_ocorrencia = ?, "
+            + "descricao_ocorrencia = ?, "
+            + "rua_ocorrencia = ?, "
+            + "cidade_ocorrencia = ?, "
+            + "bairro_ocorrencia = ?, "
+            + "proximidade_ocorrencia = ?, "
+            + "id_autuado = ?, "
+            + "id_autuante = ?, "
+            + "id_tipo_ocorrencia = ?, "
+            + "id_testemunha = ?, "
+            + "id_testemunha1 = ?, "
+            + "id_municipio = ? "
+            + "WHERE id_ocorrencia = ?";
+
+    private static final String ELIMINAR
+            = "DELETE FROM ocorrencia WHERE id_ocorrencia = ?";
+
+    private static final String BUSCAR_POR_CODIGO
+            = BASE_SELECT
+            + "WHERE o.id_ocorrencia = ?";
+
+    private static final String LISTAR_TUDO
+            = BASE_SELECT
+            + "ORDER BY o.data_ocorrencia DESC, o.id_ocorrencia DESC";
+
+    private static final String LISTAR_POR_AUTUADO
+            = BASE_SELECT
+            + "WHERE a.nome_autuado LIKE ? "
+            + "ORDER BY a.nome_autuado";
+
+    private static final String LISTAR_POR_AUTUANTE
+            = BASE_SELECT
+            + "WHERE at.nome_autuante LIKE ? "
+            + "ORDER BY at.nome_autuante";
+
+    private static final String LISTAR_POR_CIDADE
+            = BASE_SELECT
+            + "WHERE o.cidade_ocorrencia LIKE ? "
+            + "ORDER BY o.cidade_ocorrencia";
+
+    private static final String LISTAR_POR_DATA
+            = BASE_SELECT
+            + "WHERE o.data_ocorrencia = ? "
+            + "ORDER BY o.data_ocorrencia DESC";
+
+    private static final String LISTAR_POR_TESTEMUNHA
+            = BASE_SELECT
+            + "WHERE tt.nome_testemunha LIKE ? OR tt1.nome_testemunha LIKE ? "
+            + "ORDER BY tt.nome_testemunha";
+
+    private static final String LISTAR_POR_TIPO
+            = BASE_SELECT
+            + "WHERE t.nome_tipo_ocorrencia LIKE ? "
+            + "ORDER BY t.nome_tipo_ocorrencia";
 
     @Override
     public void save(Ocorrencia ocorrencia) {
-        PreparedStatement ps = null;
-        Connection conn = null;
-
         if (ocorrencia == null) {
-            System.err.println("O valor passado não pode ser nulo.");
+            System.err.println("Erro ao INSERIR ocorrência: o objeto ocorrência não pode ser nulo.");
+            return;
         }
+
+        if (!validarRelacionamentosObrigatorios(ocorrencia, "INSERIR")) {
+            return;
+        }
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(INSERIR);
-            ps.setDate(1, new java.sql.Date(ocorrencia.getDataOcorrencia().getTime()));
-            ps.setString(2, ocorrencia.getHoraOcorrencia());
-            ps.setString(3, ocorrencia.getDescricaoOcorrencia());
-            ps.setString(4, ocorrencia.getRuaOcorrencia());
-            ps.setString(5, ocorrencia.getCidadeOcorrencia());
-            ps.setString(6, ocorrencia.getBairroOcorrencia());
-            ps.setString(7, ocorrencia.getProximidadeOcorrencia());
-            ps.setInt(8, ocorrencia.getAutuado().getIdAutuado());
-            ps.setInt(9, ocorrencia.getAutuante().getIdAutuante());
-            ps.setInt(10, ocorrencia.getTipoOcorrencia().getIdTipoOcorrencia());
-            ps.setInt(11, ocorrencia.getTestemunha().getIdTestemunha());
-            ps.setInt(12, ocorrencia.getTestemunha1().getIdTestemunha());
-            ps.setInt(13, ocorrencia.getMunicipio().getIdMunicipio());
+
+            preencherPreparedStatement(ps, ocorrencia, false);
+
             ps.executeUpdate();
 
         } catch (SQLException ex) {
-            System.err.println("Erro ao INSERIR dados da ocorrencia: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao INSERIR dados da ocorrência: " + ex.getLocalizedMessage());
         } finally {
             Conexao.closeConnection(conn, ps);
         }
@@ -72,33 +179,28 @@ public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
 
     @Override
     public void update(Ocorrencia ocorrencia) {
-        PreparedStatement ps = null;
-        Connection conn = null;
-
         if (ocorrencia == null) {
-            System.err.println("O valor passado não pode ser nulo.");
+            System.err.println("Erro ao ACTUALIZAR ocorrência: o objeto ocorrência não pode ser nulo.");
+            return;
         }
+
+        if (!validarRelacionamentosObrigatorios(ocorrencia, "ACTUALIZAR")) {
+            return;
+        }
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(ACTUALIZAR);
-            ps.setDate(1, new java.sql.Date(ocorrencia.getDataOcorrencia().getTime()));
-            ps.setString(2, ocorrencia.getHoraOcorrencia());
-            ps.setString(3, ocorrencia.getDescricaoOcorrencia());
-            ps.setString(4, ocorrencia.getRuaOcorrencia());
-            ps.setString(5, ocorrencia.getCidadeOcorrencia());
-            ps.setString(6, ocorrencia.getBairroOcorrencia());
-            ps.setString(7, ocorrencia.getProximidadeOcorrencia());
-            ps.setInt(8, ocorrencia.getAutuado().getIdAutuado());
-            ps.setInt(9, ocorrencia.getAutuante().getIdAutuante());
-            ps.setInt(10, ocorrencia.getTipoOcorrencia().getIdTipoOcorrencia());
-            ps.setInt(11, ocorrencia.getTestemunha().getIdTestemunha());
-            ps.setInt(12, ocorrencia.getTestemunha1().getIdTestemunha());
-            ps.setInt(13, ocorrencia.getMunicipio().getIdMunicipio());
-            ps.setInt(14, ocorrencia.getIdOcorrencia());
+
+            preencherPreparedStatement(ps, ocorrencia, true);
+
             ps.executeUpdate();
 
         } catch (SQLException ex) {
-            System.err.println("Erro ao ACTUALIZAR dados da ocorrencia: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao ACTUALIZAR dados da ocorrência: " + ex.getLocalizedMessage());
         } finally {
             Conexao.closeConnection(conn, ps);
         }
@@ -106,20 +208,24 @@ public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
 
     @Override
     public void delete(Ocorrencia ocorrencia) {
-        PreparedStatement ps = null;
-        Connection conn = null;
-
         if (ocorrencia == null) {
-            System.err.println("O valor passado não pode ser nulo.");
+            System.err.println("Erro ao ELIMINAR ocorrência: o objeto ocorrência não pode ser nulo.");
+            return;
         }
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(ELIMINAR);
+
             ps.setInt(1, ocorrencia.getIdOcorrencia());
+
             ps.executeUpdate();
 
         } catch (SQLException ex) {
-            System.err.println("Erro ao ELIMINAR dados da ocorrencia: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao ELIMINAR dados da ocorrência: " + ex.getLocalizedMessage());
         } finally {
             Conexao.closeConnection(conn, ps);
         }
@@ -127,151 +233,125 @@ public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
 
     @Override
     public Ocorrencia findById(Integer id) {
-        PreparedStatement ps = null;
+        if (id == null) {
+            System.err.println("Erro ao BUSCAR ocorrência: o id não pode ser nulo.");
+            return null;
+        }
+
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        Ocorrencia ocorrencia = new Ocorrencia();
 
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(BUSCAR_POR_CODIGO);
+
             ps.setInt(1, id);
+
             rs = ps.executeQuery();
-            if (!rs.next()) {
-                System.err.println("Não foi encontrado nenhum registro com id: " + id);
+
+            if (rs.next()) {
+                Ocorrencia ocorrencia = new Ocorrencia();
+                popularComDados(ocorrencia, rs);
+                return ocorrencia;
             }
-            popularComDados(ocorrencia, rs);
+
+            System.err.println("Não foi encontrada nenhuma ocorrência com id: " + id);
+
         } catch (SQLException ex) {
-            System.err.println("Erro ao BUSCAR dados da ocorrencia: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao BUSCAR dados da ocorrência: " + ex.getLocalizedMessage());
         } finally {
+            fecharResultSet(rs);
             Conexao.closeConnection(conn, ps);
         }
-        return ocorrencia;
+
+        return null;
     }
 
     @Override
     public List<Ocorrencia> findAll() {
-        PreparedStatement ps = null;
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Ocorrencia> ocorrencias = new ArrayList<>();
+
+        List<Ocorrencia> ocorrencias = new ArrayList<Ocorrencia>();
+
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(LISTAR_TUDO);
+
             rs = ps.executeQuery();
+
             while (rs.next()) {
                 Ocorrencia ocorrencia = new Ocorrencia();
                 popularComDados(ocorrencia, rs);
                 ocorrencias.add(ocorrencia);
             }
+
         } catch (SQLException ex) {
-            System.err.println("Erro ao LER dados da ocorrencia: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao LISTAR dados das ocorrências: " + ex.getLocalizedMessage());
         } finally {
-            Conexao.closeConnection(conn);
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
         }
+
         return ocorrencias;
     }
 
     public List<Ocorrencia> findByAutuado(String autuado) {
-        PreparedStatement ps = null;
-        Connection conn = null;
-        ResultSet rs = null;
-        List<Ocorrencia> ocorrencias = new ArrayList<>();
-        try {
-            conn = Conexao.getConnection();
-
-            ps = conn.prepareStatement(LISTAR_POR_AUTUADO);
-            ps.setString(1, "%" + autuado + "%");
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Ocorrencia ocorrencia = new Ocorrencia();
-                popularComDados(ocorrencia, rs);
-                ocorrencias.add(ocorrencia);
-            }
-
-            if (!rs.next()) {
-                System.err.println("Não foi encontrado nenhum autuado com autuado: " + autuado);
-            }
-
-        } catch (SQLException ex) {
-            System.err.println("Erro ao ler dados do ocorrência: " + ex.getLocalizedMessage());
-        } finally {
-            Conexao.closeConnection(conn);
+        if (autuado == null) {
+            autuado = "";
         }
-        return ocorrencias;
+
+        return buscarPorTexto(
+                LISTAR_POR_AUTUADO,
+                autuado,
+                "Não foi encontrada nenhuma ocorrência com autuado: "
+        );
     }
 
     public List<Ocorrencia> findByAutuante(String autuante) {
-        PreparedStatement ps = null;
-        Connection conn = null;
-        ResultSet rs = null;
-        List<Ocorrencia> ocorrencias = new ArrayList<>();
-        try {
-            conn = Conexao.getConnection();
-
-            ps = conn.prepareStatement(LISTAR_POR_AUTUANTE);
-            ps.setString(1, "%" + autuante + "%");
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Ocorrencia ocorrencia = new Ocorrencia();
-                popularComDados(ocorrencia, rs);
-                ocorrencias.add(ocorrencia);
-            }
-
-            if (!rs.next()) {
-                System.err.println("Não foi encontrado nenhum autuado com autuante: " + autuante);
-            }
-
-        } catch (SQLException ex) {
-            System.err.println("Erro ao ler dados do ocorrência: " + ex.getLocalizedMessage());
-        } finally {
-            Conexao.closeConnection(conn);
+        if (autuante == null) {
+            autuante = "";
         }
-        return ocorrencias;
+
+        return buscarPorTexto(
+                LISTAR_POR_AUTUANTE,
+                autuante,
+                "Não foi encontrada nenhuma ocorrência com autuante: "
+        );
     }
 
     public List<Ocorrencia> findByCidade(String cidade) {
-        PreparedStatement ps = null;
-        Connection conn = null;
-        ResultSet rs = null;
-        List<Ocorrencia> ocorrencias = new ArrayList<>();
-        try {
-            conn = Conexao.getConnection();
-
-            ps = conn.prepareStatement(LISTAR_POR_CIDADE);
-            ps.setString(1, "%" + cidade + "%");
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Ocorrencia ocorrencia = new Ocorrencia();
-                popularComDados(ocorrencia, rs);
-                ocorrencias.add(ocorrencia);
-            }
-
-            if (!rs.next()) {
-                System.err.println("Não foi encontrado nenhum autuado com cidade: " + cidade);
-            }
-
-        } catch (SQLException ex) {
-            System.err.println("Erro ao ler dados do ocorrência: " + ex.getLocalizedMessage());
-        } finally {
-            Conexao.closeConnection(conn);
+        if (cidade == null) {
+            cidade = "";
         }
-        return ocorrencias;
+
+        return buscarPorTexto(
+                LISTAR_POR_CIDADE,
+                cidade,
+                "Não foi encontrada nenhuma ocorrência com cidade: "
+        );
     }
 
     public List<Ocorrencia> findByData(java.sql.Date data) {
-        PreparedStatement ps = null;
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Ocorrencia> ocorrencias = new ArrayList<>();
+
+        List<Ocorrencia> ocorrencias = new ArrayList<Ocorrencia>();
+
+        if (data == null) {
+            System.err.println("Erro ao BUSCAR ocorrência: a data não pode ser nula.");
+            return ocorrencias;
+        }
 
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(LISTAR_POR_DATA);
+
             ps.setDate(1, data);
+
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -280,28 +360,40 @@ public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
                 ocorrencias.add(ocorrencia);
             }
 
-            if (!rs.next()) {
-                System.err.println("Não foi encontrado nenhuma ocorrência com a data: " + data);
+            if (ocorrencias.isEmpty()) {
+                System.err.println("Não foi encontrada nenhuma ocorrência com a data: " + data);
             }
 
         } catch (SQLException ex) {
-            System.err.println("Erro ao ler dados do ocorrência: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao BUSCAR dados da ocorrência por data: " + ex.getLocalizedMessage());
         } finally {
-            Conexao.closeConnection(conn);
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
         }
+
         return ocorrencias;
     }
 
     public List<Ocorrencia> findByTestemunha(String testemunha) {
-        PreparedStatement ps = null;
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Ocorrencia> ocorrencias = new ArrayList<>();
+
+        List<Ocorrencia> ocorrencias = new ArrayList<Ocorrencia>();
+
+        if (testemunha == null) {
+            testemunha = "";
+        }
+
         try {
             conn = Conexao.getConnection();
-
             ps = conn.prepareStatement(LISTAR_POR_TESTEMUNHA);
-            ps.setString(1, "%" + testemunha + "%");
+
+            String termo = "%" + testemunha.trim() + "%";
+
+            ps.setString(1, termo);
+            ps.setString(2, termo);
+
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -310,28 +402,45 @@ public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
                 ocorrencias.add(ocorrencia);
             }
 
-            if (!rs.next()) {
-                System.err.println("Não foi encontrado nenhuma ocorrência com o testemunha: " + testemunha);
+            if (ocorrencias.isEmpty()) {
+                System.err.println("Não foi encontrada nenhuma ocorrência com testemunha: " + testemunha);
             }
 
         } catch (SQLException ex) {
-            System.err.println("Erro ao ler dados do ocorrência: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao BUSCAR dados da ocorrência por testemunha: " + ex.getLocalizedMessage());
         } finally {
-            Conexao.closeConnection(conn);
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
         }
+
         return ocorrencias;
     }
 
     public List<Ocorrencia> findByTipo(String tipo) {
-        PreparedStatement ps = null;
+        if (tipo == null) {
+            tipo = "";
+        }
+
+        return buscarPorTexto(
+                LISTAR_POR_TIPO,
+                tipo,
+                "Não foi encontrada nenhuma ocorrência com tipo: "
+        );
+    }
+
+    private List<Ocorrencia> buscarPorTexto(String sql, String valor, String mensagemSemResultado) {
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Ocorrencia> ocorrencias = new ArrayList<>();
+
+        List<Ocorrencia> ocorrencias = new ArrayList<Ocorrencia>();
+
         try {
             conn = Conexao.getConnection();
+            ps = conn.prepareStatement(sql);
 
-            ps = conn.prepareStatement(LISTAR_POR_TIPO);
-            ps.setString(1, "%" + tipo + "%");
+            ps.setString(1, "%" + valor.trim() + "%");
+
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -340,76 +449,166 @@ public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
                 ocorrencias.add(ocorrencia);
             }
 
-            if (!rs.next()) {
-                System.err.println("Não foi encontrado nenhuma ocorrência com o tipo: " + tipo);
+            if (ocorrencias.isEmpty()) {
+                System.err.println(mensagemSemResultado + valor);
             }
 
         } catch (SQLException ex) {
-            System.err.println("Erro ao ler dados do ocorrência: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao BUSCAR dados da ocorrência: " + ex.getLocalizedMessage());
         } finally {
-            Conexao.closeConnection(conn);
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
         }
+
         return ocorrencias;
     }
 
-    private void popularComDados(Ocorrencia ocorrencia, ResultSet rs) {
-        try {
-            ocorrencia.setIdOcorrencia(rs.getInt("o.id_ocorrencia"));
-            ocorrencia.setDataOcorrencia(rs.getDate("o.data_ocorrencia"));
-            ocorrencia.setHoraOcorrencia(rs.getString("o.hora_ocorrencia"));
-            ocorrencia.setDescricaoOcorrencia(rs.getString("o.descricao_ocorrencia"));
-            ocorrencia.setRuaOcorrencia(rs.getString("o.rua_ocorrencia"));
-            ocorrencia.setCidadeOcorrencia(rs.getString("o.cidade_ocorrencia"));
-            ocorrencia.setBairroOcorrencia(rs.getString("o.bairro_ocorrencia"));
-            ocorrencia.setProximidadeOcorrencia(rs.getString("o.proximidade_ocorrencia"));
+    private void preencherPreparedStatement(
+            PreparedStatement ps,
+            Ocorrencia ocorrencia,
+            boolean actualizar
+    ) throws SQLException {
 
-            Autuado autuado = new Autuado();
-            autuado.setIdAutuado(rs.getInt("a.id_autuado"));
-            autuado.setNomeAutuado(rs.getString("a.nome_autuado"));
-            autuado.setPaiAutuado(rs.getString("a.pai_autuado"));
-            autuado.setMaeAutuado(rs.getString("a.mae_autuado"));
-            autuado.setEstadoCivilAutuado(rs.getString("a.estado_civil_autuado"));
-            autuado.setDataNascimentoAutuado(rs.getDate("a.data_nascimento_autuado"));
-            autuado.setSexo(autuado.getSexo().getExtensao(rs.getString("a.sexo_autuado")));
-            autuado.setBiAutuado(rs.getString("a.bi_autuado"));
-            autuado.setDataEmissaoBiAutuado(rs.getDate("a.data_emissao_bi_autuado"));
-            autuado.setTelefoneAutuado(rs.getString("a.telefone_autuado"));
-            ocorrencia.setAutuado(autuado);
+        setDate(ps, 1, ocorrencia.getDataOcorrencia());
 
-            Autuante autuante = new Autuante();
-            autuante.setIdAutuante(rs.getInt("at.id_autuante"));
-            autuante.setNomeAutuante(rs.getString("at.nome_autuante"));
-            autuante.setPaiAutuante(rs.getString("at.pai_autuante"));
-            autuante.setMaeAutuante(rs.getString("at.mae_autuante"));
-            autuante.setDataNascimentoAutuante(rs.getDate("at.data_nascimento_autuante"));
-            autuante.setSexo(autuante.getSexo().getExtensao(rs.getString("at.sexo_autuante")));
-            autuante.setBiAutuante(rs.getString("at.bi_autuante"));
-            autuante.setDataEmissaoBiAutuante(rs.getDate("at.data_emissao_bi_autuante"));
-            autuante.setNipAutuante(rs.getInt("at.nip_autuante"));
-            autuante.setTelefoneAutuante(rs.getString("at.telefone_autuante"));
-            ocorrencia.setAutuante(autuante);
+        ps.setString(2, ocorrencia.getHoraOcorrencia());
+        ps.setString(3, ocorrencia.getDescricaoOcorrencia());
+        ps.setString(4, ocorrencia.getRuaOcorrencia());
+        ps.setString(5, ocorrencia.getCidadeOcorrencia());
+        ps.setString(6, ocorrencia.getBairroOcorrencia());
+        ps.setString(7, ocorrencia.getProximidadeOcorrencia());
 
-            TipoOcorrencia tipoOcorrencia = new TipoOcorrencia();
-            tipoOcorrencia.setIdTipoOcorrencia(rs.getInt("t.id_tipo_ocorrencia"));
-            tipoOcorrencia.setNomeTipoOcorrencia(rs.getString("t.nome_tipo_ocorrencia"));
-            ocorrencia.setTipoOcorrencia(tipoOcorrencia);
+        ps.setInt(8, ocorrencia.getAutuado().getIdAutuado());
+        ps.setInt(9, ocorrencia.getAutuante().getIdAutuante());
+        ps.setInt(10, ocorrencia.getTipoOcorrencia().getIdTipoOcorrencia());
+        ps.setInt(11, ocorrencia.getTestemunha().getIdTestemunha());
 
-            Testemunha testemunha = new Testemunha();
-            testemunha.setIdTestemunha(rs.getInt("tt.id_testemunha"));
-            testemunha.setNomeTestemunha(rs.getString("tt.nome_testemunha"));
-            testemunha.setDataNascimentoTestemunha(rs.getDate("tt.data_nascimento_testemunha"));
-            testemunha.setSexo(testemunha.getSexo().getExtensao(rs.getString("tt.sexo_testemunha")));
-            testemunha.setBiTestemunha(rs.getString("tt.bi_testemunha"));
-            testemunha.setTelefoneTestemunha(rs.getString("tt.telefone_testemunha"));
-            ocorrencia.setTestemunha(testemunha);
+        if (ocorrencia.getTestemunha1() != null) {
+            ps.setInt(12, ocorrencia.getTestemunha1().getIdTestemunha());
+        } else {
+            ps.setNull(12, Types.INTEGER);
+        }
 
-            Municipio municipio = new Municipio();
-            municipio.setIdMunicipio(rs.getInt("m.id_municipio"));
-            municipio.setNomeMunicipio(rs.getString("m.nome_municipio"));
-            ocorrencia.setMunicipio(municipio);
-        } catch (SQLException ex) {
-            System.err.println("Erro ao carregar dados da ocorrencia: " + ex.getLocalizedMessage());
+        ps.setInt(13, ocorrencia.getMunicipio().getIdMunicipio());
+
+        if (actualizar) {
+            ps.setInt(14, ocorrencia.getIdOcorrencia());
         }
     }
 
+    private boolean validarRelacionamentosObrigatorios(Ocorrencia ocorrencia, String operacao) {
+        if (ocorrencia.getAutuado() == null) {
+            System.err.println("Erro ao " + operacao + " ocorrência: o autuado não pode ser nulo.");
+            return false;
+        }
+
+        if (ocorrencia.getAutuante() == null) {
+            System.err.println("Erro ao " + operacao + " ocorrência: o autuante não pode ser nulo.");
+            return false;
+        }
+
+        if (ocorrencia.getTipoOcorrencia() == null) {
+            System.err.println("Erro ao " + operacao + " ocorrência: o tipo de ocorrência não pode ser nulo.");
+            return false;
+        }
+
+        if (ocorrencia.getTestemunha() == null) {
+            System.err.println("Erro ao " + operacao + " ocorrência: a testemunha principal não pode ser nula.");
+            return false;
+        }
+
+        if (ocorrencia.getMunicipio() == null) {
+            System.err.println("Erro ao " + operacao + " ocorrência: o município não pode ser nulo.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void setDate(PreparedStatement ps, int index, java.util.Date data) throws SQLException {
+        if (data != null) {
+            ps.setDate(index, new java.sql.Date(data.getTime()));
+        } else {
+            ps.setNull(index, Types.DATE);
+        }
+    }
+
+    private void popularComDados(Ocorrencia ocorrencia, ResultSet rs) throws SQLException {
+        ocorrencia.setIdOcorrencia(rs.getInt("id_ocorrencia"));
+        ocorrencia.setDataOcorrencia(rs.getDate("data_ocorrencia"));
+        ocorrencia.setHoraOcorrencia(rs.getString("hora_ocorrencia"));
+        ocorrencia.setDescricaoOcorrencia(rs.getString("descricao_ocorrencia"));
+        ocorrencia.setRuaOcorrencia(rs.getString("rua_ocorrencia"));
+        ocorrencia.setCidadeOcorrencia(rs.getString("cidade_ocorrencia"));
+        ocorrencia.setBairroOcorrencia(rs.getString("bairro_ocorrencia"));
+        ocorrencia.setProximidadeOcorrencia(rs.getString("proximidade_ocorrencia"));
+
+        Autuado autuado = new Autuado();
+        autuado.setIdAutuado(rs.getInt("autuado_id"));
+        autuado.setNomeAutuado(rs.getString("autuado_nome"));
+        autuado.setPaiAutuado(rs.getString("autuado_pai"));
+        autuado.setMaeAutuado(rs.getString("autuado_mae"));
+        autuado.setEstadoCivilAutuado(rs.getString("autuado_estado_civil"));
+        autuado.setDataNascimentoAutuado(rs.getDate("autuado_data_nascimento"));
+        autuado.setSexo(Sexo.getExtensao(rs.getString("autuado_sexo")));
+        autuado.setBiAutuado(rs.getString("autuado_bi"));
+        autuado.setDataEmissaoBiAutuado(rs.getDate("autuado_data_emissao_bi"));
+        autuado.setTelefoneAutuado(rs.getString("autuado_telefone"));
+        ocorrencia.setAutuado(autuado);
+
+        Autuante autuante = new Autuante();
+        autuante.setIdAutuante(rs.getInt("autuante_id"));
+        autuante.setNomeAutuante(rs.getString("autuante_nome"));
+        autuante.setPaiAutuante(rs.getString("autuante_pai"));
+        autuante.setMaeAutuante(rs.getString("autuante_mae"));
+        autuante.setDataNascimentoAutuante(rs.getDate("autuante_data_nascimento"));
+        autuante.setSexo(Sexo.getExtensao(rs.getString("autuante_sexo")));
+        autuante.setBiAutuante(rs.getString("autuante_bi"));
+        autuante.setDataEmissaoBiAutuante(rs.getDate("autuante_data_emissao_bi"));
+        autuante.setNipAutuante(rs.getInt("autuante_nip"));
+        autuante.setTelefoneAutuante(rs.getString("autuante_telefone"));
+        ocorrencia.setAutuante(autuante);
+
+        TipoOcorrencia tipoOcorrencia = new TipoOcorrencia();
+        tipoOcorrencia.setIdTipoOcorrencia(rs.getInt("tipo_ocorrencia_id"));
+        tipoOcorrencia.setNomeTipoOcorrencia(rs.getString("tipo_ocorrencia_nome"));
+        ocorrencia.setTipoOcorrencia(tipoOcorrencia);
+
+        Testemunha testemunha = new Testemunha();
+        testemunha.setIdTestemunha(rs.getInt("testemunha_id"));
+        testemunha.setNomeTestemunha(rs.getString("testemunha_nome"));
+        testemunha.setDataNascimentoTestemunha(rs.getDate("testemunha_data_nascimento"));
+        testemunha.setSexo(Sexo.getExtensao(rs.getString("testemunha_sexo")));
+        testemunha.setBiTestemunha(rs.getString("testemunha_bi"));
+        testemunha.setTelefoneTestemunha(rs.getString("testemunha_telefone"));
+        ocorrencia.setTestemunha(testemunha);
+
+        int idTestemunha1 = rs.getInt("testemunha1_id");
+
+        if (!rs.wasNull()) {
+            Testemunha testemunha1 = new Testemunha();
+            testemunha1.setIdTestemunha(idTestemunha1);
+            testemunha1.setNomeTestemunha(rs.getString("testemunha1_nome"));
+            testemunha1.setDataNascimentoTestemunha(rs.getDate("testemunha1_data_nascimento"));
+            testemunha1.setSexo(Sexo.getExtensao(rs.getString("testemunha1_sexo")));
+            testemunha1.setBiTestemunha(rs.getString("testemunha1_bi"));
+            testemunha1.setTelefoneTestemunha(rs.getString("testemunha1_telefone"));
+            ocorrencia.setTestemunha1(testemunha1);
+        }
+
+        Municipio municipio = new Municipio();
+        municipio.setIdMunicipio(rs.getInt("municipio_id"));
+        municipio.setNomeMunicipio(rs.getString("municipio_nome"));
+        ocorrencia.setMunicipio(municipio);
+    }
+
+    private void fecharResultSet(ResultSet rs) {
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException ex) {
+                System.err.println("Erro ao fechar ResultSet: " + ex.getLocalizedMessage());
+            }
+        }
+    }
 }
