@@ -20,29 +20,44 @@ import util.Conexao;
  */
 public class ProvinciaDAO implements GenericoDAO<Provincia> {
 
-    private static final String INSERIR = "INSERT INTO provincia (nome_provincia) VALUES(?)";
-    private static final String ACTUALIZAR = "UPDATE provincia SET nome_provincia = ? WHERE id_provincia = ?";
-    private static final String ELIMINAR = "DETELE FROM provincia WHERE id_provincia = ?";
-    private static final String BUSCAR_POR_CODIGO = "SELECT * FROM provincia WHERE id_provincia = ?";
-    private static final String LISTAR_TUDO = "SELECT * FROM provincia";
-    private static final String LISTAR_POR_NOME = "SELECT * FROM provincia WHERE nome_provincia LIKE ? ORDER BY nome_provincia";
+    private static final String INSERIR
+            = "INSERT INTO provincia (nome_provincia) VALUES (?)";
+
+    private static final String ACTUALIZAR
+            = "UPDATE provincia SET nome_provincia = ? WHERE id_provincia = ?";
+
+    private static final String ELIMINAR
+            = "DELETE FROM provincia WHERE id_provincia = ?";
+
+    private static final String BUSCAR_POR_CODIGO
+            = "SELECT * FROM provincia WHERE id_provincia = ?";
+
+    private static final String LISTAR_TUDO
+            = "SELECT * FROM provincia ORDER BY nome_provincia";
+
+    private static final String LISTAR_POR_NOME
+            = "SELECT * FROM provincia WHERE nome_provincia LIKE ? ORDER BY nome_provincia";
 
     @Override
     public void save(Provincia provincia) {
-        PreparedStatement ps = null;
-        Connection conn = null;
-
         if (provincia == null) {
-            System.err.println("O valor passado não pode ser nulo.");
+            System.err.println("Erro ao INSERIR província: o objeto província não pode ser nulo.");
+            return;
         }
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(INSERIR);
+
             ps.setString(1, provincia.getNomeProvincia());
+
             ps.executeUpdate();
 
         } catch (SQLException ex) {
-            System.err.println("Erro ao INSERIR dados da provincia: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao INSERIR dados da província: " + ex.getLocalizedMessage());
         } finally {
             Conexao.closeConnection(conn, ps);
         }
@@ -50,21 +65,25 @@ public class ProvinciaDAO implements GenericoDAO<Provincia> {
 
     @Override
     public void update(Provincia provincia) {
-        PreparedStatement ps = null;
-        Connection conn = null;
-
         if (provincia == null) {
-            System.err.println("O valor passado não pode ser nulo.");
+            System.err.println("Erro ao ACTUALIZAR província: o objeto província não pode ser nulo.");
+            return;
         }
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(ACTUALIZAR);
+
             ps.setString(1, provincia.getNomeProvincia());
             ps.setInt(2, provincia.getIdProvincia());
+
             ps.executeUpdate();
 
         } catch (SQLException ex) {
-            System.err.println("Erro ao ACTUALIZAR dados da provincia: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao ACTUALIZAR dados da província: " + ex.getLocalizedMessage());
         } finally {
             Conexao.closeConnection(conn, ps);
         }
@@ -72,20 +91,24 @@ public class ProvinciaDAO implements GenericoDAO<Provincia> {
 
     @Override
     public void delete(Provincia provincia) {
-        PreparedStatement ps = null;
-        Connection conn = null;
-
         if (provincia == null) {
-            System.err.println("O valor passado não pode ser nulo.");
+            System.err.println("Erro ao ELIMINAR província: o objeto província não pode ser nulo.");
+            return;
         }
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(ELIMINAR);
+
             ps.setInt(1, provincia.getIdProvincia());
+
             ps.executeUpdate();
 
         } catch (SQLException ex) {
-            System.err.println("Erro ao ELIMINAR dados da provincia: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao ELIMINAR dados da província: " + ex.getLocalizedMessage());
         } finally {
             Conexao.closeConnection(conn, ps);
         }
@@ -93,61 +116,88 @@ public class ProvinciaDAO implements GenericoDAO<Provincia> {
 
     @Override
     public Provincia findById(Integer id) {
-        PreparedStatement ps = null;
+        if (id == null) {
+            System.err.println("Erro ao BUSCAR província: o id não pode ser nulo.");
+            return null;
+        }
+
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        Provincia provincia = new Provincia();
 
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(BUSCAR_POR_CODIGO);
+
             ps.setInt(1, id);
+
             rs = ps.executeQuery();
-            if (!rs.next()) {
-                System.err.println("Não foi encontrado nenhum registro com id: " + id);
+
+            if (rs.next()) {
+                Provincia provincia = new Provincia();
+                popularComDados(provincia, rs);
+                return provincia;
             }
-            popularComDados(provincia, rs);
+
+            System.err.println("Não foi encontrada nenhuma província com id: " + id);
+
         } catch (SQLException ex) {
-            System.err.println("Erro ao BUSCAR dados da provincia: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao BUSCAR dados da província: " + ex.getLocalizedMessage());
         } finally {
+            fecharResultSet(rs);
             Conexao.closeConnection(conn, ps);
         }
-        return provincia;
+
+        return null;
     }
 
     @Override
     public List<Provincia> findAll() {
-        PreparedStatement ps = null;
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Provincia> provincias = new ArrayList<>();
+
+        List<Provincia> provincias = new ArrayList<Provincia>();
+
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(LISTAR_TUDO);
+
             rs = ps.executeQuery();
+
             while (rs.next()) {
                 Provincia provincia = new Provincia();
                 popularComDados(provincia, rs);
                 provincias.add(provincia);
             }
+
         } catch (SQLException ex) {
-            System.err.println("Erro ao LER dados da provincia: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao LISTAR dados das províncias: " + ex.getLocalizedMessage());
         } finally {
-            Conexao.closeConnection(conn);
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
         }
+
         return provincias;
     }
 
     public List<Provincia> findByNome(String nome) {
-        PreparedStatement ps = null;
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Provincia> provincias = new ArrayList<>();
+
+        List<Provincia> provincias = new ArrayList<Provincia>();
+
+        if (nome == null) {
+            nome = "";
+        }
+
         try {
             conn = Conexao.getConnection();
-
             ps = conn.prepareStatement(LISTAR_POR_NOME);
-            ps.setString(1, "%" + nome + "%");
+
+            ps.setString(1, "%" + nome.trim() + "%");
+
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -156,25 +206,32 @@ public class ProvinciaDAO implements GenericoDAO<Provincia> {
                 provincias.add(provincia);
             }
 
-            if (!rs.next()) {
-                System.err.println("Não foi encontrado nenhuma provincia com nome: " + nome);
+            if (provincias.isEmpty()) {
+                System.err.println("Não foi encontrada nenhuma província com nome: " + nome);
             }
 
         } catch (SQLException ex) {
-            System.err.println("Erro ao ler dados do autuado: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao BUSCAR dados da província por nome: " + ex.getLocalizedMessage());
         } finally {
-            Conexao.closeConnection(conn);
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
         }
+
         return provincias;
     }
 
-    private void popularComDados(Provincia provincia, ResultSet rs) {
-        try {
-            provincia.setIdProvincia(rs.getInt("id_provincia"));
-            provincia.setNomeProvincia(rs.getString("nome_provincia"));
+    private void popularComDados(Provincia provincia, ResultSet rs) throws SQLException {
+        provincia.setIdProvincia(rs.getInt("id_provincia"));
+        provincia.setNomeProvincia(rs.getString("nome_provincia"));
+    }
 
-        } catch (SQLException ex) {
-            System.err.println("Erro ao carregar dados da província: " + ex.getLocalizedMessage());
+    private void fecharResultSet(ResultSet rs) {
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException ex) {
+                System.err.println("Erro ao fechar ResultSet: " + ex.getLocalizedMessage());
+            }
         }
     }
 }
