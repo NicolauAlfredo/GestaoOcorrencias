@@ -10,51 +10,46 @@ package modelo;
  * @author user
  */
 public enum Sexo {
-    MASCULINO("M", "Masculino"), FEMININO("F", "Feminino");
 
-    private String abrevitura;
-    private String extensao;
+    MASCULINO("M", "Masculino"),
+    FEMININO("F", "Feminino");
 
-    private Sexo(String abrevitura, String extensao) {
-        this.abrevitura = abrevitura;
+    private final String abreviatura;
+    private final String extensao;
+
+    private Sexo(String abreviatura, String extensao) {
+        this.abreviatura = abreviatura;
         this.extensao = extensao;
     }
 
-    private Sexo() {
+    public String getAbreviatura() {
+        return abreviatura;
     }
 
+    /*
+     * Mantido por compatibilidade com código antigo.
+     */
     public String getAbrevitura() {
-        return abrevitura;
-    }
-
-    public void setAbrevitura(String abrevitura) {
-        this.abrevitura = abrevitura;
+        return abreviatura;
     }
 
     public String getExtensao() {
         return extensao;
     }
 
-    public void setExtensao(String extensao) {
-        this.extensao = extensao;
-    }
+    public static Sexo fromExtensao(String valor) {
 
-    // Métodos auxiliares para interagir com o enum
-    public static Sexo getAbreviatura(String id) {
-        for (Sexo s : values()) {
-            if (s.getAbrevitura().equalsIgnoreCase(id)) {
-                return s;
+        if (valor == null) {
+            return null;
+        }
+
+        for (Sexo sexo : values()) {
+
+            if (sexo.getExtensao().equalsIgnoreCase(valor)) {
+                return sexo;
             }
         }
-        return null;
-    }
 
-    public static Sexo getExtensao(String id) {
-        for (Sexo s : values()) {
-            if (s.getExtensao().equalsIgnoreCase(id)) {
-                return s;
-            }
-        }
         return null;
     }
 }
