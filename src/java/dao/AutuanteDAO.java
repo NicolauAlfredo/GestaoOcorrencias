@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import modelo.Autuante;
@@ -24,58 +25,136 @@ import util.Conexao;
  */
 public class AutuanteDAO implements GenericoDAO<Autuante> {
 
-    private static final String INSERIR = "INSERT INTO autuante (nome_autuante, pai_autuante, mae_autuante, bi_autuante, residencia_autuante, data_nascimento_autuante, sexo_autuante, altura_autuante, data_emissao_bi_autuante, data_validade_bi_autuante, nip_autuante, telefone_autuante, id_patente, id_municipio, id_posto_trabalho) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String ACTUALIZAR = "UPDATE autuante SET nome_autuante = ?, pai_autuante = ?, mae_autuante = ?, bi_autuante = ?, residencia_autuante = ?, data_nascimento_autuante = ?, sexo_autuante = ?, altura_autuante = ?, data_emissao_bi_autuante = ?, data_validade_bi_autuante = ?, nip_autuante = ?, telefone_autuante = ?, id_patente = ?, id_municipio = ?, id_posto_trabalho = ? WHERE id_autuante = ?";
-    private static final String ELIMINAR = "DELETE FROM autuante WHERE id_autuante = ?";
-    private static final String BUSCAR_POR_CODIGO = "SELECT * FROM autuante a INNER JOIN patente p ON a.id_patente = p.id_patente INNER JOIN municipio m ON a.id_municipio = m.id_municipio INNER JOIN posto_trabalho pt ON a.id_posto_trabalho = pt.id_posto_trabalho WHERE a.id_autuante = ?";
-    private static final String LISTAR_TUDO = "SELECT * FROM autuante a INNER JOIN patente p ON a.id_patente = p.id_patente INNER JOIN municipio m ON a.id_municipio = m.id_municipio INNER JOIN posto_trabalho pt ON a.id_posto_trabalho = pt.id_posto_trabalho";
-    private static final String LISTAR_POR_NOME = "SELECT * FROM autuante a INNER JOIN patente p ON a.id_patente = p.id_patente INNER JOIN municipio m ON a.id_municipio = m.id_municipio INNER JOIN posto_trabalho pt ON a.id_posto_trabalho = pt.id_posto_trabalho WHERE a.nome_autuante LIKE ? ORDER BY a.nome_autuante";
-    private static final String LISTAR_POR_DATA = "SELECT * FROM autuante a INNER JOIN patente p ON a.id_patente = p.id_patente INNER JOIN municipio m ON a.id_municipio = m.id_municipio INNER JOIN posto_trabalho pt ON a.id_posto_trabalho = pt.id_posto_trabalho WHERE a.data_nascimento_autuante LIKE ? ORDER BY a.nome_autuante";
-    private static final String LISTAR_POR_BI = "SELECT * FROM autuante a INNER JOIN patente p ON a.id_patente = p.id_patente INNER JOIN municipio m ON a.id_municipio = m.id_municipio INNER JOIN posto_trabalho pt ON a.id_posto_trabalho = pt.id_posto_trabalho WHERE a.bi_autuante LIKE ? ORDER BY a.nome_autuante";
-    private static final String LISTAR_POR_NIP = "SELECT * FROM autuante a INNER JOIN patente p ON a.id_patente = p.id_patente INNER JOIN municipio m ON a.id_municipio = m.id_municipio INNER JOIN posto_trabalho pt ON a.id_posto_trabalho = pt.id_posto_trabalho WHERE a.nip_autuante = ? ORDER BY a.nome_autuante";
+    private static final String CAMPOS_CONSULTA
+            = "a.id_autuante, "
+            + "a.nome_autuante, "
+            + "a.pai_autuante, "
+            + "a.mae_autuante, "
+            + "a.bi_autuante, "
+            + "a.residencia_autuante, "
+            + "a.data_nascimento_autuante, "
+            + "a.sexo_autuante, "
+            + "a.altura_autuante, "
+            + "a.data_emissao_bi_autuante, "
+            + "a.data_validade_bi_autuante, "
+            + "a.nip_autuante, "
+            + "a.telefone_autuante, "
+            + "p.id_patente, "
+            + "p.nome_patente, "
+            + "m.id_municipio, "
+            + "m.nome_municipio, "
+            + "pt.id_posto_trabalho, "
+            + "pt.nome_posto_trabalho, "
+            + "pt.numero_posto_trabalho";
+
+    private static final String INSERIR
+            = "INSERT INTO autuante "
+            + "(nome_autuante, pai_autuante, mae_autuante, bi_autuante, residencia_autuante, "
+            + "data_nascimento_autuante, sexo_autuante, altura_autuante, "
+            + "data_emissao_bi_autuante, data_validade_bi_autuante, nip_autuante, telefone_autuante, "
+            + "id_patente, id_municipio, id_posto_trabalho) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    private static final String ACTUALIZAR
+            = "UPDATE autuante SET "
+            + "nome_autuante = ?, "
+            + "pai_autuante = ?, "
+            + "mae_autuante = ?, "
+            + "bi_autuante = ?, "
+            + "residencia_autuante = ?, "
+            + "data_nascimento_autuante = ?, "
+            + "sexo_autuante = ?, "
+            + "altura_autuante = ?, "
+            + "data_emissao_bi_autuante = ?, "
+            + "data_validade_bi_autuante = ?, "
+            + "nip_autuante = ?, "
+            + "telefone_autuante = ?, "
+            + "id_patente = ?, "
+            + "id_municipio = ?, "
+            + "id_posto_trabalho = ? "
+            + "WHERE id_autuante = ?";
+
+    private static final String ELIMINAR
+            = "DELETE FROM autuante WHERE id_autuante = ?";
+
+    private static final String BUSCAR_POR_CODIGO
+            = "SELECT " + CAMPOS_CONSULTA + " "
+            + "FROM autuante a "
+            + "INNER JOIN patente p ON a.id_patente = p.id_patente "
+            + "INNER JOIN municipio m ON a.id_municipio = m.id_municipio "
+            + "INNER JOIN posto_trabalho pt ON a.id_posto_trabalho = pt.id_posto_trabalho "
+            + "WHERE a.id_autuante = ?";
+
+    private static final String LISTAR_TUDO
+            = "SELECT " + CAMPOS_CONSULTA + " "
+            + "FROM autuante a "
+            + "INNER JOIN patente p ON a.id_patente = p.id_patente "
+            + "INNER JOIN municipio m ON a.id_municipio = m.id_municipio "
+            + "INNER JOIN posto_trabalho pt ON a.id_posto_trabalho = pt.id_posto_trabalho "
+            + "ORDER BY a.nome_autuante";
+
+    private static final String LISTAR_POR_NOME
+            = "SELECT " + CAMPOS_CONSULTA + " "
+            + "FROM autuante a "
+            + "INNER JOIN patente p ON a.id_patente = p.id_patente "
+            + "INNER JOIN municipio m ON a.id_municipio = m.id_municipio "
+            + "INNER JOIN posto_trabalho pt ON a.id_posto_trabalho = pt.id_posto_trabalho "
+            + "WHERE a.nome_autuante LIKE ? "
+            + "ORDER BY a.nome_autuante";
+
+    private static final String LISTAR_POR_DATA
+            = "SELECT " + CAMPOS_CONSULTA + " "
+            + "FROM autuante a "
+            + "INNER JOIN patente p ON a.id_patente = p.id_patente "
+            + "INNER JOIN municipio m ON a.id_municipio = m.id_municipio "
+            + "INNER JOIN posto_trabalho pt ON a.id_posto_trabalho = pt.id_posto_trabalho "
+            + "WHERE a.data_nascimento_autuante = ? "
+            + "ORDER BY a.nome_autuante";
+
+    private static final String LISTAR_POR_BI
+            = "SELECT " + CAMPOS_CONSULTA + " "
+            + "FROM autuante a "
+            + "INNER JOIN patente p ON a.id_patente = p.id_patente "
+            + "INNER JOIN municipio m ON a.id_municipio = m.id_municipio "
+            + "INNER JOIN posto_trabalho pt ON a.id_posto_trabalho = pt.id_posto_trabalho "
+            + "WHERE a.bi_autuante LIKE ? "
+            + "ORDER BY a.nome_autuante";
+
+    private static final String LISTAR_POR_NIP
+            = "SELECT " + CAMPOS_CONSULTA + " "
+            + "FROM autuante a "
+            + "INNER JOIN patente p ON a.id_patente = p.id_patente "
+            + "INNER JOIN municipio m ON a.id_municipio = m.id_municipio "
+            + "INNER JOIN posto_trabalho pt ON a.id_posto_trabalho = pt.id_posto_trabalho "
+            + "WHERE a.nip_autuante = ? "
+            + "ORDER BY a.nome_autuante";
 
     @Override
     public void save(Autuante autuante) {
-        PreparedStatement ps = null;
-        Connection conn = null;
-
         if (autuante == null) {
-            System.err.println("O valor passado não pode ser nulo.");
+            System.err.println("Erro ao INSERIR autuante: o objeto autuante não pode ser nulo.");
+            return;
         }
+
+        if (autuante.getMunicipio() == null) {
+            System.err.println("Erro ao INSERIR autuante: o município não pode ser nulo.");
+            return;
+        }
+
+        if (autuante.getPostoTrabalho() == null) {
+            System.err.println("Erro ao INSERIR autuante: o posto de trabalho não pode ser nulo.");
+            return;
+        }
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(INSERIR);
-            ps.setString(1, autuante.getNomeAutuante());
-            ps.setString(2, autuante.getPaiAutuante());
-            ps.setString(3, autuante.getMaeAutuante());
-            ps.setString(4, autuante.getBiAutuante());
-            ps.setString(5, autuante.getResidenciaAutuante());
-            if (autuante.getDataNascimentoAutuante() != null) {
-                ps.setDate(6, new java.sql.Date(autuante.getDataNascimentoAutuante().getTime()));
-            } else {
-                ps.setDate(6, null);
-            }
-            ps.setString(7, autuante.getSexo().getExtensao()); // Fixar bem isso
-            ps.setDouble(8, autuante.getAlturaAutuante());
-            if (autuante.getDataValidadeBiAutuante() != null) {
-                ps.setDate(9, new java.sql.Date(autuante.getDataEmissaoBiAutuante().getTime()));
-            } else {
-                ps.setDate(9, null);
-            }
-            if (autuante.getDataValidadeBiAutuante() != null) {
-                ps.setDate(10, new java.sql.Date(autuante.getDataValidadeBiAutuante().getTime()));
-            } else {
-                ps.setDate(10, null);
-            }
-            ps.setInt(11, autuante.getNipAutuante());
-            ps.setString(12, autuante.getTelefoneAutuante());
-            if (autuante.getPatente() != null) {
-                ps.setInt(13, autuante.getPatente().getIdPatente());
-            } else {
-                ps.setNull(13, java.sql.Types.INTEGER);
-            }
-            ps.setInt(14, autuante.getMunicipio().getIdMunicipio());
-            ps.setInt(15, autuante.getPostoTrabalho().getIdPostoTrabalho());
+
+            preencherPreparedStatement(ps, autuante, false);
+
             ps.executeUpdate();
 
         } catch (SQLException ex) {
@@ -87,31 +166,30 @@ public class AutuanteDAO implements GenericoDAO<Autuante> {
 
     @Override
     public void update(Autuante autuante) {
-        PreparedStatement ps = null;
-        Connection conn = null;
-
         if (autuante == null) {
-            System.err.println("O valor passado não pode ser nulo.");
+            System.err.println("Erro ao ACTUALIZAR autuante: o objeto autuante não pode ser nulo.");
+            return;
         }
+
+        if (autuante.getMunicipio() == null) {
+            System.err.println("Erro ao ACTUALIZAR autuante: o município não pode ser nulo.");
+            return;
+        }
+
+        if (autuante.getPostoTrabalho() == null) {
+            System.err.println("Erro ao ACTUALIZAR autuante: o posto de trabalho não pode ser nulo.");
+            return;
+        }
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(ACTUALIZAR);
-            ps.setString(1, autuante.getNomeAutuante());
-            ps.setString(2, autuante.getPaiAutuante());
-            ps.setString(3, autuante.getMaeAutuante());
-            ps.setString(4, autuante.getBiAutuante());
-            ps.setString(5, autuante.getResidenciaAutuante());
-            ps.setDate(6, new java.sql.Date(autuante.getDataNascimentoAutuante().getTime()));
-            ps.setString(7, autuante.getSexo().getExtensao()); // Fixar bm isso
-            ps.setDouble(8, autuante.getAlturaAutuante());
-            ps.setDate(9, new java.sql.Date(autuante.getDataEmissaoBiAutuante().getTime()));
-            ps.setDate(10, new java.sql.Date(autuante.getDataValidadeBiAutuante().getTime()));
-            ps.setInt(11, autuante.getNipAutuante());
-            ps.setString(12, autuante.getTelefoneAutuante());
-            ps.setInt(13, autuante.getPatente().getIdPatente());
-            ps.setInt(14, autuante.getMunicipio().getIdMunicipio());
-            ps.setInt(15, autuante.getPostoTrabalho().getIdPostoTrabalho());
-            ps.setInt(16, autuante.getIdAutuante());
+
+            preencherPreparedStatement(ps, autuante, true);
+
             ps.executeUpdate();
 
         } catch (SQLException ex) {
@@ -123,16 +201,20 @@ public class AutuanteDAO implements GenericoDAO<Autuante> {
 
     @Override
     public void delete(Autuante autuante) {
-        PreparedStatement ps = null;
-        Connection conn = null;
-
         if (autuante == null) {
-            System.err.println("O valor passado não pode ser nulo.");
+            System.err.println("Erro ao ELIMINAR autuante: o objeto autuante não pode ser nulo.");
+            return;
         }
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(ELIMINAR);
+
             ps.setInt(1, autuante.getIdAutuante());
+
             ps.executeUpdate();
 
         } catch (SQLException ex) {
@@ -144,61 +226,88 @@ public class AutuanteDAO implements GenericoDAO<Autuante> {
 
     @Override
     public Autuante findById(Integer id) {
-        PreparedStatement ps = null;
+        if (id == null) {
+            System.err.println("Erro ao BUSCAR autuante: o id não pode ser nulo.");
+            return null;
+        }
+
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        Autuante autuante = new Autuante();
 
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(BUSCAR_POR_CODIGO);
+
             ps.setInt(1, id);
+
             rs = ps.executeQuery();
-            if (!rs.next()) {
-                System.err.println("Não foi encontrado nenhum registro com id: " + id);
+
+            if (rs.next()) {
+                Autuante autuante = new Autuante();
+                popularComDados(autuante, rs);
+                return autuante;
             }
-            popularComDados(autuante, rs);
+
+            System.err.println("Não foi encontrado nenhum autuante com id: " + id);
+
         } catch (SQLException ex) {
             System.err.println("Erro ao BUSCAR dados do autuante: " + ex.getLocalizedMessage());
         } finally {
+            fecharResultSet(rs);
             Conexao.closeConnection(conn, ps);
         }
-        return autuante;
+
+        return null;
     }
 
     @Override
     public List<Autuante> findAll() {
-        PreparedStatement ps = null;
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Autuante> autuantes = new ArrayList<>();
+
+        List<Autuante> autuantes = new ArrayList<Autuante>();
+
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(LISTAR_TUDO);
+
             rs = ps.executeQuery();
+
             while (rs.next()) {
                 Autuante autuante = new Autuante();
                 popularComDados(autuante, rs);
                 autuantes.add(autuante);
             }
+
         } catch (SQLException ex) {
-            System.err.println("Erro ao LER dados do autuante: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao LISTAR dados dos autuantes: " + ex.getLocalizedMessage());
         } finally {
-            Conexao.closeConnection(conn);
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
         }
+
         return autuantes;
     }
 
     public List<Autuante> findByNome(String nome) {
-        PreparedStatement ps = null;
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Autuante> autuantes = new ArrayList<>();
+
+        List<Autuante> autuantes = new ArrayList<Autuante>();
+
+        if (nome == null) {
+            nome = "";
+        }
+
         try {
             conn = Conexao.getConnection();
-
             ps = conn.prepareStatement(LISTAR_POR_NOME);
-            ps.setString(1, "%" + nome + "%");
+
+            ps.setString(1, "%" + nome.trim() + "%");
+
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -207,28 +316,38 @@ public class AutuanteDAO implements GenericoDAO<Autuante> {
                 autuantes.add(autuante);
             }
 
-            if (!rs.next()) {
-                System.err.println("Não foi encontrado nenhum autuado com nome: " + nome);
+            if (autuantes.isEmpty()) {
+                System.err.println("Não foi encontrado nenhum autuante com nome: " + nome);
             }
 
         } catch (SQLException ex) {
-            System.err.println("Erro ao ler dados do autuado: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao BUSCAR dados do autuante por nome: " + ex.getLocalizedMessage());
         } finally {
-            Conexao.closeConnection(conn);
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
         }
+
         return autuantes;
     }
 
     public List<Autuante> findByData(java.sql.Date data) {
-        PreparedStatement ps = null;
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Autuante> autuantes = new ArrayList<>();
+
+        List<Autuante> autuantes = new ArrayList<Autuante>();
+
+        if (data == null) {
+            System.err.println("Erro ao BUSCAR autuante: a data não pode ser nula.");
+            return autuantes;
+        }
 
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(LISTAR_POR_DATA);
+
             ps.setDate(1, data);
+
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -237,28 +356,37 @@ public class AutuanteDAO implements GenericoDAO<Autuante> {
                 autuantes.add(autuante);
             }
 
-            if (!rs.next()) {
+            if (autuantes.isEmpty()) {
                 System.err.println("Não foi encontrado nenhum autuante com a data: " + data);
             }
 
         } catch (SQLException ex) {
-            System.err.println("Erro ao ler dados do autuado: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao BUSCAR dados do autuante por data: " + ex.getLocalizedMessage());
         } finally {
-            Conexao.closeConnection(conn);
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
         }
+
         return autuantes;
     }
 
     public List<Autuante> findByBi(String numeroBI) {
-        PreparedStatement ps = null;
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Autuante> autuantes = new ArrayList<>();
+
+        List<Autuante> autuantes = new ArrayList<Autuante>();
+
+        if (numeroBI == null) {
+            numeroBI = "";
+        }
+
         try {
             conn = Conexao.getConnection();
-
             ps = conn.prepareStatement(LISTAR_POR_BI);
-            ps.setString(1, "%" + numeroBI + "%");
+
+            ps.setString(1, "%" + numeroBI.trim() + "%");
+
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -267,28 +395,38 @@ public class AutuanteDAO implements GenericoDAO<Autuante> {
                 autuantes.add(autuante);
             }
 
-            if (!rs.next()) {
-                System.err.println("Não foi encontrado nenhum autuante com o número do B.I. : " + numeroBI);
+            if (autuantes.isEmpty()) {
+                System.err.println("Não foi encontrado nenhum autuante com o número do B.I.: " + numeroBI);
             }
 
         } catch (SQLException ex) {
-            System.err.println("Erro ao ler dados do autuante: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao BUSCAR dados do autuante por B.I.: " + ex.getLocalizedMessage());
         } finally {
-            Conexao.closeConnection(conn);
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
         }
+
         return autuantes;
     }
 
     public List<Autuante> findByNip(Integer nip) {
-        PreparedStatement ps = null;
         Connection conn = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Autuante> autuantes = new ArrayList<>();
+
+        List<Autuante> autuantes = new ArrayList<Autuante>();
+
+        if (nip == null) {
+            System.err.println("Erro ao BUSCAR autuante: o NIP não pode ser nulo.");
+            return autuantes;
+        }
 
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(LISTAR_POR_NIP);
+
             ps.setInt(1, nip);
+
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -297,52 +435,112 @@ public class AutuanteDAO implements GenericoDAO<Autuante> {
                 autuantes.add(autuante);
             }
 
-            if (!rs.next()) {
-                System.err.println("Não foi encontrado nenhum autuante com o nip: " + nip);
+            if (autuantes.isEmpty()) {
+                System.err.println("Não foi encontrado nenhum autuante com o NIP: " + nip);
             }
 
         } catch (SQLException ex) {
-            System.err.println("Erro ao ler dados do autuado: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao BUSCAR dados do autuante por NIP: " + ex.getLocalizedMessage());
         } finally {
-            Conexao.closeConnection(conn);
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
         }
+
         return autuantes;
     }
 
-    private void popularComDados(Autuante autuante, ResultSet rs) {
-        try {
-            autuante.setIdAutuante(rs.getInt("a.id_autuante"));
-            autuante.setNomeAutuante(rs.getString("a.nome_autuante"));
-            autuante.setPaiAutuante(rs.getString("a.pai_autuante"));
-            autuante.setMaeAutuante(rs.getString("a.mae_autuante"));
-            autuante.setBiAutuante(rs.getString("a.bi_autuante"));
-            autuante.setResidenciaAutuante(rs.getString("a.residencia_autuante"));
-            autuante.setDataNascimentoAutuante(rs.getDate("a.data_nascimento_autuante"));
-            autuante.setSexo(Sexo.getExtensao(rs.getString("a.sexo_autuante")));
-            autuante.setAlturaAutuante(rs.getDouble("a.altura_autuante"));
-            autuante.setDataEmissaoBiAutuante(rs.getDate("a.data_emissao_bi_autuante"));
-            autuante.setDataValidadeBiAutuante(rs.getDate("a.data_validade_bi_autuante"));
-            autuante.setNipAutuante(rs.getInt("a.nip_autuante"));
-            autuante.setTelefoneAutuante(rs.getString("a.telefone_autuante"));
+    private void preencherPreparedStatement(
+            PreparedStatement ps,
+            Autuante autuante,
+            boolean actualizar
+    ) throws SQLException {
 
-            Patente patente = new Patente();
-            patente.setIdPatente(rs.getInt("p.id_patente"));
-            patente.setNomePatente(rs.getString("p.nome_patente"));
-            autuante.setPatente(patente);
+        ps.setString(1, autuante.getNomeAutuante());
+        ps.setString(2, autuante.getPaiAutuante());
+        ps.setString(3, autuante.getMaeAutuante());
+        ps.setString(4, autuante.getBiAutuante());
+        ps.setString(5, autuante.getResidenciaAutuante());
 
-            Municipio municipio = new Municipio();
-            municipio.setIdMunicipio(rs.getInt("m.id_municipio"));
-            municipio.setNomeMunicipio(rs.getString("m.nome_municipio"));
-            autuante.setMunicipio(municipio);
+        setDate(ps, 6, autuante.getDataNascimentoAutuante());
 
-            PostoTrabalho postoTrabalho = new PostoTrabalho();
-            postoTrabalho.setIdPostoTrabalho(rs.getInt("pt.id_posto_trabalho"));
-            postoTrabalho.setNomePostoTrabalho(rs.getString("pt.nome_posto_trabalho"));
-            postoTrabalho.setNumeroPostoTrabalho(rs.getInt("pt.numero_posto_trabalho"));
-            autuante.setPostoTrabalho(postoTrabalho);
-        } catch (SQLException ex) {
-            System.err.println("Erro ao carregar dados do autuante: " + ex.getLocalizedMessage());
+        if (autuante.getSexo() != null) {
+            ps.setString(7, autuante.getSexo().getExtensao());
+        } else {
+            ps.setNull(7, Types.VARCHAR);
+        }
+
+        ps.setDouble(8, autuante.getAlturaAutuante());
+
+        setDate(ps, 9, autuante.getDataEmissaoBiAutuante());
+        setDate(ps, 10, autuante.getDataValidadeBiAutuante());
+
+        ps.setInt(11, autuante.getNipAutuante());
+        ps.setString(12, autuante.getTelefoneAutuante());
+
+        if (autuante.getPatente() != null) {
+            ps.setInt(13, autuante.getPatente().getIdPatente());
+        } else {
+            ps.setNull(13, Types.INTEGER);
+        }
+
+        ps.setInt(14, autuante.getMunicipio().getIdMunicipio());
+        ps.setInt(15, autuante.getPostoTrabalho().getIdPostoTrabalho());
+
+        if (actualizar) {
+            ps.setInt(16, autuante.getIdAutuante());
         }
     }
 
+    private void setDate(PreparedStatement ps, int index, java.util.Date data) throws SQLException {
+        if (data != null) {
+            ps.setDate(index, new java.sql.Date(data.getTime()));
+        } else {
+            ps.setNull(index, Types.DATE);
+        }
+    }
+
+    private void popularComDados(Autuante autuante, ResultSet rs) throws SQLException {
+        autuante.setIdAutuante(rs.getInt("id_autuante"));
+        autuante.setNomeAutuante(rs.getString("nome_autuante"));
+        autuante.setPaiAutuante(rs.getString("pai_autuante"));
+        autuante.setMaeAutuante(rs.getString("mae_autuante"));
+        autuante.setBiAutuante(rs.getString("bi_autuante"));
+        autuante.setResidenciaAutuante(rs.getString("residencia_autuante"));
+        autuante.setDataNascimentoAutuante(rs.getDate("data_nascimento_autuante"));
+
+        String sexoAutuante = rs.getString("sexo_autuante");
+        autuante.setSexo(Sexo.getExtensao(sexoAutuante));
+
+        autuante.setAlturaAutuante(rs.getDouble("altura_autuante"));
+        autuante.setDataEmissaoBiAutuante(rs.getDate("data_emissao_bi_autuante"));
+        autuante.setDataValidadeBiAutuante(rs.getDate("data_validade_bi_autuante"));
+        autuante.setNipAutuante(rs.getInt("nip_autuante"));
+        autuante.setTelefoneAutuante(rs.getString("telefone_autuante"));
+
+        Patente patente = new Patente();
+        patente.setIdPatente(rs.getInt("id_patente"));
+        patente.setNomePatente(rs.getString("nome_patente"));
+        autuante.setPatente(patente);
+
+        Municipio municipio = new Municipio();
+        municipio.setIdMunicipio(rs.getInt("id_municipio"));
+        municipio.setNomeMunicipio(rs.getString("nome_municipio"));
+        autuante.setMunicipio(municipio);
+
+        PostoTrabalho postoTrabalho = new PostoTrabalho();
+        postoTrabalho.setIdPostoTrabalho(rs.getInt("id_posto_trabalho"));
+        postoTrabalho.setNomePostoTrabalho(rs.getString("nome_posto_trabalho"));
+        postoTrabalho.setNumeroPostoTrabalho(rs.getInt("numero_posto_trabalho"));
+        autuante.setPostoTrabalho(postoTrabalho);
+    }
+
+    private void fecharResultSet(ResultSet rs) {
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException ex) {
+                System.err.println("Erro ao fechar ResultSet: " + ex.getLocalizedMessage());
+            }
+        }
+    }
 }
