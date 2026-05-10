@@ -15,6 +15,7 @@ import modelo.Autuante;
 import modelo.Municipio;
 import modelo.Patente;
 import modelo.PostoTrabalho;
+import modelo.Sexo;
 import util.Conexao;
 
 /**
@@ -49,14 +50,30 @@ public class AutuanteDAO implements GenericoDAO<Autuante> {
             ps.setString(3, autuante.getMaeAutuante());
             ps.setString(4, autuante.getBiAutuante());
             ps.setString(5, autuante.getResidenciaAutuante());
-            ps.setDate(6, new java.sql.Date(autuante.getDataNascimentoAutuante().getTime()));
+            if (autuante.getDataNascimentoAutuante() != null) {
+                ps.setDate(6, new java.sql.Date(autuante.getDataNascimentoAutuante().getTime()));
+            } else {
+                ps.setDate(6, null);
+            }
             ps.setString(7, autuante.getSexo().getExtensao()); // Fixar bem isso
             ps.setDouble(8, autuante.getAlturaAutuante());
-            ps.setDate(9, new java.sql.Date(autuante.getDataEmissaoBiAutuante().getTime()));
-            ps.setDate(10, new java.sql.Date(autuante.getDataValidadeBiAutuante().getTime()));
+            if (autuante.getDataValidadeBiAutuante() != null) {
+                ps.setDate(9, new java.sql.Date(autuante.getDataEmissaoBiAutuante().getTime()));
+            } else {
+                ps.setDate(9, null);
+            }
+            if (autuante.getDataValidadeBiAutuante() != null) {
+                ps.setDate(10, new java.sql.Date(autuante.getDataValidadeBiAutuante().getTime()));
+            } else {
+                ps.setDate(10, null);
+            }
             ps.setInt(11, autuante.getNipAutuante());
             ps.setString(12, autuante.getTelefoneAutuante());
-            ps.setInt(13, autuante.getPatente().getIdPatente());
+            if (autuante.getPatente() != null) {
+                ps.setInt(13, autuante.getPatente().getIdPatente());
+            } else {
+                ps.setNull(13, java.sql.Types.INTEGER);
+            }
             ps.setInt(14, autuante.getMunicipio().getIdMunicipio());
             ps.setInt(15, autuante.getPostoTrabalho().getIdPostoTrabalho());
             ps.executeUpdate();
@@ -301,7 +318,7 @@ public class AutuanteDAO implements GenericoDAO<Autuante> {
             autuante.setBiAutuante(rs.getString("a.bi_autuante"));
             autuante.setResidenciaAutuante(rs.getString("a.residencia_autuante"));
             autuante.setDataNascimentoAutuante(rs.getDate("a.data_nascimento_autuante"));
-            autuante.setSexo(autuante.getSexo().getExtensao(rs.getString("a.sexo_autuante")));
+            autuante.setSexo(Sexo.getExtensao(rs.getString("a.sexo_autuante")));
             autuante.setAlturaAutuante(rs.getDouble("a.altura_autuante"));
             autuante.setDataEmissaoBiAutuante(rs.getDate("a.data_emissao_bi_autuante"));
             autuante.setDataValidadeBiAutuante(rs.getDate("a.data_validade_bi_autuante"));
