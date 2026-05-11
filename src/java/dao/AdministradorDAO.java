@@ -230,12 +230,11 @@ public class AdministradorDAO implements GenericoDAO<Administrador> {
                 return administrador;
             }
 
-        } finally {
-            fecharResultSet(rs);
-            Conexao.closeConnection(conn, ps);
-        }
+            return null;
 
-        return null;
+        } finally {
+            Conexao.closeConnection(conn, ps, rs);
+        }
     }
 
     private void preencherPreparedStatement(

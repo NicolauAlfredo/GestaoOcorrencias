@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package util;
 
 import java.sql.Connection;
@@ -6,27 +10,38 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Conexao {
+/**
+ * Classe de exemplo para configuração da conexão com MySQL.
+ *
+ * Configure os dados abaixo conforme o seu ambiente local.
+ *
+ * @author Nicolau Alfredo
+ */
+public class ConexaoExemplo {
 
     public static Connection getConnection() {
+
         Connection con;
 
         String driver = "com.mysql.cj.jdbc.Driver";
 
         String url
-                = "jdbc:mysql://localhost:3306/policia?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+                = "jdbc:mysql://localhost:3306/nome_da_base";
 
-        String user = "root";
+        String user = "seu_usuario_mysql";
 
-        String password = "PapaiCode*-";
+        String password = "sua_senha_mysql";
 
         try {
+
             Class.forName(driver);
 
             con = DriverManager.getConnection(url, user, password);
 
         } catch (ClassNotFoundException | SQLException ex) {
+
             System.err.println("Erro na conexão com a base de dados: " + ex.getMessage());
+
             return null;
         }
 
@@ -46,6 +61,7 @@ public class Conexao {
     }
 
     private static void close(Connection conn, PreparedStatement ps, ResultSet rs) {
+
         try {
 
             if (rs != null) {
@@ -61,6 +77,7 @@ public class Conexao {
             }
 
         } catch (SQLException ex) {
+
             System.err.println("Erro ao desalocar recurso: " + ex.getMessage());
         }
     }
