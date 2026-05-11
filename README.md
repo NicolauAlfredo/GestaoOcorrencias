@@ -219,15 +219,6 @@ Planned future upgrades:
 
 # Screenshots
 
-Add screenshots of:
-
-- Login page
-- Dashboard
-- Administrator management
-- Municipality listing
-- Pagination
-- Search system
-
 ---
 
 # How to Run
@@ -244,7 +235,7 @@ Add screenshots of:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/your-repository.git
+git clone https://github.com/NicolauAlfredo/GestaoOcorrencias.git
 ```
 
 ### 2. Create the database
