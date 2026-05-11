@@ -65,6 +65,17 @@ public class AdministradorDAO implements GenericoDAO<Administrador> {
             + "ORDER BY nome_administrador "
             + "LIMIT ? OFFSET ?";
 
+    private static final String CONTAR_ADMINISTRADORES_POR_NOME
+            = "SELECT COUNT(1) AS total_administradores "
+            + "FROM administrador "
+            + "WHERE nome_administrador LIKE ?";
+
+    private static final String CONSULTAR_PAGINA_POR_NOME
+            = "SELECT * FROM administrador "
+            + "WHERE nome_administrador LIKE ? "
+            + "ORDER BY nome_administrador "
+            + "LIMIT ? OFFSET ?";
+
     @Override
     public void save(Administrador administrador) {
         if (administrador == null) {
@@ -210,8 +221,7 @@ public class AdministradorDAO implements GenericoDAO<Administrador> {
         return administradores;
     }
 
-    public Administrador verificarAcesso(String nip, String palavraPasse)
-            throws SQLException, ClassNotFoundException {
+    public Administrador verificarAcesso(String nip, String palavraPasse) throws SQLException, ClassNotFoundException {
 
         if (nip == null || nip.trim().isEmpty()) {
             return null;
@@ -340,11 +350,92 @@ public class AdministradorDAO implements GenericoDAO<Administrador> {
         }
     }
 
-    private void preencherPreparedStatement(
-            PreparedStatement ps,
-            Administrador administrador,
-            boolean editar
-    ) throws SQLException {
+    public int quantidadePaginasPorNome(String nome) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        int quantidadePaginas = 1;
+
+        if (nome == null) {
+            nome = "";
+        }
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(CONTAR_ADMINISTRADORES_POR_NOME);
+
+            ps.setString(1, "%" + nome.trim() + "%");
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int totalAdministradores = rs.getInt("total_administradores");
+
+                quantidadePaginas = (int) Math.ceil(
+                        totalAdministradores / (double) TOTAL_ADMINISTRADORES_POR_PAGINA
+                );
+
+                if (quantidadePaginas < 1) {
+                    quantidadePaginas = 1;
+                }
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao calcular páginas por nome de administrador: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return quantidadePaginas;
+    }
+
+    public List<Administrador> consultarPaginaPorNome(String nome, String numeroPagina) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        List<Administrador> administradores = new ArrayList<Administrador>();
+
+        if (nome == null) {
+            nome = "";
+        }
+
+        int pagina = converterNumeroPagina(numeroPagina);
+        int offset = (pagina * TOTAL_ADMINISTRADORES_POR_PAGINA) - TOTAL_ADMINISTRADORES_POR_PAGINA;
+
+        if (offset < 0) {
+            offset = 0;
+        }
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(CONSULTAR_PAGINA_POR_NOME);
+
+            ps.setString(1, "%" + nome.trim() + "%");
+            ps.setInt(2, TOTAL_ADMINISTRADORES_POR_PAGINA);
+            ps.setInt(3, offset);
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Administrador administrador = new Administrador();
+                popularComDados(administrador, rs);
+                administradores.add(administrador);
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao consultar administradores por nome com paginação: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return administradores;
+    }
+
+    private void preencherPreparedStatement(PreparedStatement ps, Administrador administrador, boolean editar) throws SQLException {
 
         ps.setString(1, administrador.getNomeAdministrador());
 

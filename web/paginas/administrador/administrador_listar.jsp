@@ -45,7 +45,7 @@
 
             int paginaAnterior = paginaActual - 1;
             int proximaPagina = paginaActual + 1;
-            %>
+        %>
 
         <div class="container">
             <div id="page-wrapper">
@@ -57,8 +57,7 @@
                             <a href="administrador_registo.jsp">Administrador</a>
                         </h1>
 
-                        <%
-                            String message = (String) request.getAttribute("message");
+                        <%                            String message = (String) request.getAttribute("message");
 
                             if (message != null && !message.trim().isEmpty()) {
                         %>
@@ -179,7 +178,7 @@
                                     <ul class="pagination">
 
                                         <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
-                                            <a href="<%=paginaActual <= 1 ? "#" : "administrador_listar.jsp?pagina=" + paginaAnterior%>">
+                                            <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "administrador_listar.jsp?pagina=" + paginaAnterior%>">
                                                 &laquo;
                                             </a>
                                         </li>
@@ -195,7 +194,7 @@
                                         %>
 
                                         <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-                                            <a href="<%=paginaActual >= quantidadePaginas ? "#" : "administrador_listar.jsp?pagina=" + proximaPagina%>">
+                                            <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "administrador_listar.jsp?pagina=" + proximaPagina%>">
                                                 &raquo;
                                             </a>
                                         </li>
