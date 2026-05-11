@@ -94,7 +94,14 @@
                 <div class="panel-body">
                     <form action="autuado_listar_por_data.jsp" method="get">
                         <div class="form-group input-group">
-                            <input type="search" name="data_autuado" class="form-control" placeholder="dd/MM/yyyy" value="<%=dataTexto%>">
+                            <input
+                                type="search"
+                                id="pesquisa_autuado"
+                                name="data_autuado"
+                                class="form-control"
+                                placeholder="dd/MM/yyyy"
+                                value="<%=dataTexto%>"
+                                />
 
                             <span class="input-group-btn">
                                 <button class="btn btn-primary" type="submit">
@@ -148,5 +155,32 @@
                 <%@include file="../../menus/rodape.jsp" %>
             </div>
         </div>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#pesquisa_autuado").keyup(function () {
+                    var termo = $(this).val();
+
+                    $.ajax({
+                        url: "<%=request.getContextPath()%>/autuadoServlet",
+                        type: "GET",
+                        data: {
+                            comando: "pesquisar_ajax",
+                            tipo_pesquisa: "data",
+                            termo: termo
+                        },
+                        success: function (resultado) {
+                            $("#resultado-autuados").html(resultado);
+                            $(".pagination").hide();
+                        },
+                        error: function () {
+                            $("#resultado-autuados").html(
+                                    "<tr><td colspan='12' class='text-center text-danger'>Erro ao pesquisar autuados.</td></tr>"
+                                    );
+                        }
+                    });
+                });
+            });
+        </script>
     </body>
 </html>
