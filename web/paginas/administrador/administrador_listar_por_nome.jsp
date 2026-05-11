@@ -73,8 +73,7 @@
                             Administrador
                         </h1>
 
-                        <%
-                            String message = (String) request.getAttribute("message");
+                        <%                            String message = (String) request.getAttribute("message");
 
                             if (message != null && !message.trim().isEmpty()) {
                         %>
@@ -119,6 +118,7 @@
                                 <div class="form-group input-group">
                                     <input
                                         type="search"
+                                        id="nome_administrador"
                                         name="nome_administrador"
                                         class="form-control"
                                         placeholder="Nome do administrador"
@@ -148,7 +148,7 @@
                                         </tr>
                                     </thead>
 
-                                    <tbody>
+                                    <tbody id="resultado-administradores">
                                         <%
                                             if (administradores == null || administradores.isEmpty()) {
                                         %>
@@ -253,5 +253,31 @@
                 <%@include file="../../menus/rodape.jsp" %>
             </div>
         </div>
+
+        <!-- Live Search -->
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#nome_administrador").keyup(function () {
+                    var nome = $(this).val();
+
+                    $.ajax({
+                        url: "<%=request.getContextPath()%>/administradorServlet",
+                        type: "GET",
+                        data: {
+                            comando: "pesquisar_ajax",
+                            nome_administrador: nome
+                        },
+                        success: function (resultado) {
+                            $("#resultado-administradores").html(resultado);
+                        },
+                        error: function () {
+                            $("#resultado-administradores").html(
+                                    "<tr><td colspan='11' class='text-center text-danger'>Erro ao pesquisar administradores.</td></tr>"
+                                    );
+                        }
+                    });
+                });
+            });
+        </script>
     </body>
 </html>
