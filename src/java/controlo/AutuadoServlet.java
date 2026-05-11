@@ -79,7 +79,7 @@ public class AutuadoServlet extends HttpServlet {
                 autuado.setProfissao(profissao);
 
                 Municipio municipio = new Municipio();
-                municipio.setIdMunicipio(Integer.parseInt(request.getParameter("select_profissao_autuado")));
+                municipio.setIdMunicipio(Integer.parseInt(request.getParameter("select_municipio_autuado")));
                 autuado.setMunicipio(municipio);
 
                 autuadoDAO.save(autuado);
@@ -95,7 +95,7 @@ public class AutuadoServlet extends HttpServlet {
                 autuado.setBiAutuado(request.getParameter("bi_autuado"));
                 autuado.setResidenciaAutuado(request.getParameter("residencia_autuado"));
                 autuado.setDataNascimentoAutuado(DateUtil.strToDate(request.getParameter("data_nascimento_autuado")));
-                autuado.setSexo(autuado.getSexo().getExtensao(request.getParameter("sexo_autuado")));
+                autuado.setSexo(modelo.Sexo.getExtensao(request.getParameter("sexo_autuado")));
                 autuado.setProximidadeAutuado(request.getParameter("proximidade_autuado"));
                 autuado.setEstadoCivilAutuado(request.getParameter("estado_civil_autuado"));
                 autuado.setDataEmissaoBiAutuado(DateUtil.strToDate(request.getParameter("data_emissao_bi_autuado")));
@@ -127,7 +127,7 @@ public class AutuadoServlet extends HttpServlet {
                 request.setAttribute("autuado", autuado);
                 RequestDispatcher rd = request.getRequestDispatcher("/paginas/autuado/autuado_editar.jsp");
                 rd.forward(request, response);
-                
+
             } else if (comando.equalsIgnoreCase("listar")) {
                 response.sendRedirect("paginas/autuado/autuado_listar.jsp");
 

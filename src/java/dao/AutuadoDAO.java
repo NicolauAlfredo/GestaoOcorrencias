@@ -110,6 +110,61 @@ public class AutuadoDAO implements GenericoDAO<Autuado> {
             + "WHERE a.bi_autuado LIKE ? "
             + "ORDER BY a.nome_autuado";
 
+    private static final int TOTAL_AUTUADOS_POR_PAGINA = 6;
+
+    private static final String CONTAR_AUTUADOS
+            = "SELECT COUNT(1) AS total_autuados FROM autuado";
+
+    private static final String CONSULTAR_PAGINA
+            = "SELECT " + CAMPOS_CONSULTA + " "
+            + "FROM autuado a "
+            + "INNER JOIN profissao p ON a.id_profissao = p.id_profissao "
+            + "INNER JOIN municipio m ON a.id_municipio = m.id_municipio "
+            + "ORDER BY a.nome_autuado "
+            + "LIMIT ? OFFSET ?";
+
+    private static final String CONTAR_AUTUADOS_POR_NOME
+            = "SELECT COUNT(1) AS total_autuados "
+            + "FROM autuado "
+            + "WHERE nome_autuado LIKE ?";
+
+    private static final String CONSULTAR_PAGINA_POR_NOME
+            = "SELECT " + CAMPOS_CONSULTA + " "
+            + "FROM autuado a "
+            + "INNER JOIN profissao p ON a.id_profissao = p.id_profissao "
+            + "INNER JOIN municipio m ON a.id_municipio = m.id_municipio "
+            + "WHERE a.nome_autuado LIKE ? "
+            + "ORDER BY a.nome_autuado "
+            + "LIMIT ? OFFSET ?";
+
+    private static final String CONTAR_AUTUADOS_POR_BI
+            = "SELECT COUNT(1) AS total_autuados "
+            + "FROM autuado "
+            + "WHERE bi_autuado LIKE ?";
+
+    private static final String CONSULTAR_PAGINA_POR_BI
+            = "SELECT " + CAMPOS_CONSULTA + " "
+            + "FROM autuado a "
+            + "INNER JOIN profissao p ON a.id_profissao = p.id_profissao "
+            + "INNER JOIN municipio m ON a.id_municipio = m.id_municipio "
+            + "WHERE a.bi_autuado LIKE ? "
+            + "ORDER BY a.nome_autuado "
+            + "LIMIT ? OFFSET ?";
+
+    private static final String CONTAR_AUTUADOS_POR_DATA
+            = "SELECT COUNT(1) AS total_autuados "
+            + "FROM autuado "
+            + "WHERE data_nascimento_autuado = ?";
+
+    private static final String CONSULTAR_PAGINA_POR_DATA
+            = "SELECT " + CAMPOS_CONSULTA + " "
+            + "FROM autuado a "
+            + "INNER JOIN profissao p ON a.id_profissao = p.id_profissao "
+            + "INNER JOIN municipio m ON a.id_municipio = m.id_municipio "
+            + "WHERE a.data_nascimento_autuado = ? "
+            + "ORDER BY a.nome_autuado "
+            + "LIMIT ? OFFSET ?";
+
     @Override
     public void save(Autuado autuado) {
         if (autuado == null) {
@@ -390,11 +445,240 @@ public class AutuadoDAO implements GenericoDAO<Autuado> {
         return autuados;
     }
 
-    private void preencherPreparedStatement(
-            PreparedStatement ps,
-            Autuado autuado,
-            boolean actualizar
-    ) throws SQLException {
+    public int quantidadePaginas() {
+        return contarPaginas(CONTAR_AUTUADOS, null, null);
+    }
+
+    public List<Autuado> consultarPagina(String numeroPagina) {
+        return consultarPaginaSemFiltro(CONSULTAR_PAGINA, numeroPagina);
+    }
+
+    public int quantidadePaginasPorNome(String nome) {
+        if (nome == null) {
+            nome = "";
+        }
+
+        return contarPaginas(CONTAR_AUTUADOS_POR_NOME, "%" + nome.trim() + "%", null);
+    }
+
+    public List<Autuado> consultarPaginaPorNome(String nome, String numeroPagina) {
+        if (nome == null) {
+            nome = "";
+        }
+
+        return consultarPaginaComTexto(CONSULTAR_PAGINA_POR_NOME, nome, numeroPagina);
+    }
+
+    public int quantidadePaginasPorBi(String bi) {
+        if (bi == null) {
+            bi = "";
+        }
+
+        return contarPaginas(CONTAR_AUTUADOS_POR_BI, "%" + bi.trim() + "%", null);
+    }
+
+    public List<Autuado> consultarPaginaPorBi(String bi, String numeroPagina) {
+        if (bi == null) {
+            bi = "";
+        }
+
+        return consultarPaginaComTexto(CONSULTAR_PAGINA_POR_BI, bi, numeroPagina);
+    }
+
+    public int quantidadePaginasPorData(java.sql.Date data) {
+        if (data == null) {
+            return 1;
+        }
+
+        return contarPaginas(CONTAR_AUTUADOS_POR_DATA, null, data);
+    }
+
+    public List<Autuado> consultarPaginaPorData(java.sql.Date data, String numeroPagina) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        List<Autuado> autuados = new ArrayList<Autuado>();
+
+        if (data == null) {
+            return autuados;
+        }
+
+        int pagina = converterNumeroPagina(numeroPagina);
+        int offset = (pagina * TOTAL_AUTUADOS_POR_PAGINA) - TOTAL_AUTUADOS_POR_PAGINA;
+
+        if (offset < 0) {
+            offset = 0;
+        }
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(CONSULTAR_PAGINA_POR_DATA);
+
+            ps.setDate(1, data);
+            ps.setInt(2, TOTAL_AUTUADOS_POR_PAGINA);
+            ps.setInt(3, offset);
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Autuado autuado = new Autuado();
+                popularComDados(autuado, rs);
+                autuados.add(autuado);
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao consultar autuados por data com paginação: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return autuados;
+    }
+
+    private int contarPaginas(String sql, String filtroTexto, java.sql.Date filtroData) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        int quantidadePaginas = 1;
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(sql);
+
+            if (filtroTexto != null) {
+                ps.setString(1, filtroTexto);
+            }
+
+            if (filtroData != null) {
+                ps.setDate(1, filtroData);
+            }
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int totalAutuados = rs.getInt("total_autuados");
+
+                quantidadePaginas = (int) Math.ceil(
+                        totalAutuados / (double) TOTAL_AUTUADOS_POR_PAGINA
+                );
+
+                if (quantidadePaginas < 1) {
+                    quantidadePaginas = 1;
+                }
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao calcular quantidade de páginas dos autuados: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return quantidadePaginas;
+    }
+
+    private List<Autuado> consultarPaginaSemFiltro(String sql, String numeroPagina) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        List<Autuado> autuados = new ArrayList<Autuado>();
+
+        int pagina = converterNumeroPagina(numeroPagina);
+        int offset = (pagina * TOTAL_AUTUADOS_POR_PAGINA) - TOTAL_AUTUADOS_POR_PAGINA;
+
+        if (offset < 0) {
+            offset = 0;
+        }
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(sql);
+
+            ps.setInt(1, TOTAL_AUTUADOS_POR_PAGINA);
+            ps.setInt(2, offset);
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Autuado autuado = new Autuado();
+                popularComDados(autuado, rs);
+                autuados.add(autuado);
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao consultar página de autuados: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return autuados;
+    }
+
+    private List<Autuado> consultarPaginaComTexto(String sql, String filtro, String numeroPagina) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        List<Autuado> autuados = new ArrayList<Autuado>();
+
+        int pagina = converterNumeroPagina(numeroPagina);
+        int offset = (pagina * TOTAL_AUTUADOS_POR_PAGINA) - TOTAL_AUTUADOS_POR_PAGINA;
+
+        if (offset < 0) {
+            offset = 0;
+        }
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(sql);
+
+            ps.setString(1, "%" + filtro.trim() + "%");
+            ps.setInt(2, TOTAL_AUTUADOS_POR_PAGINA);
+            ps.setInt(3, offset);
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Autuado autuado = new Autuado();
+                popularComDados(autuado, rs);
+                autuados.add(autuado);
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao consultar autuados com filtro e paginação: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return autuados;
+    }
+
+    private int converterNumeroPagina(String numeroPagina) {
+        if (numeroPagina == null || numeroPagina.trim().isEmpty()) {
+            return 1;
+        }
+
+        try {
+            int pagina = Integer.parseInt(numeroPagina.trim());
+
+            if (pagina < 1) {
+                return 1;
+            }
+
+            return pagina;
+
+        } catch (NumberFormatException ex) {
+            return 1;
+        }
+    }
+
+    private void preencherPreparedStatement(PreparedStatement ps, Autuado autuado, boolean actualizar) throws SQLException {
 
         ps.setString(1, autuado.getNomeAutuado());
         ps.setString(2, autuado.getPaiAutuado());
