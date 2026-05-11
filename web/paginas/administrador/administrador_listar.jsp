@@ -8,11 +8,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <base href="<%=request.getContextPath()%>/"> 
+
         <title>Administrador</title>
 
-        <link href="<%=request.getContextPath()%>/Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/jquery-1.12.3.min.js" type="text/javascript"></script>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
+        <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
 
     <body>
@@ -54,11 +58,10 @@
                         <%@include file="../../menus/cabecalho.jsp" %>
 
                         <h1 class="page-header text-primary" title="Registar administrador">
-                            <a href="administrador_registo.jsp">Administrador</a>
+                            <a href="paginas/administrador/administrador_registo.jsp">Administrador</a>
                         </h1>
 
-                        <%                            String message = (String) request.getAttribute("message");
-
+                        <%String message = (String) request.getAttribute("message");
                             if (message != null && !message.trim().isEmpty()) {
                         %>
                         <div class="alert alert-info">
@@ -82,13 +85,13 @@
 
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a href="<%=request.getContextPath()%>/listaOcorrencias">
+                                        <a href="listaOcorrencias">
                                             <span class="glyphicon glyphicon-print"> Imprimir </span>
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a href="administrador_listar_por_nome.jsp">
+                                        <a href="paginas/administrador/administrador_listar_por_nome.jsp">
                                             <span class="glyphicon glyphicon-search"> Pesquisar </span>
                                         </a>
                                     </li>
@@ -143,25 +146,25 @@
                                             <td><%=administrador.getTelefoneAdministrador()%></td>
 
                                             <td>
-                                                <a href="<%=request.getContextPath()%>/administradorServlet?comando=detalhes&id_administrador=<%=administrador.getIdAdministrador()%>">
+                                                <a href="administradorServlet?comando=detalhes&id_administrador=<%=administrador.getIdAdministrador()%>">
                                                     <span class="glyphicon glyphicon-print"></span>
                                                 </a>
                                             </td>
 
                                             <td>
-                                                <a href="<%=request.getContextPath()%>/administradorServlet?comando=detalhes&id_administrador=<%=administrador.getIdAdministrador()%>">
+                                                <a href="administradorServlet?comando=detalhes&id_administrador=<%=administrador.getIdAdministrador()%>">
                                                     <span class="glyphicon glyphicon-zoom-in"></span>
                                                 </a>
                                             </td>
 
                                             <td>
-                                                <a href="<%=request.getContextPath()%>/administradorServlet?comando=prepara_editar&id_administrador=<%=administrador.getIdAdministrador()%>">
+                                                <a href="administradorServlet?comando=prepara_editar&id_administrador=<%=administrador.getIdAdministrador()%>">
                                                     <span class="glyphicon glyphicon-edit"></span>
                                                 </a>
                                             </td>
 
                                             <td>
-                                                <a href="<%=request.getContextPath()%>/administradorServlet?comando=eliminar&id_administrador=<%=administrador.getIdAdministrador()%>"
+                                                <a href="/administradorServlet?comando=eliminar&id_administrador=<%=administrador.getIdAdministrador()%>"
                                                    onclick="return confirm('Deseja realmente eliminar este administrador?');">
                                                     <span class="glyphicon glyphicon-trash"></span>
                                                 </a>

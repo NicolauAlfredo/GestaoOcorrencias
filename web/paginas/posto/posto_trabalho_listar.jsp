@@ -12,10 +12,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+        <base href="<%=request.getContextPath()%>/"> 
+
         <title>Posto de Trabalho</title>
-        <link href="<%=request.getContextPath()%>/Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/jquery-1.12.3.min.js" type="text/javascript"></script>
+
+        <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
+        <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
     <body>
         <%
@@ -29,7 +34,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <%@include file="../../menus/cabecalho.jsp" %>
-                        <h1 class="page-header text-primary" title="Registar posto trabalho"><a href="posto_trabalho_registo.jsp">Posto de Trabalho</a></h1>
+                        <h1 class="page-header text-primary" title="Registar posto trabalho"><a href="paginas/posto/posto_trabalho_registo.jsp">Posto de Trabalho</a></h1>
                         <div class="alert alert-info">
                             <p>${message}</p>
                         </div>
@@ -50,8 +55,8 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a href="<%=request.getContextPath()%>/listaOcorrencias"> <span class="glyphicon glyphicon-print"> Imprimir </span> </a></li>
-                                    <li><a href="posto_trabalho_listar_por_nome.jsp"> <span class="glyphicon glyphicon-search"> Pesquisar </span> </a></li>
+                                    <li><a href="listaOcorrencias"> <span class="glyphicon glyphicon-print"> Imprimir </span> </a></li>
+                                    <li><a href="paginas/posto/posto_trabalho_listar_por_nome.jsp"> <span class="glyphicon glyphicon-search"> Pesquisar </span> </a></li>
                                 </ul>
                             </div>
                             <!-- Fim do Botão Suspenso -->
@@ -80,25 +85,25 @@
                                                 <td><%=postoTrabalho.getMunicipio().getNomeMunicipio()%></td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/postoTrabalhoServlet?comando=detalhes&id_posto_trabalho=<%=postoTrabalho.getIdPostoTrabalho()%>">
+                                                    <a href="postoTrabalhoServlet?comando=detalhes&id_posto_trabalho=<%=postoTrabalho.getIdPostoTrabalho()%>">
                                                         <span class="glyphicon glyphicon-print"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/postoTrabalhoServlet?comando=detalhes&id_posto_trabalho=<%=postoTrabalho.getIdPostoTrabalho()%>">
+                                                    <a href="postoTrabalhoServlet?comando=detalhes&id_posto_trabalho=<%=postoTrabalho.getIdPostoTrabalho()%>">
                                                         <span class="glyphicon glyphicon-zoom-in"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/postoTrabalhoServlet?comando=prepara_editar&id_posto_trabalho=<%=postoTrabalho.getIdPostoTrabalho()%>">
+                                                    <a href="postoTrabalhoServlet?comando=prepara_editar&id_posto_trabalho=<%=postoTrabalho.getIdPostoTrabalho()%>">
                                                         <span class="glyphicon glyphicon-edit"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/postoTrabalhoServlet?comando=eliminar&id_posto_trabalho=<%=postoTrabalho.getIdPostoTrabalho()%>">
+                                                    <a href="postoTrabalhoServlet?comando=eliminar&id_posto_trabalho=<%=postoTrabalho.getIdPostoTrabalho()%>">
                                                         <span class="glyphicon glyphicon-trash"></span>
                                                     </a>
                                                 </td>

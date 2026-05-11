@@ -12,10 +12,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+        <base href="<%=request.getContextPath()%>/"> 
+
         <title>Profissão</title>
-        <link href="<%=request.getContextPath()%>/Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/jquery-1.12.3.min.js" type="text/javascript"></script>
+
+        <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
+        <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
     <body>
         <!-- Container principal do Bootstrap -->
@@ -83,25 +88,25 @@
                                                 <td><%=profissao.getNomeProfissao()%></td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/profissaoServlet?comando=detalhes&id_profissao=<%=profissao.getIdProfissao()%>">
+                                                    <a href="profissaoServlet?comando=detalhes&id_profissao=<%=profissao.getIdProfissao()%>">
                                                         <span class="glyphicon glyphicon-print"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/profissaoServlet?comando=detalhes&id_profissao=<%=profissao.getIdProfissao()%>">
+                                                    <a href="profissaoServlet?comando=detalhes&id_profissao=<%=profissao.getIdProfissao()%>">
                                                         <span class="glyphicon glyphicon-zoom-in"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/profissaoServlet?comando=prepara_editar&id_profissao=<%=profissao.getIdProfissao()%>">
+                                                    <a href="profissaoServlet?comando=prepara_editar&id_profissao=<%=profissao.getIdProfissao()%>">
                                                         <span class="glyphicon glyphicon-edit"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/profissaoServlet?comando=eliminar&id_profissao=<%=profissao.getIdProfissao()%>">
+                                                    <a href="profissaoServlet?comando=eliminar&id_profissao=<%=profissao.getIdProfissao()%>">
                                                         <span class="glyphicon glyphicon-trash"></span>
                                                     </a>
                                                 </td>

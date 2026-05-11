@@ -87,25 +87,25 @@
                                                 <td><%=patente.getNomePatente()%></td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/patenteServlet?comando=detalhes&id_patente=<%=patente.getIdPatente()%>">
+                                                    <a href="patenteServlet?comando=detalhes&id_patente=<%=patente.getIdPatente()%>">
                                                         <span class="glyphicon glyphicon-print"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/patenteServlet?comando=detalhes&id_patente=<%=patente.getIdPatente()%>">
+                                                    <a href="patenteServlet?comando=detalhes&id_patente=<%=patente.getIdPatente()%>">
                                                         <span class="glyphicon glyphicon-zoom-in"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/patenteServlet?comando=prepara_editar&id_patente=<%=patente.getIdPatente()%>">
+                                                    <a href="patenteServlet?comando=prepara_editar&id_patente=<%=patente.getIdPatente()%>">
                                                         <span class="glyphicon glyphicon-edit"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/patenteServlet?comando=eliminar&id_patente=<%=patente.getIdPatente()%>">
+                                                    <a href="patenteServlet?comando=eliminar&id_patente=<%=patente.getIdPatente()%>">
                                                         <span class="glyphicon glyphicon-trash"></span>
                                                     </a>
                                                 </td>

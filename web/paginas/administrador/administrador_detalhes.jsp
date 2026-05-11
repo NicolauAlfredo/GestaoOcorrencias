@@ -11,16 +11,21 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <base href="<%=request.getContextPath()%>/"> 
+
         <title>Administrador</title>
-        <link href="<%=request.getContextPath()%>/Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/jquery-1.12.3.min.js" type="text/javascript"></script>
+
+        <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
+        <script src="Bootstrap/js/bootstrap.min.js"></script> 
     </head>
     <body>
-       <%
+        <%
             Administrador administrador = (Administrador) request.getAttribute("administrador");
         %>
-        
+
         <!-- Container principal do Bootstrap -->
         <div class="container">              
             <div id="page-wrapper">                
@@ -59,13 +64,13 @@
                                             Nome: <strong> <%=administrador.getNomeAdministrador()%> </strong>
                                         </p>
                                     </li>
-                                    
+
                                     <li>
                                         <p class="text-primary">
                                             Data de Nascimento: <strong> <%=DateUtil.formataData(administrador.getDataNascimentoAdministrador())%> </strong>
                                         </p>
                                     </li>
-                                    
+
                                     <li>
                                         <p class="text-primary">
                                             Sexo: <strong> <%=administrador.getSexo().getExtensao()%> </strong>
@@ -74,22 +79,22 @@
 
                                     <li>
                                         <p class="text-primary">
-                                              Bilhete de Identidade Nº: <strong> <%=administrador.getBiAdministrador()%> </strong>
+                                            Bilhete de Identidade Nº: <strong> <%=administrador.getBiAdministrador()%> </strong>
                                         </p>
                                     </li>
-                                    
+
                                     <li>
                                         <p class="text-primary">
                                             Email: <strong> <%=administrador.getEmailAdministrador()%> </strong>
                                         </p>
                                     </li>
-                                    
+
                                     <li>
                                         <p class="text-primary">
-                                              Número de Telefone: <strong> <%=administrador.getTelefoneAdministrador()%> </strong>
+                                            Número de Telefone: <strong> <%=administrador.getTelefoneAdministrador()%> </strong>
                                         </p>
                                     </li>
-                                    
+
                                 </ul>
                             </div>
                             <!-- Fim da área do Corpo -->

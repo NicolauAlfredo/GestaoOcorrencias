@@ -12,10 +12,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+        <base href="<%=request.getContextPath()%>/"> 
+
         <title>Município</title>
-        <link href="<%=request.getContextPath()%>/Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/jquery-1.12.3.min.js" type="text/javascript"></script>
+
+        <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
+        <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
     <body>
         <!-- Container principal do Bootstrap -->
@@ -67,8 +72,7 @@
                                 <!-- Fim da div com o campo de pesquisa -->
                             </form>
 
-                            <%
-                                MunicipioDAO municipioDAO = new MunicipioDAO();
+                            <%                                MunicipioDAO municipioDAO = new MunicipioDAO();
                                 String nome = request.getParameter("nome_municipio");
                                 List<Municipio> municipios = municipioDAO.findByNome(nome);
                             %>
@@ -92,25 +96,25 @@
                                                 <td><%=municipio.getProvincia().getNomeProvincia()%></td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/municipioServlet?comando=detalhes&id_municipio=<%=municipio.getIdMunicipio()%>">
+                                                    <a href="municipioServlet?comando=detalhes&id_municipio=<%=municipio.getIdMunicipio()%>">
                                                         <span class="glyphicon glyphicon-print"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/municipioServlet?comando=detalhes&id_municipio=<%=municipio.getIdMunicipio()%>">
+                                                    <a href="municipioServlet?comando=detalhes&id_municipio=<%=municipio.getIdMunicipio()%>">
                                                         <span class="glyphicon glyphicon-zoom-in"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/municipioServlet?comando=prepara_editar&id_municipio=<%=municipio.getIdMunicipio()%>">
+                                                    <a href="municipioServlet?comando=prepara_editar&id_municipio=<%=municipio.getIdMunicipio()%>">
                                                         <span class="glyphicon glyphicon-edit"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/municipioServlet?comando=eliminar&id_municipio=<%=municipio.getIdMunicipio()%>">
+                                                    <a href="municipioServlet?comando=eliminar&id_municipio=<%=municipio.getIdMunicipio()%>">
                                                         <span class="glyphicon glyphicon-trash"></span>
                                                     </a>
                                                 </td>

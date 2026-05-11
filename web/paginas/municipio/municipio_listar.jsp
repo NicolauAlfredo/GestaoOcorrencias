@@ -7,11 +7,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <base href="<%=request.getContextPath()%>/"> 
+
         <title>Município</title>
 
-        <link href="<%=request.getContextPath()%>/Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/jquery-1.12.3.min.js" type="text/javascript"></script>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
+        <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
 
     <body>
@@ -54,18 +58,17 @@
                         <%@include file="../../menus/cabecalho.jsp" %>
 
                         <h1 class="page-header text-primary" title="Registar município">
-                            <a href="<%=request.getContextPath()%>/paginas/municipio/municipio_registo.jsp">Município</a>
+                            <a href="paginas/municipio/municipio_registo.jsp">Município</a>
                         </h1>
 
-                        <%
-                            String message = (String) request.getAttribute("message");
+                        <%                            String message = (String) request.getAttribute("message");
 
                             if (message != null && !message.trim().isEmpty()) {
                         %>
                         <div class="alert alert-info">
                             <p><%=message%></p>
                         </div>
-                        <% } %>
+                        <% }%>
                     </div>
                 </div>
             </div>
@@ -83,19 +86,19 @@
 
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a href="<%=request.getContextPath()%>/municipios">
+                                        <a href="/municipios">
                                             <span class="glyphicon glyphicon-print"> Imprimir </span>
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a href="<%=request.getContextPath()%>/paginas/municipio/municipio_listar_por_nome.jsp">
+                                        <a href="/paginas/municipio/municipio_listar_por_nome.jsp">
                                             <span class="glyphicon glyphicon-search"> Pesquisar por Nome </span>
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a href="<%=request.getContextPath()%>/paginas/municipio/municipio_listar_por_provincia.jsp">
+                                        <a href="/paginas/municipio/municipio_listar_por_provincia.jsp">
                                             <span class="glyphicon glyphicon-search"> Pesquisar por Província </span>
                                         </a>
                                     </li>
@@ -125,8 +128,8 @@
                                             </td>
                                         </tr>
                                         <%
-                                            } else {
-                                                for (Municipio municipio : municipios) {
+                                        } else {
+                                            for (Municipio municipio : municipios) {
                                         %>
                                         <tr>
                                             <td><%=municipio.getIdMunicipio()%></td>
@@ -142,25 +145,25 @@
                                             </td>
 
                                             <td>
-                                                <a href="<%=request.getContextPath()%>/municipioServlet?comando=detalhes&id_municipio=<%=municipio.getIdMunicipio()%>">
+                                                <a href="municipioServlet?comando=detalhes&id_municipio=<%=municipio.getIdMunicipio()%>">
                                                     <span class="glyphicon glyphicon-print"></span>
                                                 </a>
                                             </td>
 
                                             <td>
-                                                <a href="<%=request.getContextPath()%>/municipioServlet?comando=detalhes&id_municipio=<%=municipio.getIdMunicipio()%>">
+                                                <a href="municipioServlet?comando=detalhes&id_municipio=<%=municipio.getIdMunicipio()%>">
                                                     <span class="glyphicon glyphicon-zoom-in"></span>
                                                 </a>
                                             </td>
 
                                             <td>
-                                                <a href="<%=request.getContextPath()%>/municipioServlet?comando=prepara_editar&id_municipio=<%=municipio.getIdMunicipio()%>">
+                                                <a href="municipioServlet?comando=prepara_editar&id_municipio=<%=municipio.getIdMunicipio()%>">
                                                     <span class="glyphicon glyphicon-edit"></span>
                                                 </a>
                                             </td>
 
                                             <td>
-                                                <a href="<%=request.getContextPath()%>/municipioServlet?comando=eliminar&id_municipio=<%=municipio.getIdMunicipio()%>"
+                                                <a href="municipioServlet?comando=eliminar&id_municipio=<%=municipio.getIdMunicipio()%>"
                                                    onclick="return confirm('Deseja realmente eliminar este município?');">
                                                     <span class="glyphicon glyphicon-trash"></span>
                                                 </a>
@@ -182,7 +185,7 @@
                                             %>
                                             <a href="javascript:void(0);">&laquo;</a>
                                             <%
-                                                } else {
+                                            } else {
                                             %>
                                             <a href="<%=urlListar%>?pagina=<%=paginaAnterior%>">&laquo;</a>
                                             <%
@@ -206,7 +209,7 @@
                                             %>
                                             <a href="javascript:void(0);">&raquo;</a>
                                             <%
-                                                } else {
+                                            } else {
                                             %>
                                             <a href="<%=urlListar%>?pagina=<%=proximaPagina%>">&raquo;</a>
                                             <%

@@ -10,10 +10,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Província:</title>
-        <link href="../css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <script src="../js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="../js/jquery-1.12.3.min.js" type="text/javascript"></script>  
+
+        <base href="<%=request.getContextPath()%>/"> 
+
+        <title>Província</title>
+
+        <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
+        <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
     <body> 
         <%
@@ -61,7 +66,7 @@
                 </div>
                 <!-- Fim da área da linha -->
 
-                 <!-- Rodapé -->
+                <!-- Rodapé -->
                 <%@include file="../../menus/rodape.jsp" %>
                 <!-- Fim do Rodapé-->
 

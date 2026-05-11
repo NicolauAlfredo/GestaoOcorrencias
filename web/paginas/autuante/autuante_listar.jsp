@@ -14,10 +14,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <base href="<%=request.getContextPath()%>/"> 
+
         <title>Autuante</title>
-        <link href="<%=request.getContextPath()%>/Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/jquery-1.12.3.min.js" type="text/javascript"></script>
+
+        <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
+        <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
     <body>
         <%
@@ -31,7 +36,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <%@include file="../../menus/cabecalho.jsp" %>
-                        <h1 class="page-header text-primary" title="Registar autuante"><a href="autuante_registo.jsp">Autuante</a></h1>
+                        <h1 class="page-header text-primary" title="Registar autuante"><a href="paginas/autuante/autuante_registo.jsp">Autuante</a></h1>
                         <div class="alert alert-info">
                             <p>${message}</p>
                         </div>
@@ -52,8 +57,8 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a href="<%=request.getContextPath()%>/autuantes"> <span class="glyphicon glyphicon-print"> Imprimir </span> </a></li>
-                                    <li><a href="autuante_listar_por_nome.jsp"> <span class="glyphicon glyphicon-search"> Pesquisar </span> </a></li>
+                                    <li><a href="autuantes"> <span class="glyphicon glyphicon-print"> Imprimir </span> </a></li>
+                                    <li><a href="paginas/autuante/autuante_listar_por_nome.jsp"> <span class="glyphicon glyphicon-search"> Pesquisar </span> </a></li>
                                 </ul>
                             </div>
                             <!-- Fim do Botão Suspenso -->                            
@@ -89,25 +94,25 @@
                                                 <td><%=autuante.getTelefoneAutuante()%></td>
                                                 <td><%=autuante.getPatente().getNomePatente()%></td>
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/autuanteServlet?comando=detalhes&id_autuante=<%=autuante.getIdAutuante()%>">
+                                                    <a href="autuanteServlet?comando=detalhes&id_autuante=<%=autuante.getIdAutuante()%>">
                                                         <span class="glyphicon glyphicon-print"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/autuanteServlet?comando=detalhes&id_autuante=<%=autuante.getIdAutuante()%>">
+                                                    <a href="autuanteServlet?comando=detalhes&id_autuante=<%=autuante.getIdAutuante()%>">
                                                         <span class="glyphicon glyphicon-zoom-in"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/autuanteServlet?comando=prepara_editar&id_autuante=<%=autuante.getIdAutuante()%>">
+                                                    <a href="autuanteServlet?comando=prepara_editar&id_autuante=<%=autuante.getIdAutuante()%>">
                                                         <span class="glyphicon glyphicon-edit"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/autuanteServlet?comando=eliminar&id_autuante=<%=autuante.getIdAutuante()%>">
+                                                    <a href="autuanteServlet?comando=eliminar&id_autuante=<%=autuante.getIdAutuante()%>">
                                                         <span class="glyphicon glyphicon-trash"></span>
                                                     </a>
                                                 </td>

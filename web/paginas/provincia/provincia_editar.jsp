@@ -10,11 +10,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+        <base href="<%=request.getContextPath()%>/"> 
+
         <title>Província</title>
-        <link href="<%=request.getContextPath()%>/Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/jquery-1.12.3.min.js" type="text/javascript"></script>
-        <script src="provincia_validador.js" type="text/javascript"></script>
+
+        <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
+        <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
     <body>
         <%
@@ -51,7 +55,7 @@
                         <div class="panel-body">
                             <!-- Área do corpo-->
                             <div class="col-lg-12">
-                                <form role="form" accept-charset="ISO-8859-1, UTF-8" action="<%=request.getContextPath()%>/provinciaServlet?comando=editar" method="POST">
+                                <form role="form" accept-charset="ISO-8859-1, UTF-8" action="provinciaServlet?comando=editar" method="POST">
                                     <div class="form-group">
                                         <div class="col-xs-6" > 
                                             <label class="text-primary">Id:</label>

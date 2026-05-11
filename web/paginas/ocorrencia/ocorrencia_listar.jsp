@@ -14,10 +14,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <base href="<%=request.getContextPath()%>/"> 
+
         <title>Ocorrência</title>
-        <link href="<%=request.getContextPath()%>/Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/jquery-1.12.3.min.js" type="text/javascript"></script>
+
+        <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
+        <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
     <body>
         <%
@@ -33,7 +38,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <%@include file="../../menus/cabecalho.jsp" %>
-                        <h1 class="page-header text-primary" title="Registar ocorrência"><a href="ocorrencia_registo.jsp">Ocorrência</a></h1>
+                        <h1 class="page-header text-primary" title="Registar ocorrência"><a href="paginas/ocorrencia/ocorrencia_registo.jsp">Ocorrência</a></h1>
                         <div class="alert alert-info">
                             <p>${message}</p>
                         </div>
@@ -54,8 +59,8 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a href="<%=request.getContextPath()%>/listaOcorrencias"> <span class="glyphicon glyphicon-print"> Imprimir </span> </a></li>
-                                    <li><a href="ocorrencia_listar_por_autuado.jsp"> <span class="glyphicon glyphicon-search"> Pesquisar </span> </a></li>
+                                    <li><a href="listaOcorrencias"> <span class="glyphicon glyphicon-print"> Imprimir </span> </a></li>
+                                    <li><a href="paginas/ocorrencia/ocorrencia_listar_por_autuado.jsp"> <span class="glyphicon glyphicon-search"> Pesquisar </span> </a></li>
                                 </ul>
                             </div>
                             <!-- Fim do Botão Suspenso -->
@@ -87,41 +92,41 @@
                                                 <td><%=ocorrencia.getHoraOcorrencia()%></td>
                                                 <td><%=ocorrencia.getCidadeOcorrencia()%></td>
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/autuadoServlet?comando=detalhes&id_autuado=<%=ocorrencia.getAutuado().getIdAutuado()%>">
+                                                    <a href="autuadoServlet?comando=detalhes&id_autuado=<%=ocorrencia.getAutuado().getIdAutuado()%>">
                                                         <%=ocorrencia.getAutuado().getNomeAutuado()%>
                                                     </a>                                                  
                                                 </td>
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/autuanteServlet?comando=detalhes&id_autuante=<%=ocorrencia.getAutuante().getIdAutuante()%>">
+                                                    <a href="autuanteServlet?comando=detalhes&id_autuante=<%=ocorrencia.getAutuante().getIdAutuante()%>">
                                                         <%=ocorrencia.getAutuante().getNomeAutuante()%>     
                                                     </a>                                                  
                                                 </td>
                                                 <td><%=ocorrencia.getTipoOcorrencia().getNomeTipoOcorrencia()%></td>
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/testemunhaServlet?comando=detalhes&id_testemunha=<%=ocorrencia.getTestemunha().getIdTestemunha()%>">
+                                                    <a href="testemunhaServlet?comando=detalhes&id_testemunha=<%=ocorrencia.getTestemunha().getIdTestemunha()%>">
                                                         <%=ocorrencia.getTestemunha().getNomeTestemunha()%>
                                                     </a>                                                  
                                                 </td>
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/ocorrenciaComParametro?id_ocorrencia=<%=ocorrencia.getIdOcorrencia()%>" title="Imprimir">
+                                                    <a href="ocorrenciaComParametro?id_ocorrencia=<%=ocorrencia.getIdOcorrencia()%>" title="Imprimir">
                                                         <span class="glyphicon glyphicon-print"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/ocorrenciaServlet?comando=detalhes&id_ocorrencia=<%=ocorrencia.getIdOcorrencia()%>" title="Detalhes">
+                                                    <a href="ocorrenciaServlet?comando=detalhes&id_ocorrencia=<%=ocorrencia.getIdOcorrencia()%>" title="Detalhes">
                                                         <span class="glyphicon glyphicon-zoom-in"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/ocorrenciaServlet?comando=prepara_editar&id_ocorrencia=<%=ocorrencia.getIdOcorrencia()%>" title="Editar dados">
+                                                    <a href="ocorrenciaServlet?comando=prepara_editar&id_ocorrencia=<%=ocorrencia.getIdOcorrencia()%>" title="Editar dados">
                                                         <span class="glyphicon glyphicon-edit"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/ocorrenciaServlet?comando=eliminar&id_ocorrencia=<%=ocorrencia.getIdOcorrencia()%>" title="Eliminar">
+                                                    <a href="ocorrenciaServlet?comando=eliminar&id_ocorrencia=<%=ocorrencia.getIdOcorrencia()%>" title="Eliminar">
                                                         <span class="glyphicon glyphicon-trash"></span>
                                                     </a>
                                                 </td>

@@ -4,7 +4,6 @@
     Author     : user
 --%>
 
-<%@page import="com.sun.org.glassfish.external.probe.provider.annotations.Probe"%>
 <%@page import="java.util.List"%>
 <%@page import="dao.ProfissaoDAO"%>
 <%@page import="modelo.Profissao"%>
@@ -19,11 +18,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <base href="<%=request.getContextPath()%>/"> 
+
         <title>Testemunha</title>
-        <link href="<%=request.getContextPath()%>/Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/jquery-1.12.3.min.js" type="text/javascript"></script>
-        <script src="testemunha_validador.js" type="text/javascript"></script>
+
+        <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
+        <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
     <body>
         <%
@@ -34,7 +37,7 @@
 
             ProfissaoDAO profissaoDAO = new ProfissaoDAO();
             List<Profissao> profissoes = profissaoDAO.findAll();
-            %>
+        %>
 
         <!-- Container principal do Bootstrap -->
         <div class="container">              

@@ -11,10 +11,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <base href="<%=request.getContextPath()%>/"> 
+
         <title>Ocorrência</title>
-        <link href="<%=request.getContextPath()%>/Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/jquery-1.12.3.min.js" type="text/javascript"></script>
+
+        <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
+        <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
     <body>
         <%
@@ -99,7 +104,7 @@
                                     <li>
                                         <p class="text-primary">
                                             Autuado:
-                                            <a href="<%= request.getContextPath()%>/autuadoServlet?comando=detalhes&id_autuado=<%=ocorrencia.getAutuado().getIdAutuado()%>">
+                                            <a href="autuadoServlet?comando=detalhes&id_autuado=<%=ocorrencia.getAutuado().getIdAutuado()%>">
                                                 <strong> <%=ocorrencia.getAutuado().getNomeAutuado()%> </strong>
                                             </a>  
                                         </p>
@@ -108,7 +113,7 @@
                                     <li>
                                         <p class="text-primary">
                                             Autuante:
-                                            <a href="<%= request.getContextPath()%>/autuanteServlet?comando=detalhes&id_autuante=<%=ocorrencia.getAutuante().getIdAutuante()%>">
+                                            <a href="autuanteServlet?comando=detalhes&id_autuante=<%=ocorrencia.getAutuante().getIdAutuante()%>">
                                                 <strong> <%=ocorrencia.getAutuante().getNomeAutuante()%> </strong>  
                                             </a>                                            
                                         </p>
@@ -123,16 +128,16 @@
                                     <li>
                                         <p class="text-primary">
                                             1º Testemunha:
-                                            <a href="<%= request.getContextPath()%>/testemunhaServlet?comando=detalhes&id_testemunha=<%=ocorrencia.getTestemunha().getIdTestemunha()%>">
+                                            <a href="testemunhaServlet?comando=detalhes&id_testemunha=<%=ocorrencia.getTestemunha().getIdTestemunha()%>">
                                                 <strong> <%=ocorrencia.getTestemunha().getNomeTestemunha()%> </strong>
                                             </a>                                             
                                         </p>
                                     </li>
-                                    
-                                     <li>
+
+                                    <li>
                                         <p class="text-primary">
                                             2º Testemunha:
-                                            <a href="<%= request.getContextPath()%>/testemunhaServlet?comando=detalhes&id_testemunha=<%=ocorrencia.getTestemunha().getIdTestemunha()%>">
+                                            <a href="testemunhaServlet?comando=detalhes&id_testemunha=<%=ocorrencia.getTestemunha().getIdTestemunha()%>">
                                                 <strong> <%=ocorrencia.getTestemunha().getNomeTestemunha()%> </strong>
                                             </a>                                             
                                         </p>

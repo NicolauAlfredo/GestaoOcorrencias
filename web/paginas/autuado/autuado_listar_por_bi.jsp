@@ -13,11 +13,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <base href="<%=request.getContextPath()%>/"> 
+
         <title>Autuado</title>
 
-        <link href="<%=request.getContextPath()%>/Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/jquery-1.12.3.min.js" type="text/javascript"></script>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
+        <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
 
     <body>
@@ -73,9 +77,9 @@
                         </button>
 
                         <ul class="dropdown-menu">
-                            <li><a href="autuado_listar.jsp">Listar Todos</a></li>
-                            <li><a href="autuado_listar_por_nome.jsp">Nome Autuado</a></li>
-                            <li><a href="autuado_listar_por_data.jsp">Data de Nascimento</a></li>
+                            <li><a href="paginas/autuadoautuado_listar.jsp">Listar Todos</a></li>
+                            <li><a href="paginas/autuadoautuado_listar_por_nome.jsp">Nome Autuado</a></li>
+                            <li><a href="paginas/autuadoautuado_listar_por_data.jsp">Data de Nascimento</a></li>
                         </ul>
                     </div>
                 </div>
@@ -151,7 +155,7 @@
                     var termo = $(this).val();
 
                     $.ajax({
-                        url: "<%=request.getContextPath()%>/autuadoServlet",
+                        url: "autuadoServlet",
                         type: "GET",
                         data: {
                             comando: "pesquisar_ajax",

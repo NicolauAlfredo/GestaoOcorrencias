@@ -13,11 +13,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <base href="<%=request.getContextPath()%>/"> 
+
         <title>Autuado</title>
 
-        <link href="<%=request.getContextPath()%>/Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/jquery-1.12.3.min.js" type="text/javascript"></script>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
+        <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
 
     <body>
@@ -58,7 +62,7 @@
                         <%@include file="../../menus/cabecalho.jsp" %>
 
                         <h1 class="page-header text-primary" title="Registar autuado">
-                            <a href="autuado_registo.jsp">Autuado</a>
+                            <a href="paginas/autuado/autuado_registo.jsp">Autuado</a>
                         </h1>
 
                         <%                            String message = (String) request.getAttribute("message");
@@ -85,10 +89,10 @@
                                 </button>
 
                                 <ul class="dropdown-menu">
-                                    <li><a href="<%=request.getContextPath()%>/autuados"><span class="glyphicon glyphicon-print"> Imprimir </span></a></li>
-                                    <li><a href="autuado_listar_por_nome.jsp"><span class="glyphicon glyphicon-search"> Pesquisar por Nome </span></a></li>
-                                    <li><a href="autuado_listar_por_bi.jsp"><span class="glyphicon glyphicon-search"> Pesquisar por B.I. </span></a></li>
-                                    <li><a href="autuado_listar_por_data.jsp"><span class="glyphicon glyphicon-search"> Pesquisar por Data </span></a></li>
+                                    <li><a href="autuados"><span class="glyphicon glyphicon-print"> Imprimir </span></a></li>
+                                    <li><a href="paginas/autuadoautuado_listar_por_nome.jsp"><span class="glyphicon glyphicon-search"> Pesquisar por Nome </span></a></li>
+                                    <li><a href="paginas/autuadoautuado_listar_por_bi.jsp"><span class="glyphicon glyphicon-search"> Pesquisar por B.I. </span></a></li>
+                                    <li><a href="paginas/autuadoautuado_listar_por_data.jsp"><span class="glyphicon glyphicon-search"> Pesquisar por Data </span></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -98,7 +102,7 @@
                                 <%
                                     request.setAttribute("autuados", autuados);
                                 %>
-                                
+
                                 <%@include file="autuado_tabela.jsp" %>
 
                                 <div class="text-center">

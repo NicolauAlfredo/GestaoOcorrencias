@@ -12,10 +12,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+        <base href="<%=request.getContextPath()%>/"> 
+
         <title>Tipo de Ocorrência</title>
-        <link href="<%=request.getContextPath()%>/Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/jquery-1.12.3.min.js" type="text/javascript"></script>
+
+        <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
+        <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
     <body>
         <%
@@ -29,7 +34,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <%@include file="../../menus/cabecalho.jsp" %>
-                        <h1 class="page-header text-primary" title="Registar tipo ocorrência"> <a href="tipo_ocorrencia_registo.jsp">Tipo de Ocorrência</a></h1>
+                        <h1 class="page-header text-primary" title="Registar tipo ocorrência"> <a href="paginas/tipo/tipo_ocorrencia_registo.jsp">Tipo de Ocorrência</a></h1>
                         <div class="alert alert-info">
                             <p>${message}</p>
                         </div>
@@ -50,8 +55,8 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a href="<%=request.getContextPath()%>/listaOcorrencias"> <span class="glyphicon glyphicon-print"> Imprimir </span> </a></li>
-                                    <li><a href="tipo_ocorrencia_listar_por_nome.jsp"> <span class="glyphicon glyphicon-search"> Pesquisar </span> </a></li>
+                                    <li><a href="listaOcorrencias"> <span class="glyphicon glyphicon-print"> Imprimir </span> </a></li>
+                                    <li><a href="paginas/tipo/tipo_ocorrencia_listar_por_nome.jsp"> <span class="glyphicon glyphicon-search"> Pesquisar </span> </a></li>
                                 </ul>
                             </div>
                             <!-- Fim do Botão Suspenso -->
@@ -76,25 +81,25 @@
                                                 <td><%=tipoOcorrencia.getNomeTipoOcorrencia()%></td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/tipoOcorrenciaServlet?comando=detalhes&id_tipo_ocorrencia=<%=tipoOcorrencia.getIdTipoOcorrencia()%>">
+                                                    <a href="tipoOcorrenciaServlet?comando=detalhes&id_tipo_ocorrencia=<%=tipoOcorrencia.getIdTipoOcorrencia()%>">
                                                         <span class="glyphicon glyphicon-print"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/tipoOcorrenciaServlet?comando=detalhes&id_tipo_ocorrencia=<%=tipoOcorrencia.getIdTipoOcorrencia()%>">
+                                                    <a href="tipoOcorrenciaServlet?comando=detalhes&id_tipo_ocorrencia=<%=tipoOcorrencia.getIdTipoOcorrencia()%>">
                                                         <span class="glyphicon glyphicon-zoom-in"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/tipoOcorrenciaServlet?comando=prepara_editar&id_tipo_ocorrencia=<%=tipoOcorrencia.getIdTipoOcorrencia()%>">
+                                                    <a href="tipoOcorrenciaServlet?comando=prepara_editar&id_tipo_ocorrencia=<%=tipoOcorrencia.getIdTipoOcorrencia()%>">
                                                         <span class="glyphicon glyphicon-edit"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/tipoOcorrenciaServlet?comando=eliminar&id_tipo_ocorrencia=<%=tipoOcorrencia.getIdTipoOcorrencia()%>">
+                                                    <a href="tipoOcorrenciaServlet?comando=eliminar&id_tipo_ocorrencia=<%=tipoOcorrencia.getIdTipoOcorrencia()%>">
                                                         <span class="glyphicon glyphicon-trash"></span>
                                                     </a>
                                                 </td>

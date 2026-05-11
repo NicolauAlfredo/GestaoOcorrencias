@@ -13,10 +13,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <base href="<%=request.getContextPath()%>/"> 
+
         <title>Testemunha</title>
-        <link href="<%=request.getContextPath()%>/Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/jquery-1.12.3.min.js" type="text/javascript"></script>
+
+        <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
+        <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
     <body>
         <!-- Container principal do Bootstrap -->
@@ -46,8 +51,8 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a href="testemunha_listar_por_data.jsp">Data de Nascimento</a></li>
-                                    <li><a href="testemunha_listar_por_nome.jsp">Nome Testemunha</a></li>
+                                    <li><a href="paginas/testemunha/testemunha_listar_por_data.jsp">Data de Nascimento</a></li>
+                                    <li><a href="paginas/testemunha/testemunha_listar_por_nome.jsp">Nome Testemunha</a></li>
                                 </ul>
                             </div>
                             <!-- Fim do Botão Suspenso -->
@@ -69,8 +74,7 @@
                                 <!-- Fim da div com o campo de pesquisa -->
                             </form>
 
-                            <%
-                                TestemunhaDAO testemunhaDAO = new TestemunhaDAO();
+                            <%                                TestemunhaDAO testemunhaDAO = new TestemunhaDAO();
                                 String numeroBI = request.getParameter("bi_testemunha");
                                 List<Testemunha> testemunhas = testemunhaDAO.findByBi(numeroBI);
                             %>
@@ -101,25 +105,25 @@
                                                 <td><%=testemunha.getSexo().getExtensao()%></td>                                              
                                                 <td><%=testemunha.getTelefoneTestemunha()%></td>
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/testemunhaServlet?comando=detalhes&id_testemunha=<%=testemunha.getIdTestemunha()%>">
+                                                    <a href="testemunhaServlet?comando=detalhes&id_testemunha=<%=testemunha.getIdTestemunha()%>">
                                                         <span class="glyphicon glyphicon-print"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/testemunhaServlet?comando=detalhes&id_testemunha=<%=testemunha.getIdTestemunha()%>">
+                                                    <a href="testemunhaServlet?comando=detalhes&id_testemunha=<%=testemunha.getIdTestemunha()%>">
                                                         <span class="glyphicon glyphicon-zoom-in"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/testemunhaServlet?comando=prepara_editar&id_testemunha=<%=testemunha.getIdTestemunha()%>">
+                                                    <a href="testemunhaServlet?comando=prepara_editar&id_testemunha=<%=testemunha.getIdTestemunha()%>">
                                                         <span class="glyphicon glyphicon-edit"></span>
                                                     </a>
                                                 </td>
 
                                                 <td>
-                                                    <a href="<%= request.getContextPath()%>/testemunhaServlet?comando=eliminar&id_testemunha=<%=testemunha.getIdTestemunha()%>">
+                                                    <a href="testemunhaServlet?comando=eliminar&id_testemunha=<%=testemunha.getIdTestemunha()%>">
                                                         <span class="glyphicon glyphicon-trash"></span>
                                                     </a>
                                                 </td>

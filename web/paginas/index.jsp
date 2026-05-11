@@ -5,44 +5,46 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Comando da Polícia Nacional de Angola</title> 
+        <meta charset="UTF-8">
 
-        <link href="<%=request.getContextPath()%>/Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <base href="<%=request.getContextPath()%>/">
 
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/jquery-1.12.3.min.js" type="text/javascript"></script>
-        <script src="<%=request.getContextPath()%>/Bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <title>Login</title>
+
+        <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
+        <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
+
     <body>
-        <!-- Container principal do Bootstrap -->
-        <div class="container">            
+        <div class="container">
 
             <div id="page-wrapper">
                 <div class="row">
                     <div class="col-lg-12">
-                        <%@include file="../menus/cabecalho.jsp" %>                        
-                    </div>                 
+                        <%@include file="../menus/cabecalho.jsp" %>
+                    </div>
                 </div>
             </div>
 
-            <!-- Linha de divisão -->
             <div class="row">
-                <!-- Área da linha -->
                 <div class="col-lg-12">
                     <div class="panel panel-default">
-                        <div class="panel-heading">                           
-                            <h4 class="text-primary" style="text-align: center"> 
-                                Comando da Polícia Nacional de Angola 
-                            </h4>                                                  
+
+                        <div class="panel-heading">
+                            <h4 class="text-primary" style="text-align: center">
+                                Comando da Polícia Nacional de Angola
+                            </h4>
                         </div>
 
-                        <!-- Corpo da página -->
                         <div class="panel-body">
-                            <!-- Área nova -->
                             <div class="row">
+
                                 <div class="col-lg-3 col-md-6">
                                     <div class="panel panel-primary">
                                         <div class="panel-heading">
@@ -55,10 +57,13 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <a href="<%=request.getContextPath()%>ocorrencia/ocorrencia_registo.jsp">
+
+                                        <a href="<%=request.getContextPath()%>/paginas/ocorrencia/ocorrencia_registo.jsp">
                                             <div class="panel-footer">
                                                 <span class="pull-left">Registar</span>
-                                                <span class="pull-right"><i class="glyphicon glyphicon-circle-arrow-right"></i></span>
+                                                <span class="pull-right">
+                                                    <i class="glyphicon glyphicon-circle-arrow-right"></i>
+                                                </span>
                                                 <div class="clearfix"></div>
                                             </div>
                                         </a>
@@ -77,10 +82,13 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <a href="<%=request.getContextPath()%>autuado/autuado_registo.jsp">
+
+                                        <a href="<%=request.getContextPath()%>/paginas/autuado/autuado_registo.jsp">
                                             <div class="panel-footer">
                                                 <span class="pull-left">Registar</span>
-                                                <span class="pull-right"><i class="glyphicon glyphicon-circle-arrow-right"></i></span>
+                                                <span class="pull-right">
+                                                    <i class="glyphicon glyphicon-circle-arrow-right"></i>
+                                                </span>
                                                 <div class="clearfix"></div>
                                             </div>
                                         </a>
@@ -99,15 +107,18 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <a href="<%=request.getContextPath()%>autuante/autuante_registo.jsp">
+
+                                        <a href="<%=request.getContextPath()%>/paginas/autuante/autuante_registo.jsp">
                                             <div class="panel-footer">
                                                 <span class="pull-left">Registar</span>
-                                                <span class="pull-right"><i class="glyphicon glyphicon-circle-arrow-right"></i></span>
+                                                <span class="pull-right">
+                                                    <i class="glyphicon glyphicon-circle-arrow-right"></i>
+                                                </span>
                                                 <div class="clearfix"></div>
                                             </div>
                                         </a>
                                     </div>
-                                </div>      
+                                </div>
 
                                 <div class="col-lg-3 col-md-6">
                                     <div class="panel panel-primary">
@@ -121,34 +132,32 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <a href="<%=request.getContextPath()%>testemunha/testemunha_registo.jsp">
+
+                                        <a href="<%=request.getContextPath()%>/paginas/testemunha/testemunha_registo.jsp">
                                             <div class="panel-footer">
                                                 <span class="pull-left">Registar</span>
-                                                <span class="pull-right"><i class="glyphicon glyphicon-circle-arrow-right"></i></span>
+                                                <span class="pull-right">
+                                                    <i class="glyphicon glyphicon-circle-arrow-right"></i>
+                                                </span>
                                                 <div class="clearfix"></div>
                                             </div>
                                         </a>
                                     </div>
-                                </div>      
-                            </div> 
-                            <!-- Fim da nova área -->
+                                </div>
 
-                            <!-- lógotipo -->                            
-                            <img class="img-responsive img-rounded center-block" src="<%=request.getContextPath()%>/img/logo.jpg">              
-                            <!-- Fim do logotipo -->
+                            </div>
+
+                            <img
+                                class="img-responsive img-rounded center-block"
+                                src="<%=request.getContextPath()%>/img/logo.jpg"
+                                alt="Logotipo da Polícia Nacional de Angola"
+                                />
                         </div>
-                        <!-- Fim do corpo da página -->
-                    </div>                   
-                </div> 
-                <!-- Fim da área da linha-->
+                    </div>
+                </div>
 
-                <!-- Rodapé -->
                 <%@include file="../menus/rodape.jsp" %>
-                <!-- Fim do Rodapé-->
-
             </div>
-            <!-- Fim da linha de divisão -->
         </div>
-        <!-- Fim do Container -->    
     </body>
 </html>
