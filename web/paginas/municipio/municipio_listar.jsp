@@ -19,7 +19,6 @@
             MunicipioDAO municipioDAO = new MunicipioDAO();
 
             String paginaParametro = request.getParameter("pagina");
-
             int paginaActual = 1;
 
             if (paginaParametro != null && !paginaParametro.trim().isEmpty()) {
@@ -44,7 +43,9 @@
 
             int paginaAnterior = paginaActual - 1;
             int proximaPagina = paginaActual + 1;
-            %>
+
+            String urlListar = request.getContextPath() + "/paginas/municipio/municipio_listar.jsp";
+        %>
 
         <div class="container">
             <div id="page-wrapper">
@@ -53,7 +54,7 @@
                         <%@include file="../../menus/cabecalho.jsp" %>
 
                         <h1 class="page-header text-primary" title="Registar município">
-                            <a href="municipio_registo.jsp">Município</a>
+                            <a href="<%=request.getContextPath()%>/paginas/municipio/municipio_registo.jsp">Município</a>
                         </h1>
 
                         <%
@@ -64,7 +65,7 @@
                         <div class="alert alert-info">
                             <p><%=message%></p>
                         </div>
-                        <% }%>
+                        <% } %>
                     </div>
                 </div>
             </div>
@@ -88,13 +89,13 @@
                                     </li>
 
                                     <li>
-                                        <a href="municipio_listar_por_nome.jsp">
+                                        <a href="<%=request.getContextPath()%>/paginas/municipio/municipio_listar_por_nome.jsp">
                                             <span class="glyphicon glyphicon-search"> Pesquisar por Nome </span>
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a href="municipio_listar_por_provincia.jsp">
+                                        <a href="<%=request.getContextPath()%>/paginas/municipio/municipio_listar_por_provincia.jsp">
                                             <span class="glyphicon glyphicon-search"> Pesquisar por Província </span>
                                         </a>
                                     </li>
@@ -124,8 +125,8 @@
                                             </td>
                                         </tr>
                                         <%
-                                        } else {
-                                            for (Municipio municipio : municipios) {
+                                            } else {
+                                                for (Municipio municipio : municipios) {
                                         %>
                                         <tr>
                                             <td><%=municipio.getIdMunicipio()%></td>
@@ -176,25 +177,41 @@
                                     <ul class="pagination">
 
                                         <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
-                                            <a href="<%=paginaActual <= 1 ? "#" : "municipio_listar.jsp?pagina=" + paginaAnterior%>">
-                                                &laquo;
-                                            </a>
+                                            <%
+                                                if (paginaActual <= 1) {
+                                            %>
+                                            <a href="javascript:void(0);">&laquo;</a>
+                                            <%
+                                                } else {
+                                            %>
+                                            <a href="<%=urlListar%>?pagina=<%=paginaAnterior%>">&laquo;</a>
+                                            <%
+                                                }
+                                            %>
                                         </li>
 
                                         <%
                                             for (int i = 1; i <= quantidadePaginas; i++) {
                                         %>
                                         <li class="<%=i == paginaActual ? "active" : ""%>">
-                                            <a href="municipio_listar.jsp?pagina=<%=i%>"><%=i%></a>
+                                            <a href="<%=urlListar%>?pagina=<%=i%>"><%=i%></a>
                                         </li>
                                         <%
                                             }
                                         %>
 
                                         <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-                                            <a href="<%=paginaActual >= quantidadePaginas ? "#" : "municipio_listar.jsp?pagina=" + proximaPagina%>">
-                                                &raquo;
-                                            </a>
+                                            <%
+                                                if (paginaActual >= quantidadePaginas) {
+                                            %>
+                                            <a href="javascript:void(0);">&raquo;</a>
+                                            <%
+                                                } else {
+                                            %>
+                                            <a href="<%=urlListar%>?pagina=<%=proximaPagina%>">&raquo;</a>
+                                            <%
+                                                }
+                                            %>
                                         </li>
 
                                     </ul>
