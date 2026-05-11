@@ -55,6 +55,16 @@ public class AdministradorDAO implements GenericoDAO<Administrador> {
             + "WHERE nip_administrador = ? "
             + "AND palavra_passe_administrador = ?";
 
+    private static final int TOTAL_ADMINISTRADORES_POR_PAGINA = 6;
+
+    private static final String CONTAR_ADMINISTRADORES
+            = "SELECT COUNT(1) AS total_administradores FROM administrador";
+
+    private static final String CONSULTAR_PAGINA
+            = "SELECT * FROM administrador "
+            + "ORDER BY nome_administrador "
+            + "LIMIT ? OFFSET ?";
+
     @Override
     public void save(Administrador administrador) {
         if (administrador == null) {
@@ -234,6 +244,99 @@ public class AdministradorDAO implements GenericoDAO<Administrador> {
 
         } finally {
             Conexao.closeConnection(conn, ps, rs);
+        }
+    }
+
+    public int quantidadePaginas() {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        int quantidadePaginas = 1;
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(CONTAR_ADMINISTRADORES);
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int totalAdministradores = rs.getInt("total_administradores");
+
+                quantidadePaginas = (int) Math.ceil(
+                        totalAdministradores / (double) TOTAL_ADMINISTRADORES_POR_PAGINA
+                );
+
+                if (quantidadePaginas < 1) {
+                    quantidadePaginas = 1;
+                }
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao calcular quantidade de páginas dos administradores: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return quantidadePaginas;
+    }
+
+    public List<Administrador> consultarPagina(String numeroPagina) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        List<Administrador> administradores = new ArrayList<Administrador>();
+
+        int pagina = converterNumeroPagina(numeroPagina);
+        int offset = (pagina * TOTAL_ADMINISTRADORES_POR_PAGINA) - TOTAL_ADMINISTRADORES_POR_PAGINA;
+
+        if (offset < 0) {
+            offset = 0;
+        }
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(CONSULTAR_PAGINA);
+
+            ps.setInt(1, TOTAL_ADMINISTRADORES_POR_PAGINA);
+            ps.setInt(2, offset);
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Administrador administrador = new Administrador();
+                popularComDados(administrador, rs);
+                administradores.add(administrador);
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao consultar página dos administradores: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return administradores;
+    }
+
+    private int converterNumeroPagina(String numeroPagina) {
+        if (numeroPagina == null || numeroPagina.trim().isEmpty()) {
+            return 1;
+        }
+
+        try {
+            int pagina = Integer.parseInt(numeroPagina.trim());
+
+            if (pagina < 1) {
+                return 1;
+            }
+
+            return pagina;
+
+        } catch (NumberFormatException ex) {
+            return 1;
         }
     }
 
