@@ -170,6 +170,18 @@ public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
             + "ORDER BY a.nome_autuado "
             + "LIMIT ? OFFSET ?";
 
+    private static final String CONTAR_OCORRENCIAS_POR_AUTUANTE
+            = "SELECT COUNT(1) AS total_ocorrencias "
+            + "FROM ocorrencia o "
+            + "INNER JOIN autuante at ON o.id_autuante = at.id_autuante "
+            + "WHERE at.nome_autuante LIKE ?";
+
+    private static final String CONSULTAR_PAGINA_POR_AUTUANTE
+            = BASE_SELECT
+            + "WHERE at.nome_autuante LIKE ? "
+            + "ORDER BY at.nome_autuante "
+            + "LIMIT ? OFFSET ?";
+
     @Override
     public void save(Ocorrencia ocorrencia) {
         if (ocorrencia == null) {
@@ -565,6 +577,22 @@ public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
         }
 
         return contarPaginasPorTexto(CONTAR_OCORRENCIAS_POR_AUTUADO, autuado);
+    }
+
+    public int quantidadePaginasPorAutuante(String autuante) {
+        if (autuante == null) {
+            autuante = "";
+        }
+
+        return contarPaginasPorTexto(CONTAR_OCORRENCIAS_POR_AUTUANTE, autuante);
+    }
+
+    public List<Ocorrencia> consultarPaginaPorAutuante(String autuante, String numeroPagina) {
+        if (autuante == null) {
+            autuante = "";
+        }
+
+        return consultarPaginaPorTexto(CONSULTAR_PAGINA_POR_AUTUANTE, autuante, numeroPagina);
     }
 
     public List<Ocorrencia> consultarPaginaPorAutuado(String autuado, String numeroPagina) {
