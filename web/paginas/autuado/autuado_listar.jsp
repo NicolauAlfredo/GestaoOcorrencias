@@ -90,9 +90,9 @@
 
                                 <ul class="dropdown-menu">
                                     <li><a href="autuados"><span class="glyphicon glyphicon-print"> Imprimir </span></a></li>
-                                    <li><a href="paginas/autuadoautuado_listar_por_nome.jsp"><span class="glyphicon glyphicon-search"> Pesquisar por Nome </span></a></li>
-                                    <li><a href="paginas/autuadoautuado_listar_por_bi.jsp"><span class="glyphicon glyphicon-search"> Pesquisar por B.I. </span></a></li>
-                                    <li><a href="paginas/autuadoautuado_listar_por_data.jsp"><span class="glyphicon glyphicon-search"> Pesquisar por Data </span></a></li>
+                                    <li><a href="paginas/autuado/autuado_listar_por_nome.jsp"><span class="glyphicon glyphicon-search"> Pesquisar por Nome </span></a></li>
+                                    <li><a href="paginas/autuado/autuado_listar_por_bi.jsp"><span class="glyphicon glyphicon-search"> Pesquisar por B.I. </span></a></li>
+                                    <li><a href="paginas/autuado/autuado_listar_por_data.jsp"><span class="glyphicon glyphicon-search"> Pesquisar por Data </span></a></li>
                                 </ul>
                             </div>
                         </div>

@@ -77,9 +77,9 @@
                         </button>
 
                         <ul class="dropdown-menu">
-                            <li><a href="paginas/autuadoautuado_listar.jsp">Listar Todos</a></li>
-                            <li><a href="paginas/autuadoautuado_listar_por_nome.jsp">Nome Autuado</a></li>
-                            <li><a href="paginas/autuadoautuado_listar_por_data.jsp">Data de Nascimento</a></li>
+                            <li><a href="paginas/autuado/autuado_listar.jsp">Listar Todos</a></li>
+                            <li><a href="paginas/autuado/autuado_listar_por_nome.jsp">Nome Autuado</a></li>
+                            <li><a href="paginas/autuado/autuado_listar_por_data.jsp">Data de Nascimento</a></li>
                         </ul>
                     </div>
                 </div>
