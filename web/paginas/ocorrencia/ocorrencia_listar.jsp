@@ -27,9 +27,35 @@
     <body>
         <%
             OcorrenciaDAO ocorrenciaDAO = new OcorrenciaDAO();
-            List<Ocorrencia> ocorrencias = ocorrenciaDAO.findAll();
 
-            Testemunha testemunha = new Testemunha();
+            String paginaParametro = request.getParameter("pagina");
+
+            int paginaActual = 1;
+
+            if (paginaParametro != null && !paginaParametro.trim().isEmpty()) {
+                try {
+                    paginaActual = Integer.parseInt(paginaParametro);
+                } catch (NumberFormatException ex) {
+                    paginaActual = 1;
+                }
+            }
+
+            if (paginaActual < 1) {
+                paginaActual = 1;
+            }
+
+            int quantidadePaginas = ocorrenciaDAO.quantidadePaginas();
+
+            if (paginaActual > quantidadePaginas) {
+                paginaActual = quantidadePaginas;
+            }
+
+            List<Ocorrencia> ocorrencias = ocorrenciaDAO.consultarPagina(String.valueOf(paginaActual));
+
+            int paginaAnterior = paginaActual - 1;
+            int proximaPagina = paginaActual + 1;
+
+            String urlListar = "paginas/ocorrencia/ocorrencia_listar.jsp";
         %>
 
         <!-- Container principal do Bootstrap -->
@@ -85,28 +111,43 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <%for (Ocorrencia ocorrencia : ocorrencias) {%>
+                                            <%        if (ocorrencias == null || ocorrencias.isEmpty()) {
+                                            %>
+                                            <tr>
+                                                <td colspan="12" class="text-center text-muted">
+                                                    Nenhuma ocorrência encontrada.
+                                                </td>
+                                            </tr>
+                                            <%
+                                            } else {
+                                                for (Ocorrencia ocorrencia : ocorrencias) {
+                                            %>
                                             <tr>
                                                 <td><%=ocorrencia.getIdOcorrencia()%></td>
                                                 <td><%=DateUtil.formataData(ocorrencia.getDataOcorrencia())%></td>
                                                 <td><%=ocorrencia.getHoraOcorrencia()%></td>
                                                 <td><%=ocorrencia.getCidadeOcorrencia()%></td>
+
                                                 <td>
                                                     <a href="autuadoServlet?comando=detalhes&id_autuado=<%=ocorrencia.getAutuado().getIdAutuado()%>">
                                                         <%=ocorrencia.getAutuado().getNomeAutuado()%>
-                                                    </a>                                                  
+                                                    </a>
                                                 </td>
+
                                                 <td>
                                                     <a href="autuanteServlet?comando=detalhes&id_autuante=<%=ocorrencia.getAutuante().getIdAutuante()%>">
-                                                        <%=ocorrencia.getAutuante().getNomeAutuante()%>     
-                                                    </a>                                                  
+                                                        <%=ocorrencia.getAutuante().getNomeAutuante()%>
+                                                    </a>
                                                 </td>
+
                                                 <td><%=ocorrencia.getTipoOcorrencia().getNomeTipoOcorrencia()%></td>
+
                                                 <td>
                                                     <a href="testemunhaServlet?comando=detalhes&id_testemunha=<%=ocorrencia.getTestemunha().getIdTestemunha()%>">
                                                         <%=ocorrencia.getTestemunha().getNomeTestemunha()%>
-                                                    </a>                                                  
+                                                    </a>
                                                 </td>
+
                                                 <td>
                                                     <a href="ocorrenciaComParametro?id_ocorrencia=<%=ocorrencia.getIdOcorrencia()%>" title="Imprimir">
                                                         <span class="glyphicon glyphicon-print"></span>
@@ -126,24 +167,51 @@
                                                 </td>
 
                                                 <td>
-                                                    <a href="ocorrenciaServlet?comando=eliminar&id_ocorrencia=<%=ocorrencia.getIdOcorrencia()%>" title="Eliminar">
+                                                    <a href="ocorrenciaServlet?comando=eliminar&id_ocorrencia=<%=ocorrencia.getIdOcorrencia()%>"
+                                                       title="Eliminar"
+                                                       onclick="return confirm('Deseja realmente eliminar esta ocorrência?');">
                                                         <span class="glyphicon glyphicon-trash"></span>
                                                     </a>
                                                 </td>
                                             </tr>
-                                            <%}%>
+                                            <%
+                                                    }
+                                                }
+                                            %>
                                         </tbody>
                                     </table>
                                     <!-- Paginação -->
-                                    <ul class="pagination"> 
-                                        <li><a href="#">&laquo;</a></li> 
-                                        <li><a href="#">1</a></li>
-                                        <li><a href="#">2</a></li> 
-                                        <li><a href="#">3</a></li> 
-                                        <li><a href="#">4</a></li> 
-                                        <li><a href="#">5</a></li> 
-                                        <li><a href="#">&raquo;</a></li> 
-                                    </ul>
+                                    <div class="text-center">
+                                        <ul class="pagination">
+
+                                            <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
+                                                <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : urlListar + "?pagina=" + paginaAnterior%>">
+                                                    &laquo;
+                                                </a>
+                                            </li>
+
+                                            <%
+                                                for (int i = 1; i <= quantidadePaginas; i++) {
+                                            %>
+                                            <li class="<%=i == paginaActual ? "active" : ""%>">
+                                                <a href="<%=urlListar%>?pagina=<%=i%>"><%=i%></a>
+                                            </li>
+                                            <%
+                                                }
+                                            %>
+
+                                            <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
+                                                <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : urlListar + "?pagina=" + proximaPagina%>">
+                                                    &raquo;
+                                                </a>
+                                            </li>
+
+                                        </ul>
+
+                                        <p class="text-muted">
+                                            Página <%=paginaActual%> de <%=quantidadePaginas%>
+                                        </p>
+                                    </div>
                                     <!-- Fim da Paginação-->
                                 </div> 
                             </form>

@@ -148,6 +148,16 @@ public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
             + "WHERE t.nome_tipo_ocorrencia LIKE ? "
             + "ORDER BY t.nome_tipo_ocorrencia";
 
+    private static final int TOTAL_OCORRENCIAS_POR_PAGINA = 6;
+
+    private static final String CONTAR_OCORRENCIAS
+            = "SELECT COUNT(1) AS total_ocorrencias FROM ocorrencia";
+
+    private static final String CONSULTAR_PAGINA
+            = BASE_SELECT
+            + "ORDER BY o.data_ocorrencia DESC, o.id_ocorrencia DESC "
+            + "LIMIT ? OFFSET ?";
+
     @Override
     public void save(Ocorrencia ocorrencia) {
         if (ocorrencia == null) {
@@ -463,11 +473,100 @@ public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
         return ocorrencias;
     }
 
-    private void preencherPreparedStatement(
-            PreparedStatement ps,
-            Ocorrencia ocorrencia,
-            boolean actualizar
-    ) throws SQLException {
+    public int quantidadePaginas() {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        int quantidadePaginas = 1;
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(CONTAR_OCORRENCIAS);
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int totalOcorrencias = rs.getInt("total_ocorrencias");
+
+                quantidadePaginas = (int) Math.ceil(
+                        totalOcorrencias / (double) TOTAL_OCORRENCIAS_POR_PAGINA
+                );
+
+                if (quantidadePaginas < 1) {
+                    quantidadePaginas = 1;
+                }
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao calcular quantidade de páginas das ocorrências: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return quantidadePaginas;
+    }
+
+    public List<Ocorrencia> consultarPagina(String numeroPagina) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        List<Ocorrencia> ocorrencias = new ArrayList<Ocorrencia>();
+
+        int pagina = converterNumeroPagina(numeroPagina);
+        int offset = (pagina * TOTAL_OCORRENCIAS_POR_PAGINA) - TOTAL_OCORRENCIAS_POR_PAGINA;
+
+        if (offset < 0) {
+            offset = 0;
+        }
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(CONSULTAR_PAGINA);
+
+            ps.setInt(1, TOTAL_OCORRENCIAS_POR_PAGINA);
+            ps.setInt(2, offset);
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Ocorrencia ocorrencia = new Ocorrencia();
+                popularComDados(ocorrencia, rs);
+                ocorrencias.add(ocorrencia);
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao consultar página de ocorrências: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return ocorrencias;
+    }
+
+    private int converterNumeroPagina(String numeroPagina) {
+        if (numeroPagina == null || numeroPagina.trim().isEmpty()) {
+            return 1;
+        }
+
+        try {
+            int pagina = Integer.parseInt(numeroPagina.trim());
+
+            if (pagina < 1) {
+                return 1;
+            }
+
+            return pagina;
+
+        } catch (NumberFormatException ex) {
+            return 1;
+        }
+    }
+
+    private void preencherPreparedStatement(PreparedStatement ps, Ocorrencia ocorrencia, boolean actualizar) throws SQLException {
 
         setDate(ps, 1, ocorrencia.getDataOcorrencia());
 
