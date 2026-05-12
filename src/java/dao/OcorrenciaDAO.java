@@ -204,6 +204,19 @@ public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
             + "ORDER BY o.data_ocorrencia DESC, o.id_ocorrencia DESC "
             + "LIMIT ? OFFSET ?";
 
+    private static final String CONTAR_OCORRENCIAS_POR_TESTEMUNHA
+            = "SELECT COUNT(1) AS total_ocorrencias "
+            + "FROM ocorrencia o "
+            + "INNER JOIN testemunha tt ON o.id_testemunha = tt.id_testemunha "
+            + "LEFT JOIN testemunha tt1 ON o.id_testemunha1 = tt1.id_testemunha "
+            + "WHERE tt.nome_testemunha LIKE ? OR tt1.nome_testemunha LIKE ?";
+
+    private static final String CONSULTAR_PAGINA_POR_TESTEMUNHA
+            = BASE_SELECT
+            + "WHERE tt.nome_testemunha LIKE ? OR tt1.nome_testemunha LIKE ? "
+            + "ORDER BY tt.nome_testemunha "
+            + "LIMIT ? OFFSET ?";
+
     @Override
     public void save(Ocorrencia ocorrencia) {
         if (ocorrencia == null) {
@@ -719,6 +732,97 @@ public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
         } catch (NumberFormatException ex) {
             return 1;
         }
+    }
+
+    public int quantidadePaginasPorTestemunha(String testemunha) {
+        if (testemunha == null) {
+            testemunha = "";
+        }
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        int quantidadePaginas = 1;
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(CONTAR_OCORRENCIAS_POR_TESTEMUNHA);
+
+            String termo = "%" + testemunha.trim() + "%";
+
+            ps.setString(1, termo);
+            ps.setString(2, termo);
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int totalOcorrencias = rs.getInt("total_ocorrencias");
+
+                quantidadePaginas = (int) Math.ceil(
+                        totalOcorrencias / (double) TOTAL_OCORRENCIAS_POR_PAGINA
+                );
+
+                if (quantidadePaginas < 1) {
+                    quantidadePaginas = 1;
+                }
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao calcular páginas por testemunha: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return quantidadePaginas;
+    }
+
+    public List<Ocorrencia> consultarPaginaPorTestemunha(String testemunha, String numeroPagina) {
+        if (testemunha == null) {
+            testemunha = "";
+        }
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        List<Ocorrencia> ocorrencias = new ArrayList<Ocorrencia>();
+
+        int pagina = converterNumeroPagina(numeroPagina);
+        int offset = (pagina * TOTAL_OCORRENCIAS_POR_PAGINA) - TOTAL_OCORRENCIAS_POR_PAGINA;
+
+        if (offset < 0) {
+            offset = 0;
+        }
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(CONSULTAR_PAGINA_POR_TESTEMUNHA);
+
+            String termo = "%" + testemunha.trim() + "%";
+
+            ps.setString(1, termo);
+            ps.setString(2, termo);
+            ps.setInt(3, TOTAL_OCORRENCIAS_POR_PAGINA);
+            ps.setInt(4, offset);
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Ocorrencia ocorrencia = new Ocorrencia();
+                popularComDados(ocorrencia, rs);
+                ocorrencias.add(ocorrencia);
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao consultar ocorrências por testemunha com paginação: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return ocorrencias;
     }
 
     public int quantidadePaginasPorCidade(String cidade) {
