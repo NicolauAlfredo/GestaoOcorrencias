@@ -135,6 +135,7 @@
                         <div class="form-group input-group">
                             <input
                                 type="search"
+                                id="nip_autuante"
                                 name="nip_autuante"
                                 class="form-control"
                                 placeholder="NIP do autuante"
@@ -156,7 +157,7 @@
                             <ul class="pagination">
 
                                 <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
-                                    <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/autuante/autuante_listar_por_numero.jsp?nip_autuante=" + nipUrl + "&pagina=" + paginaAnterior%>">
+                                    <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/autuante/autuante_listar_por_nip.jsp?nip_autuante=" + nipUrl + "&pagina=" + paginaAnterior%>">
                                         &laquo;
                                     </a>
                                 </li>
@@ -165,7 +166,7 @@
                                     for (int i = 1; i <= quantidadePaginas; i++) {
                                 %>
                                 <li class="<%=i == paginaActual ? "active" : ""%>">
-                                    <a href="paginas/autuante/autuante_listar_por_numero.jsp?nip_autuante=<%=nipUrl%>&pagina=<%=i%>">
+                                    <a href="paginas/autuante/autuante_listar_por_nip.jsp?nip_autuante=<%=nipUrl%>&pagina=<%=i%>">
                                         <%=i%>
                                     </a>
                                 </li>
@@ -174,7 +175,7 @@
                                 %>
 
                                 <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-                                    <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/autuante/autuante_listar_por_numero.jsp?nip_autuante=" + nipUrl + "&pagina=" + proximaPagina%>">
+                                    <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/autuante/autuante_listar_por_nip.jsp?nip_autuante=" + nipUrl + "&pagina=" + proximaPagina%>">
                                         &raquo;
                                     </a>
                                 </li>
@@ -193,5 +194,32 @@
                 <%@include file="../../menus/rodape.jsp" %>
             </div>
         </div>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#nip_autuante").keyup(function () {
+                    var termo = $(this).val();
+
+                    $.ajax({
+                        url: "autuanteServlet",
+                        type: "GET",
+                        data: {
+                            comando: "pesquisar_ajax",
+                            tipo_pesquisa: "nip",
+                            termo: termo
+                        },
+                        success: function (resultado) {
+                            $("#resultado-autuantes").html(resultado);
+                            $(".pagination").hide();
+                        },
+                        error: function () {
+                            $("#resultado-autuantes").html(
+                                    "<tr><td colspan='12' class='text-center text-danger'>Erro ao pesquisar autuantes.</td></tr>"
+                                    );
+                        }
+                    });
+                });
+            });
+        </script>
     </body>
 </html>
