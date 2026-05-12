@@ -7,6 +7,8 @@ package controlo;
 
 import dao.MunicipioDAO;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -56,6 +58,12 @@ public class MunicipioServlet extends HttpServlet {
         }
         try {
             municipioDAO = new MunicipioDAO();
+
+            if (comando.equalsIgnoreCase("pesquisar_ajax")) {
+                pesquisarAjax(request, response, municipioDAO);
+                return;
+            }
+
             if (comando.equalsIgnoreCase("guardar")) {
                 Provincia provincia = new Provincia();
                 municipio.setNomeMunicipio(request.getParameter("nome_municipio"));
@@ -106,6 +114,98 @@ public class MunicipioServlet extends HttpServlet {
             System.err.println("Erro na leitura dos dados: " + ex.getMessage());
         }
 
+    }
+
+    private void pesquisarAjax(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            MunicipioDAO municipioDAO
+    ) throws IOException {
+
+        response.setContentType("text/html;charset=UTF-8");
+
+        String tipoPesquisa = request.getParameter("tipo_pesquisa");
+        String termo = request.getParameter("termo");
+
+        if (tipoPesquisa == null) {
+            tipoPesquisa = "nome";
+        }
+
+        if (termo == null) {
+            termo = "";
+        }
+
+        List<Municipio> municipios;
+
+        if (tipoPesquisa.equalsIgnoreCase("provincia")) {
+            try {
+                if (termo.trim().isEmpty()) {
+                    municipios = municipioDAO.findAll();
+                } else {
+                    municipios = municipioDAO.findByProvincia(Integer.parseInt(termo.trim()));
+                }
+            } catch (Exception ex) {
+                municipios = new java.util.ArrayList<Municipio>();
+            }
+        } else {
+            municipios = municipioDAO.findByNome(termo);
+        }
+
+        PrintWriter out = response.getWriter();
+
+        if (municipios == null || municipios.isEmpty()) {
+            out.println("<tr>");
+            out.println("<td colspan='7' class='text-center text-muted'>Nenhum município encontrado.</td>");
+            out.println("</tr>");
+            return;
+        }
+
+        for (Municipio municipio : municipios) {
+            out.println("<tr>");
+
+            out.println("<td>" + municipio.getIdMunicipio() + "</td>");
+            out.println("<td>" + valorSeguro(municipio.getNomeMunicipio()) + "</td>");
+
+            if (municipio.getProvincia() != null) {
+                out.println("<td>" + valorSeguro(municipio.getProvincia().getNomeProvincia()) + "</td>");
+            } else {
+                out.println("<td></td>");
+            }
+
+            out.println("<td>");
+            out.println("<a href='" + request.getContextPath() + "/municipioServlet?comando=detalhes&id_municipio=" + municipio.getIdMunicipio() + "'>");
+            out.println("<span class='glyphicon glyphicon-print'></span>");
+            out.println("</a>");
+            out.println("</td>");
+
+            out.println("<td>");
+            out.println("<a href='" + request.getContextPath() + "/municipioServlet?comando=detalhes&id_municipio=" + municipio.getIdMunicipio() + "'>");
+            out.println("<span class='glyphicon glyphicon-zoom-in'></span>");
+            out.println("</a>");
+            out.println("</td>");
+
+            out.println("<td>");
+            out.println("<a href='" + request.getContextPath() + "/municipioServlet?comando=prepara_editar&id_municipio=" + municipio.getIdMunicipio() + "'>");
+            out.println("<span class='glyphicon glyphicon-edit'></span>");
+            out.println("</a>");
+            out.println("</td>");
+
+            out.println("<td>");
+            out.println("<a onclick=\"return confirm('Deseja realmente eliminar este município?');\" href='" + request.getContextPath() + "/municipioServlet?comando=eliminar&id_municipio=" + municipio.getIdMunicipio() + "'>");
+            out.println("<span class='glyphicon glyphicon-trash'></span>");
+            out.println("</a>");
+            out.println("</td>");
+
+            out.println("</tr>");
+        }
+    }
+
+    private String valorSeguro(String valor) {
+        if (valor == null) {
+            return "";
+        }
+
+        return valor;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
