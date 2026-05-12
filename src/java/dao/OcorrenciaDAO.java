@@ -193,6 +193,17 @@ public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
             + "ORDER BY o.cidade_ocorrencia "
             + "LIMIT ? OFFSET ?";
 
+    private static final String CONTAR_OCORRENCIAS_POR_DATA
+            = "SELECT COUNT(1) AS total_ocorrencias "
+            + "FROM ocorrencia "
+            + "WHERE data_ocorrencia = ?";
+
+    private static final String CONSULTAR_PAGINA_POR_DATA
+            = BASE_SELECT
+            + "WHERE o.data_ocorrencia = ? "
+            + "ORDER BY o.data_ocorrencia DESC, o.id_ocorrencia DESC "
+            + "LIMIT ? OFFSET ?";
+
     @Override
     public void save(Ocorrencia ocorrencia) {
         if (ocorrencia == null) {
@@ -716,6 +727,95 @@ public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
         }
 
         return contarPaginasPorTexto(CONTAR_OCORRENCIAS_POR_CIDADE, cidade);
+    }
+
+    public int quantidadePaginasPorData(java.sql.Date data) {
+        if (data == null) {
+            return 1;
+        }
+
+        return contarPaginasPorData(CONTAR_OCORRENCIAS_POR_DATA, data);
+    }
+
+    public List<Ocorrencia> consultarPaginaPorData(java.sql.Date data, String numeroPagina) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        List<Ocorrencia> ocorrencias = new ArrayList<Ocorrencia>();
+
+        if (data == null) {
+            return ocorrencias;
+        }
+
+        int pagina = converterNumeroPagina(numeroPagina);
+        int offset = (pagina * TOTAL_OCORRENCIAS_POR_PAGINA) - TOTAL_OCORRENCIAS_POR_PAGINA;
+
+        if (offset < 0) {
+            offset = 0;
+        }
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(CONSULTAR_PAGINA_POR_DATA);
+
+            ps.setDate(1, data);
+            ps.setInt(2, TOTAL_OCORRENCIAS_POR_PAGINA);
+            ps.setInt(3, offset);
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Ocorrencia ocorrencia = new Ocorrencia();
+                popularComDados(ocorrencia, rs);
+                ocorrencias.add(ocorrencia);
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao consultar ocorrências por data com paginação: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return ocorrencias;
+    }
+
+    private int contarPaginasPorData(String sql, java.sql.Date data) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        int quantidadePaginas = 1;
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(sql);
+
+            ps.setDate(1, data);
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int totalOcorrencias = rs.getInt("total_ocorrencias");
+
+                quantidadePaginas = (int) Math.ceil(
+                        totalOcorrencias / (double) TOTAL_OCORRENCIAS_POR_PAGINA
+                );
+
+                if (quantidadePaginas < 1) {
+                    quantidadePaginas = 1;
+                }
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao calcular páginas por data: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return quantidadePaginas;
     }
 
     public List<Ocorrencia> consultarPaginaPorCidade(String cidade, String numeroPagina) {
