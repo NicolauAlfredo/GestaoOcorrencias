@@ -182,6 +182,17 @@ public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
             + "ORDER BY at.nome_autuante "
             + "LIMIT ? OFFSET ?";
 
+    private static final String CONTAR_OCORRENCIAS_POR_CIDADE
+            = "SELECT COUNT(1) AS total_ocorrencias "
+            + "FROM ocorrencia "
+            + "WHERE cidade_ocorrencia LIKE ?";
+
+    private static final String CONSULTAR_PAGINA_POR_CIDADE
+            = BASE_SELECT
+            + "WHERE o.cidade_ocorrencia LIKE ? "
+            + "ORDER BY o.cidade_ocorrencia "
+            + "LIMIT ? OFFSET ?";
+
     @Override
     public void save(Ocorrencia ocorrencia) {
         if (ocorrencia == null) {
@@ -697,6 +708,22 @@ public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
         } catch (NumberFormatException ex) {
             return 1;
         }
+    }
+
+    public int quantidadePaginasPorCidade(String cidade) {
+        if (cidade == null) {
+            cidade = "";
+        }
+
+        return contarPaginasPorTexto(CONTAR_OCORRENCIAS_POR_CIDADE, cidade);
+    }
+
+    public List<Ocorrencia> consultarPaginaPorCidade(String cidade, String numeroPagina) {
+        if (cidade == null) {
+            cidade = "";
+        }
+
+        return consultarPaginaPorTexto(CONSULTAR_PAGINA_POR_CIDADE, cidade, numeroPagina);
     }
 
     private void preencherPreparedStatement(PreparedStatement ps, Ocorrencia ocorrencia, boolean actualizar) throws SQLException {
