@@ -24,6 +24,47 @@
         <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
     <body>
+        <%
+            OcorrenciaDAO ocorrenciaDAO = new OcorrenciaDAO();
+
+            String testemunha = request.getParameter("testemunha_ocorrencia");
+            String paginaParametro = request.getParameter("pagina");
+
+            if (testemunha == null) {
+                testemunha = "";
+            }
+
+            int paginaActual = 1;
+
+            if (paginaParametro != null && !paginaParametro.trim().isEmpty()) {
+                try {
+                    paginaActual = Integer.parseInt(paginaParametro);
+                } catch (NumberFormatException ex) {
+                    paginaActual = 1;
+                }
+            }
+
+            if (paginaActual < 1) {
+                paginaActual = 1;
+            }
+
+            int quantidadePaginas = ocorrenciaDAO.quantidadePaginasPorTestemunha(testemunha);
+
+            if (paginaActual > quantidadePaginas) {
+                paginaActual = quantidadePaginas;
+            }
+
+            List<Ocorrencia> ocorrencias = ocorrenciaDAO.consultarPaginaPorTestemunha(
+                    testemunha,
+                    String.valueOf(paginaActual)
+            );
+
+            int paginaAnterior = paginaActual - 1;
+            int proximaPagina = paginaActual + 1;
+
+            String testemunhaUrl = java.net.URLEncoder.encode(testemunha, "UTF-8");
+        %>
+
         <!-- Container principal do Bootstrap -->
         <div class="container">
             <div id="page-wrapper">
@@ -64,24 +105,22 @@
                         <!-- Corpo da página -->   
                         <div class="panel-body">
 
-                            <form action="ocorrencia_listar_por_testemunha.jsp" method="post">
-                                <!-- Div com o campo de pesquisa -->
+                            <form action="paginas/ocorrencia/ocorrencia_listar_por_testemunha.jsp" method="get">
                                 <div class="form-group input-group">
-                                    <input type="search" name="testemunha_ocorrencia" class="form-control" required placeholder="Testemunha">
+                                    <input
+                                        type="search"
+                                        name="testemunha_ocorrencia"
+                                        class="form-control"
+                                        placeholder="Testemunha"
+                                        value="<%=testemunha%>"
+                                        >
                                     <span class="input-group-btn">
                                         <button class="btn btn-primary" type="submit">
                                             <i class="glyphicon glyphicon-search"></i>
                                         </button>
                                     </span>
                                 </div>
-                                <!-- Fim da div com o campo de pesquisa -->
                             </form>
-
-                            <%                                OcorrenciaDAO ocorrenciaDAO = new OcorrenciaDAO();
-                                String testemunha = request.getParameter("testemunha_ocorrencia");
-                                List<Ocorrencia> ocorrencias = ocorrenciaDAO.findByTestemunha(testemunha);
-
-                            %>
 
                             <form>
                                 <div class="table-responsive">
@@ -149,6 +188,40 @@
                                             <%}%>
                                         </tbody>
                                     </table>
+
+                                    <div class="text-center">
+                                        <ul class="pagination">
+
+                                            <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
+                                                <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_testemunha.jsp?testemunha_ocorrencia=" + testemunhaUrl + "&pagina=" + paginaAnterior%>">
+                                                    &laquo;
+                                                </a>
+                                            </li>
+
+                                            <%
+                                                for (int i = 1; i <= quantidadePaginas; i++) {
+                                            %>
+                                            <li class="<%=i == paginaActual ? "active" : ""%>">
+                                                <a href="paginas/ocorrencia/ocorrencia_listar_por_testemunha.jsp?testemunha_ocorrencia=<%=testemunhaUrl%>&pagina=<%=i%>">
+                                                    <%=i%>
+                                                </a>
+                                            </li>
+                                            <%
+                                                }
+                                            %>
+
+                                            <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
+                                                <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_testemunha.jsp?testemunha_ocorrencia=" + testemunhaUrl + "&pagina=" + proximaPagina%>">
+                                                    &raquo;
+                                                </a>
+                                            </li>
+
+                                        </ul>
+
+                                        <p class="text-muted">
+                                            Página <%=paginaActual%> de <%=quantidadePaginas%>
+                                        </p>
+                                    </div>
                                 </div> 
                             </form>
                         </div>
