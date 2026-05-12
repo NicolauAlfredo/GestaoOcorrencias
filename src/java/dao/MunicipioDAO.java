@@ -74,6 +74,19 @@ public class MunicipioDAO implements GenericoDAO<Municipio> {
             + "ORDER BY m.nome_municipio "
             + "LIMIT ? OFFSET ?";
 
+    private static final String CONTAR_MUNICIPIOS_POR_NOME
+            = "SELECT COUNT(1) AS total_municipios "
+            + "FROM municipio "
+            + "WHERE nome_municipio LIKE ?";
+
+    private static final String CONSULTAR_PAGINA_POR_NOME
+            = "SELECT " + CAMPOS_CONSULTA + " "
+            + "FROM municipio m "
+            + "INNER JOIN provincia p ON m.id_provincia = p.id_provincia "
+            + "WHERE m.nome_municipio LIKE ? "
+            + "ORDER BY m.nome_municipio "
+            + "LIMIT ? OFFSET ?";
+
     @Override
     public void save(Municipio municipio) {
         if (municipio == null) {
@@ -363,6 +376,91 @@ public class MunicipioDAO implements GenericoDAO<Municipio> {
                 municipios.add(municipio);
             }
 
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return municipios;
+    }
+
+    public int quantidadePaginasPorNome(String nome) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        int quantidadePaginas = 1;
+
+        if (nome == null) {
+            nome = "";
+        }
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(CONTAR_MUNICIPIOS_POR_NOME);
+
+            ps.setString(1, "%" + nome.trim() + "%");
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int totalMunicipios = rs.getInt("total_municipios");
+
+                quantidadePaginas = (int) Math.ceil(
+                        totalMunicipios / (double) TOTAL_MUNICIPIOS_POR_PAGINA
+                );
+
+                if (quantidadePaginas < 1) {
+                    quantidadePaginas = 1;
+                }
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao calcular páginas por nome do município: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return quantidadePaginas;
+    }
+
+    public List<Municipio> consultarPaginaPorNome(String nome, String numeroPagina) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        List<Municipio> municipios = new ArrayList<Municipio>();
+
+        if (nome == null) {
+            nome = "";
+        }
+
+        int pagina = converterNumeroPagina(numeroPagina);
+        int offset = (pagina * TOTAL_MUNICIPIOS_POR_PAGINA) - TOTAL_MUNICIPIOS_POR_PAGINA;
+
+        if (offset < 0) {
+            offset = 0;
+        }
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(CONSULTAR_PAGINA_POR_NOME);
+
+            ps.setString(1, "%" + nome.trim() + "%");
+            ps.setInt(2, TOTAL_MUNICIPIOS_POR_PAGINA);
+            ps.setInt(3, offset);
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Municipio municipio = new Municipio();
+                popularComDados(municipio, rs);
+                municipios.add(municipio);
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao consultar municípios por nome com paginação: " + ex.getLocalizedMessage());
         } finally {
             fecharResultSet(rs);
             Conexao.closeConnection(conn, ps);

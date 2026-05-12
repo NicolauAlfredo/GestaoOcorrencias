@@ -29,14 +29,43 @@
             MunicipioDAO municipioDAO = new MunicipioDAO();
 
             String nome = request.getParameter("nome_municipio");
+            String paginaParametro = request.getParameter("pagina");
 
             if (nome == null) {
                 nome = "";
             }
 
-            List<Municipio> municipios = municipioDAO.findByNome(nome);
+            int paginaActual = 1;
+
+            if (paginaParametro != null && !paginaParametro.trim().isEmpty()) {
+                try {
+                    paginaActual = Integer.parseInt(paginaParametro);
+                } catch (NumberFormatException ex) {
+                    paginaActual = 1;
+                }
+            }
+
+            if (paginaActual < 1) {
+                paginaActual = 1;
+            }
+
+            int quantidadePaginas = municipioDAO.quantidadePaginasPorNome(nome);
+
+            if (paginaActual > quantidadePaginas) {
+                paginaActual = quantidadePaginas;
+            }
+
+            List<Municipio> municipios = municipioDAO.consultarPaginaPorNome(
+                    nome,
+                    String.valueOf(paginaActual)
+            );
 
             request.setAttribute("municipios", municipios);
+
+            int paginaAnterior = paginaActual - 1;
+            int proximaPagina = paginaActual + 1;
+
+            String nomeUrl = java.net.URLEncoder.encode(nome, "UTF-8");
         %>
 
         <div class="container">
@@ -104,6 +133,40 @@
                             <form>
                                 <div class="table-responsive">
                                     <%@include file="municipio_tabela.jsp" %>
+                                </div>
+
+                                <div class="text-center">
+                                    <ul class="pagination">
+
+                                        <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
+                                            <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/municipio/municipio_listar_por_nome.jsp?nome_municipio=" + nomeUrl + "&pagina=" + paginaAnterior%>">
+                                                &laquo;
+                                            </a>
+                                        </li>
+
+                                        <%
+                                            for (int i = 1; i <= quantidadePaginas; i++) {
+                                        %>
+                                        <li class="<%=i == paginaActual ? "active" : ""%>">
+                                            <a href="paginas/municipio/municipio_listar_por_nome.jsp?nome_municipio=<%=nomeUrl%>&pagina=<%=i%>">
+                                                <%=i%>
+                                            </a>
+                                        </li>
+                                        <%
+                                            }
+                                        %>
+
+                                        <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
+                                            <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/municipio/municipio_listar_por_nome.jsp?nome_municipio=" + nomeUrl + "&pagina=" + proximaPagina%>">
+                                                &raquo;
+                                            </a>
+                                        </li>
+
+                                    </ul>
+
+                                    <p class="text-muted">
+                                        Página <%=paginaActual%> de <%=quantidadePaginas%>
+                                    </p>
                                 </div>
                             </form>
                         </div>
