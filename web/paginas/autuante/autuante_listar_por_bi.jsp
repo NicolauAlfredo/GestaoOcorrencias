@@ -125,6 +125,7 @@
                         <div class="form-group input-group">
                             <input
                                 type="search"
+                                id="bi_autuante"
                                 name="bi_autuante"
                                 class="form-control"
                                 placeholder="Nº. Bilhete de Identidade"
@@ -182,6 +183,34 @@
             <div class="row">
                 <%@include file="../../menus/rodape.jsp" %>
             </div>
+
         </div>
-    </body>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#bi_autuante").keyup(function () {
+                    var termo = $(this).val();
+
+                    $.ajax({
+                        url: "autuanteServlet",
+                        type: "GET",
+                        data: {
+                            comando: "pesquisar_ajax",
+                            tipo_pesquisa: "bi",
+                            termo: termo
+                        },
+                        success: function (resultado) {
+                            $("#resultado-autuantes").html(resultado);
+                            $(".pagination").hide();
+                        },
+                        error: function () {
+                            $("#resultado-autuantes").html(
+                                    "<tr><td colspan='12' class='text-center text-danger'>Erro ao pesquisar autuantes.</td></tr>"
+                                    );
+                        }
+                    });
+                });
+            });
+        </script>
+    </body> 
 </html>
