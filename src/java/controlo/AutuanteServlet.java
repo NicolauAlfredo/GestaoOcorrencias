@@ -8,6 +8,7 @@ package controlo;
 import dao.AutuanteDAO;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -89,7 +90,7 @@ public class AutuanteServlet extends HttpServlet {
                 request.setAttribute("message", "Autuante cadastrado!");
                 RequestDispatcher dispatcher = request.getRequestDispatcher("paginas/autuante/autuante_registo.jsp");
                 dispatcher.forward(request, response);
-                
+
             } else if (comando.equalsIgnoreCase("editar")) {
                 autuante.setIdAutuante(Integer.parseInt(request.getParameter("id_autuante")));
                 autuante.setNomeAutuante(request.getParameter("nome_autuante"));
@@ -121,29 +122,46 @@ public class AutuanteServlet extends HttpServlet {
                 request.setAttribute("message", "Autuante editado!");
                 RequestDispatcher dispatcher = request.getRequestDispatcher("paginas/autuante/autuante_listar.jsp");
                 dispatcher.forward(request, response);
-                
+
             } else if (comando.equalsIgnoreCase("eliminar")) {
                 autuanteDAO.delete(autuante);
-                
+
                 request.setAttribute("message", "Autuante eliminado!");
                 RequestDispatcher dispatcher = request.getRequestDispatcher("paginas/autuante/autuante_listar.jsp");
                 dispatcher.forward(request, response);
-                
+
             } else if (comando.equalsIgnoreCase("prepara_editar")) {
                 autuante = autuanteDAO.findById(autuante.getIdAutuante());
                 request.setAttribute("autuante", autuante);
                 RequestDispatcher rd = request.getRequestDispatcher("/paginas/autuante/autuante_editar.jsp");
                 rd.forward(request, response);
-                
+
             } else if (comando.equalsIgnoreCase("listar")) {
                 response.sendRedirect("paginas/autuante/autuante_listar.jsp");
-                
+
             } else if (comando.equalsIgnoreCase("detalhes")) {
                 autuante = autuanteDAO.findById(autuante.getIdAutuante());
                 request.setAttribute("autuante", autuante);
                 RequestDispatcher rd = request.getRequestDispatcher("paginas/autuante/autuante_detalhes.jsp");
                 rd.forward(request, response);
-                
+
+            } else if (comando.equalsIgnoreCase("pesquisa_dinamica_nome")) {
+
+                String nome = request.getParameter("nome_autuante");
+
+                if (nome == null) {
+                    nome = "";
+                }
+
+                List<Autuante> autuantes = autuanteDAO.findByNome(nome);
+
+                request.setAttribute("listaAutuantes", autuantes);
+
+                RequestDispatcher dispatcher = request.getRequestDispatcher(
+                        "paginas/autuante/autuante_tabela.jsp"
+                );
+
+                dispatcher.forward(request, response);
             } else if (comando.equalsIgnoreCase("principal")) {
                 response.sendRedirect("paginas/index.jsp");
             }

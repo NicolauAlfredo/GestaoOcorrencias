@@ -125,6 +125,7 @@
                         <div class="form-group input-group">
                             <input
                                 type="search"
+                                id="nome_autuante"
                                 name="nome_autuante"
                                 class="form-control"
                                 placeholder="Nome do autuante"
@@ -140,9 +141,11 @@
                     </form>
 
                     <div class="table-responsive">
-                        <%@include file="autuante_tabela.jsp" %>
+                        <div id="resultado-autuantes">
+                            <%@include file="autuante_tabela.jsp" %>
+                        </div>
 
-                        <div class="text-center">
+                        <div class="text-center" id="paginacao-autuantes">
                             <ul class="pagination">
 
                                 <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
@@ -183,5 +186,39 @@
                 <%@include file="../../menus/rodape.jsp" %>
             </div>
         </div>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#nome_autuante").keyup(function () {
+                    var nome = $(this).val();
+
+                    $.ajax({
+                        url: "autuanteServlet",
+                        type: "GET",
+                        data: {
+                            comando: "pesquisa_dinamica_nome",
+                            nome_autuante: nome
+                        },
+                        success: function (resultado) {
+                            $("#resultado-autuantes").html(resultado);
+                            $("#paginacao-autuantes").hide();
+                        },
+                        error: function () {
+                            $("#resultado-autuantes").html(
+                                    "<table class='table table-hover'>" +
+                                    "<tbody>" +
+                                    "<tr>" +
+                                    "<td colspan='12' class='text-center text-danger'>" +
+                                    "Erro ao pesquisar autuantes." +
+                                    "</td>" +
+                                    "</tr>" +
+                                    "</tbody>" +
+                                    "</table>"
+                                    );
+                        }
+                    });
+                });
+            });
+        </script>
+
     </body>
 </html>
