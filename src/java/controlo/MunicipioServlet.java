@@ -138,15 +138,7 @@ public class MunicipioServlet extends HttpServlet {
         List<Municipio> municipios;
 
         if (tipoPesquisa.equalsIgnoreCase("provincia")) {
-            try {
-                if (termo.trim().isEmpty()) {
-                    municipios = municipioDAO.findAll();
-                } else {
-                    municipios = municipioDAO.findByProvincia(Integer.parseInt(termo.trim()));
-                }
-            } catch (Exception ex) {
-                municipios = new java.util.ArrayList<Municipio>();
-            }
+            municipios = municipioDAO.findByProvincia(termo);
         } else {
             municipios = municipioDAO.findByNome(termo);
         }
