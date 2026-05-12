@@ -27,7 +27,7 @@
         </tr>
     </thead>
 
-    <tbody>
+    <tbody  id="resultado-autuantes">
         <%
             if (listaAutuantes == null || listaAutuantes.isEmpty()) {
         %>

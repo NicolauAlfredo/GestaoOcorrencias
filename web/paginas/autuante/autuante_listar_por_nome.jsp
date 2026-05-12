@@ -140,12 +140,15 @@
                         </div>
                     </form>
 
-                    <div class="table-responsive">
-                        <div id="resultado-autuantes">
-                            <%@include file="autuante_tabela.jsp" %>
-                        </div>
+                    <div class="table-responsive" id="paginacao-autuantes">  
 
-                        <div class="text-center" id="paginacao-autuantes">
+                        <%
+                            request.setAttribute("listaAutuantes", autuantes);
+                        %>
+
+                        <%@include file="autuante_tabela.jsp" %>
+
+                        <div class="text-center" >
                             <ul class="pagination">
 
                                 <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
@@ -189,30 +192,23 @@
         <script type="text/javascript">
             $(document).ready(function () {
                 $("#nome_autuante").keyup(function () {
-                    var nome = $(this).val();
+                    var termo = $(this).val();
 
                     $.ajax({
                         url: "autuanteServlet",
                         type: "GET",
                         data: {
-                            comando: "pesquisa_dinamica_nome",
-                            nome_autuante: nome
+                            comando: "pesquisar_ajax",
+                            tipo_pesquisa: "nome",
+                            termo: termo
                         },
                         success: function (resultado) {
                             $("#resultado-autuantes").html(resultado);
-                            $("#paginacao-autuantes").hide();
+                            $(".pagination").hide();
                         },
                         error: function () {
                             $("#resultado-autuantes").html(
-                                    "<table class='table table-hover'>" +
-                                    "<tbody>" +
-                                    "<tr>" +
-                                    "<td colspan='12' class='text-center text-danger'>" +
-                                    "Erro ao pesquisar autuantes." +
-                                    "</td>" +
-                                    "</tr>" +
-                                    "</tbody>" +
-                                    "</table>"
+                                    "<tr><td colspan='12' class='text-center text-danger'>Erro ao pesquisar autuantes.</td></tr>"
                                     );
                         }
                     });
