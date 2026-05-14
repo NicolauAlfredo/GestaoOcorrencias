@@ -109,6 +109,17 @@ public class AdministradorServlet extends HttpServlet {
                     if (administrador != null) {
                         HttpSession session = request.getSession();
                         session.setAttribute("administrador", administrador);
+
+                        String lembrarMe = request.getParameter("lembrar_me");
+
+                        if ("sim".equalsIgnoreCase(lembrarMe)) {
+                            javax.servlet.http.Cookie cookieNip = new javax.servlet.http.Cookie("nip_administrador", String.valueOf(administrador.getNipAdministrador()));
+
+                            cookieNip.setMaxAge(60 * 60 * 24 * 7); // 7 dias
+                            cookieNip.setPath(request.getContextPath());
+
+                            response.addCookie(cookieNip);
+                        }
                         pagina = "paginas/index.jsp";
                     } else {
                         request.setAttribute("message", "O NIP ou a palavra-passe está errada.");

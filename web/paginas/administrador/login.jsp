@@ -249,12 +249,26 @@
                                     <span class="glyphicon glyphicon-user"></span>
                                 </span>
 
+                                <%
+                                    String nipGuardado = "";
+                                    Cookie[] cookies = request.getCookies();
+                                    if (cookies != null) {
+                                        for (Cookie cookie : cookies) {
+                                            if ("nip_administrador".equals(cookie.getName())) {
+                                                nipGuardado = cookie.getValue();
+                                                break;
+                                            }
+                                        }
+                                    }
+                                %>
+
                                 <input
                                     class="form-control"
                                     type="text"
                                     id="nip_administrador"
                                     name="nip_administrador"
                                     placeholder="NIP"
+                                    value="<%=nipGuardado%>"
                                     required
                                     autofocus>
                             </div>
