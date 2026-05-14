@@ -29,7 +29,7 @@
 
             ProfissaoDAO profissaoDAO = new ProfissaoDAO();
             List<Profissao> profissoes = profissaoDAO.findAll();
-            %>
+        %>
 
         <!-- Container principal do Bootstrap -->
         <div class="container">              
@@ -148,9 +148,8 @@
 
                                     <div class="form-group">                                                  
                                         <div class="col-xs-6">
-                                            <label class="text-primary" for="altura_testemunha"> &lowast; Altura (m): </label>
-                                            <input type="text" class="form-control" id="altura_testemunha" name="altura_testemunha" required/>
-                                        </div>   
+                                            <label class="text-primary" for="proximidade_testemunha"> &lowast; Proximidade: </label>
+                                            <input type="text" class="form-control" id="proximidade_testemunha" name="proximidade_testemunha" required/>  </div>   
                                     </div> 
 
                                     <div class="form-group">                                                  
