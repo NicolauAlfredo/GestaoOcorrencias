@@ -44,14 +44,21 @@ public class OcorrenciaServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, ParseException {
+
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
+
         String comando = request.getParameter("comando");
+
         if (comando == null) {
             comando = "principal";
         }
+
         OcorrenciaDAO ocorrenciaDAO;
         Ocorrencia ocorrencia = new Ocorrencia();
         if (comando == null || !comando.equalsIgnoreCase("principal")) {
+
             try {
                 String idOcorrencia = request.getParameter("id_ocorrencia");
                 if (idOcorrencia != null) {

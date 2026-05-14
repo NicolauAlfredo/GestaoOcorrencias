@@ -6,6 +6,7 @@
 
 <%@page import="modelo.TipoOcorrencia"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -30,7 +31,7 @@
             <div id="page-wrapper">                
                 <div class="row">
                     <div class="col-lg-12">
-                        <%@include file="../../menus/cabecalho.jsp" %>
+                        <%@include file="../../components/cabecalho.jsp" %>
                         <h1 class="page-header text-primary">Tipo de Ocorrência</h1>
                     </div>
                 </div>

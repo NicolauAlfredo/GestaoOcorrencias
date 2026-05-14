@@ -10,7 +10,8 @@
 <%@page import="dao.MunicipioDAO"%>
 <%@page import="modelo.Municipio"%>
 <%@page import="java.util.List"%>
-<%@page contentType="text/html" pageEncoding="ISO-8859-1"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -45,9 +46,9 @@
                 </div>
             </div>
 
-            <!-- Linha de divisão -->
+            <!-- Linha de divisÃ£o -->
             <div class="row">
-                <!-- Área da linha -->
+                <!-- Ãrea da linha -->
                 <div class="col-lg-12">
                     <div class="panel panel-default">                       
                         <div class="panel-heading">
@@ -57,12 +58,12 @@
                             <div class="alert alert-success">
                                 <p>${message}</p>
                             </div>
-                            <p class="text-info"> &lowast; Campos de preenchimento obrigatório</p>
+                            <p class="text-info"> &lowast; Campos de preenchimento obrigatÃ³rio</p>
                         </div>
 
-                        <!-- Corpo da página -->
+                        <!-- Corpo da pÃ¡gina -->
                         <div class="panel-body">
-                            <!-- Área do corpo-->
+                            <!-- Ãrea do corpo-->
                             <div class="col-lg-12">
                                 <form name="form_autuado" accept-charset="ISO-8859-1, UTF-8" role="form" action="autuadoServlet?comando=guardar" method="POST">
                                     <div class="form-group">                                                  
@@ -81,21 +82,21 @@
 
                                     <div class="form-group">                                                 
                                         <div class="col-xs-6">
-                                            <label class="text-primary" for="mae_autuado"> Nome da Mãe: </label>
+                                            <label class="text-primary" for="mae_autuado"> Nome da MÃ£e: </label>
                                             <input type="text" class="form-control" id="mae_autuado" name="mae_autuado"/>
                                         </div>
                                     </div>                                 
 
                                     <div class="form-group"> 
                                         <div class="col-xs-6">
-                                            <label class="text-primary" for="bi_autuado"> &lowast; Bilhete de Identidade Nº: </label>
+                                            <label class="text-primary" for="bi_autuado"> &lowast; Bilhete de Identidade NÂº: </label>
                                             <input type="text" class="form-control" id="bi_autuado" name="bi_autuado" required pattern="^[0-9]{9}[A-Z]{2}[0-9]{3}$"/>
                                         </div>
                                     </div>
 
                                     <div class="form-group">                                                                                                                                                                
                                         <div class="col-xs-6">
-                                            <label class="text-primary" for="residencia_autuado"> &lowast; Residência: </label>
+                                            <label class="text-primary" for="residencia_autuado"> &lowast; ResidÃªncia: </label>
                                             <input type="text" class="form-control" id="residencia_autuado" name="residencia_autuado"/>
                                         </div>
                                     </div>  
@@ -118,7 +119,7 @@
 
                                     <div class="form-group">                                                 
                                         <div class="col-xs-6">
-                                            <label class="text-primary" for="proximidade_autuado"> &lowast; Próximo de: </label>
+                                            <label class="text-primary" for="proximidade_autuado"> &lowast; PrÃ³ximo de: </label>
                                             <input type="text" class="form-control" id="proximidade_autuado" name="proximidade_autuado" required/>
                                         </div>
                                     </div> 
@@ -152,14 +153,14 @@
 
                                     <div class="form-group">
                                         <div class="col-xs-6" >
-                                            <label class="text-primary" for="data_validade_bi_autuado"> &lowast; B.I. Válido até:</label>
+                                            <label class="text-primary" for="data_validade_bi_autuado"> &lowast; B.I. VÃ¡lido atÃ©:</label>
                                             <input type="text" class="form-control" id="data_validade_bi_autuado" name="data_validade_bi_autuado" placeholder="dd/MM/yyyy" required/>
                                         </div>
                                     </div>
 
                                     <div class="form-group">                                                 
                                         <div class="col-xs-6">
-                                            <label class="text-primary" for="estado_civil_autuado"> &lowast; Estado cívil: </label>
+                                            <label class="text-primary" for="estado_civil_autuado"> &lowast; Estado cÃ­vil: </label>
                                             <input type="text" class="form-control" id="estado_civil_autuado" name="estado_civil_autuado" required/>
                                         </div>
                                     </div>
@@ -173,7 +174,7 @@
 
                                     <div class="form-group">                                                
                                         <div class="col-xs-6" >
-                                            <label class="text-primary" for="select_profissao_autuado">Profissão:</label>
+                                            <label class="text-primary" for="select_profissao_autuado">ProfissÃ£o:</label>
                                             <select class="form-control" id="select_profissao_autuado" name="select_profissao_autuado">
                                                 <% for (Profissao profissao : profissoes) {%>
                                                 <option value="<%=profissao.getIdProfissao()%>">
@@ -199,19 +200,19 @@
                                     </div>
                                 </form>  
                             </div>
-                            <!-- Fim da área do Corpo -->
+                            <!-- Fim da Ã¡rea do Corpo -->
                         </div>
                         <!-- Fim do Corpo -->
                     </div>
                 </div>
-                <!-- Fim da área da linha -->
+                <!-- Fim da Ã¡rea da linha -->
 
-                <!-- Rodapé -->
+                <!-- RodapÃ© -->
                 <%@include file="../../components/rodape.jsp" %>
-                <!-- Fim do Rodapé-->
+                <!-- Fim do RodapÃ©-->
 
             </div>
-            <!-- Fim da Linha de Divisão -->
+            <!-- Fim da Linha de DivisÃ£o -->
         </div>
         <!-- Fim do Container -->
     </body>

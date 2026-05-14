@@ -4,7 +4,8 @@
     Author     : user
 --%>
 
-<%@page contentType="text/html" pageEncoding="ISO-8859-1"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -12,7 +13,7 @@
 
         <base href="<%=request.getContextPath()%>/"> 
 
-        <title>Tipo de Ocorrência</title>
+        <title>Tipo de OcorrÃªncia</title>
 
         <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -26,30 +27,30 @@
             <div id="page-wrapper">                
                 <div class="row">
                     <div class="col-lg-12">
-                        <%@include file="../../menus/cabecalho.jsp" %>
-                        <h1 class="page-header text-primary" title="Ver registos"><a href="paginas/tipo/tipo_ocorrencia_listar.jsp">Tipo de Ocorrência</a></h1>
+                        <%@include file="../../components/cabecalho.jsp" %>
+                        <h1 class="page-header text-primary" title="Ver registos"><a href="paginas/tipo/tipo_ocorrencia_listar.jsp">Tipo de OcorrÃªncia</a></h1>
                     </div>
                 </div>
             </div>
 
-            <!-- Linha de divisão -->
+            <!-- Linha de divisÃ£o -->
             <div class="row">
-                <!-- Área da linha -->
+                <!-- Ãrea da linha -->
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <p class="text-primary"> 
-                                Registo de Tipo de Ocorrência 
+                                Registo de Tipo de OcorrÃªncia 
                             </p>
                             <div class="alert alert-success">
                                 <p>${message}</p>
                             </div>
-                            <p class="text-info"> &lowast; Campos de preenchimento obrigatório</p>
+                            <p class="text-info"> &lowast; Campos de preenchimento obrigatÃ³rio</p>
                         </div>
 
-                        <!-- Corpo da página -->
+                        <!-- Corpo da pÃ¡gina -->
                         <div class="panel-body">
-                            <!-- Área do corpo-->
+                            <!-- Ãrea do corpo-->
                             <div class="col-lg-12">
                                 <form role="form" accept-charset="ISO-8859-1, UTF-8" action="tipoOcorrenciaServlet?comando=guardar" method="POST">
                                     <div class="form-group">
@@ -81,19 +82,19 @@
                                     </div>
                                 </form>   
                             </div>
-                            <!-- Fim da área do Corpo -->
+                            <!-- Fim da Ã¡rea do Corpo -->
                         </div>
                         <!-- Fim do Corpo -->
                     </div>
                 </div>
-                <!-- Fim da área da linha -->
+                <!-- Fim da Ã¡rea da linha -->
 
-                <!-- Rodapé -->
-                <%@include file="../../menus/rodape.jsp" %>
-                <!-- Fim do Rodapé-->
+                <!-- RodapÃ© -->
+                <%@include file="../../components/rodape.jsp" %>
+                <!-- Fim do RodapÃ©-->
 
             </div>
-            <!-- Fim da Linha de Divisão -->
+            <!-- Fim da Linha de DivisÃ£o -->
         </div>
         <!-- Fim do Container -->
     </body>

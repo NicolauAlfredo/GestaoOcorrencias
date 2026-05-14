@@ -16,7 +16,8 @@
 <%@page import="dao.PatenteDAO"%>
 <%@page import="modelo.Municipio"%>
 <%@page import="modelo.Municipio"%>
-<%@page contentType="text/html" pageEncoding="ISO-8859-1"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -56,9 +57,9 @@
                 </div>
             </div>
 
-            <!-- Linha de divisão -->
+            <!-- Linha de divisÃ£o -->
             <div class="row">
-                <!-- Área da linha -->
+                <!-- Ãrea da linha -->
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -68,12 +69,12 @@
                             <div class="alert alert-success">
                                 <p>${message}</p>
                             </div>
-                            <p class="text-info"> &lowast; Campos de preenchimento obrigatório</p>
+                            <p class="text-info"> &lowast; Campos de preenchimento obrigatÃ³rio</p>
                         </div>
 
-                        <!-- Corpo da página -->
+                        <!-- Corpo da pÃ¡gina -->
                         <div class="panel-body">
-                            <!-- Área do corpo-->
+                            <!-- Ãrea do corpo-->
                             <div class="col-lg-12">
                                 <form name="form_autuante" accept-charset="ISO-8859-1, UTF-8" role="form" action="autuanteServlet?comando=editar" method="POST">
                                     <div class="form-group">                                                
@@ -99,21 +100,21 @@
 
                                     <div class="form-group">                                                 
                                         <div class="col-xs-6">
-                                            <label class="text-primary" for="mae_autuante"> Nome da Mãe: </label>
+                                            <label class="text-primary" for="mae_autuante"> Nome da MÃ£e: </label>
                                             <input type="text" class="form-control" id="mae_autuante" name="mae_autuante" value="<%=autuante.getMaeAutuante()%>"/>
                                         </div>
                                     </div>                                 
 
                                     <div class="form-group"> 
                                         <div class="col-xs-6">
-                                            <label class="text-primary" for="bi_autuante"> &lowast; Bilhete de Identidade Nº: </label>
+                                            <label class="text-primary" for="bi_autuante"> &lowast; Bilhete de Identidade NÂº: </label>
                                             <input type="text" class="form-control" id="bi_autuante" name="bi_autuante" value="<%=autuante.getBiAutuante()%>" required pattern="^[0-9]{9}[A-Z]{2}[0-9]{3}$"/>
                                         </div>
                                     </div>
 
                                     <div class="form-group">                                                 
                                         <div class="col-xs-6">
-                                            <label class="text-primary" for="residencia_autuante"> &lowast; Residência: </label>
+                                            <label class="text-primary" for="residencia_autuante"> &lowast; ResidÃªncia: </label>
                                             <input type="text" class="form-control" id="residencia_autuante" name="residencia_autuante" value="<%=autuante.getResidenciaAutuante()%>"/>
                                         </div>
                                     </div>  
@@ -170,7 +171,7 @@
 
                                     <div class="form-group">
                                         <div class="col-xs-6" >
-                                            <label class="text-primary" for="data_validade_bi_autuante"> &lowast; B.I. Válido até:</label>
+                                            <label class="text-primary" for="data_validade_bi_autuante"> &lowast; B.I. VÃ¡lido atÃ©:</label>
                                             <input type="text" class="form-control" id="data_validade_bi_autuante" name="data_validade_bi_autuante" placeholder="dd/MM/yyyy"  value="<%=DateUtil.formataData(autuante.getDataValidadeBiAutuante())%>" required/>
                                         </div>
                                     </div>
@@ -230,19 +231,19 @@
                                     </div>
                                 </form>     
                             </div>
-                            <!-- Fim da área do Corpo -->
+                            <!-- Fim da Ã¡rea do Corpo -->
                         </div>
                         <!-- Fim do Corpo -->
                     </div>
                 </div>
-                <!-- Fim da área da linha -->
+                <!-- Fim da Ã¡rea da linha -->
 
-                <!-- Rodapé -->
+                <!-- RodapÃ© -->
                 <%@include file="../../components/rodape.jsp" %>
-                <!-- Fim do Rodapé-->
+                <!-- Fim do RodapÃ©-->
 
             </div>
-            <!-- Fim da Linha de Divisão -->
+            <!-- Fim da Linha de DivisÃ£o -->
         </div>
         <!-- Fim do Container -->
     </body>

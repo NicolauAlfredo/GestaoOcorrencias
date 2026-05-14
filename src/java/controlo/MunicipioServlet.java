@@ -38,9 +38,13 @@ public class MunicipioServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, Exception {
+        
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
 
         String comando = request.getParameter("comando");
+
         if (comando == null) {
             comando = "principal";
         }

@@ -5,7 +5,8 @@
 --%>
 
 <%@page import="modelo.Profissao"%>
-<%@page contentType="text/html" pageEncoding="ISO-8859-1"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,7 +14,7 @@
         
         <base href="<%=request.getContextPath()%>/"> 
 
-        <title>Profiss„o</title>
+        <title>Profiss√£o</title>
 
         <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -31,29 +32,29 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <%@include file="../../components/cabecalho.jsp" %>
-                        <h1 class="page-header text-primary">Profiss„o</h1>
+                        <h1 class="page-header text-primary">Profiss√£o</h1>
                     </div>
                 </div>
             </div>
 
-            <!-- Linha de divis„o -->
+            <!-- Linha de divis√£o -->
             <div class="row">
-                <!-- ¡rea da linha -->
+                <!-- √Årea da linha -->
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <p class="text-primary"> 
-                                Editar dados da Profiss„o: <strong> <%=profissao.getNomeProfissao()%> </strong>
+                                Editar dados da Profiss√£o: <strong> <%=profissao.getNomeProfissao()%> </strong>
                             </p>
                             <div class="alert alert-success">
                                 <p>${message}</p>
                             </div>
-                            <p class="text-info"> &lowast; Campos de preenchimento obrigatÛrio</p>
+                            <p class="text-info"> &lowast; Campos de preenchimento obrigat√≥rio</p>
                         </div>
 
-                        <!-- Corpo da p·gina -->
+                        <!-- Corpo da p√°gina -->
                         <div class="panel-body">
-                            <!-- ¡rea do corpo-->
+                            <!-- √Årea do corpo-->
                             <div class="col-lg-12">
                                 <form role="form" accept-charset="ISO-8859-1, UTF-8" action="profissaoServlet?comando=editar" method="POST">
                                     <div class="form-group">
@@ -85,19 +86,19 @@
                                     </div>
                                 </form>   
                             </div>
-                            <!-- Fim da ·rea do Corpo -->
+                            <!-- Fim da √°rea do Corpo -->
                         </div>
                         <!-- Fim do Corpo -->
                     </div>
                 </div>
-                <!-- Fim da ·rea da linha -->
+                <!-- Fim da √°rea da linha -->
 
-                <!-- RodapÈ -->
+                <!-- Rodap√© -->
                 <%@include file="../../components/rodape.jsp" %>
-                <!-- Fim do RodapÈ-->
+                <!-- Fim do Rodap√©-->
 
             </div>
-            <!-- Fim da Linha de Divis„o -->
+            <!-- Fim da Linha de Divis√£o -->
         </div>
         <!-- Fim do Container -->
     </body>

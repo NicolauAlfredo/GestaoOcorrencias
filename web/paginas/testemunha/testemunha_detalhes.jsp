@@ -7,6 +7,7 @@
 <%@page import="modelo.DateUtil"%>
 <%@page import="modelo.Testemunha"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -31,7 +32,7 @@
             <div id="page-wrapper">                
                 <div class="row">
                     <div class="col-lg-12">
-                        <%@include file="../../menus/cabecalho.jsp" %>
+                        <%@include file="../../components/cabecalho.jsp" %>
                         <h1 class="page-header text-primary">Testemunha</h1>
                     </div>
                 </div>
@@ -146,7 +147,7 @@
                 <!-- Fim da área da linha -->
 
                 <!-- Rodapé -->
-                <%@include file="../../menus/rodape.jsp" %>
+                <%@include file="../../components/rodape.jsp" %>
                 <!-- Fim do Rodapé-->
 
             </div>   

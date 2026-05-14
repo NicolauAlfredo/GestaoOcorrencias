@@ -4,134 +4,167 @@
     Author     : user
 --%>
 
+<%@page import="java.net.URLEncoder"%>
 <%@page import="dao.TipoOcorrenciaDAO"%>
 <%@page import="java.util.List"%>
 <%@page import="modelo.TipoOcorrencia"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        
-        <base href="<%=request.getContextPath()%>/"> 
+        <base href="<%=request.getContextPath()%>/">
 
         <title>Tipo de Ocorrência</title>
 
         <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
         <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
         <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
+
     <body>
         <%
             TipoOcorrenciaDAO tipoOcorrenciaDAO = new TipoOcorrenciaDAO();
-            List<TipoOcorrencia> tipoOcorrencias = tipoOcorrenciaDAO.findAll();
+
+            String termo = request.getParameter("termo");
+            String paginaParametro = request.getParameter("pagina");
+
+            if (termo == null) {
+                termo = "";
+            }
+
+            int paginaActual = 1;
+
+            if (paginaParametro != null && !paginaParametro.trim().isEmpty()) {
+                try {
+                    paginaActual = Integer.parseInt(paginaParametro);
+                } catch (NumberFormatException ex) {
+                    paginaActual = 1;
+                }
+            }
+
+            if (paginaActual < 1) {
+                paginaActual = 1;
+            }
+
+            int quantidadePaginas;
+            List<TipoOcorrencia> tipoOcorrencias;
+
+            if (termo.trim().isEmpty()) {
+                quantidadePaginas = tipoOcorrenciaDAO.quantidadePaginas();
+                tipoOcorrencias = tipoOcorrenciaDAO.consultarPagina(String.valueOf(paginaActual));
+            } else {
+                quantidadePaginas = tipoOcorrenciaDAO.quantidadePaginasPorNome(termo);
+                tipoOcorrencias = tipoOcorrenciaDAO.consultarPaginaPorNome(termo, String.valueOf(paginaActual));
+            }
+
+            if (quantidadePaginas < 1) {
+                quantidadePaginas = 1;
+            }
+
+            if (paginaActual > quantidadePaginas) {
+                paginaActual = quantidadePaginas;
+            }
+
+            request.setAttribute("tipoOcorrencias", tipoOcorrencias);
+
+            String termoUrl = URLEncoder.encode(termo, "UTF-8");
         %>
 
-        <!-- Container principal do Bootstrap -->
         <div class="container">
             <div id="page-wrapper">
                 <div class="row">
                     <div class="col-lg-12">
-                        <%@include file="../../menus/cabecalho.jsp" %>
-                        <h1 class="page-header text-primary" title="Registar tipo ocorrência"> <a href="paginas/tipo/tipo_ocorrencia_registo.jsp">Tipo de Ocorrência</a></h1>
+                        <%@include file="../../components/cabecalho.jsp" %>
+
+                        <h1 class="page-header text-primary" title="Registar tipo ocorrência">
+                            <a href="paginas/tipo/tipo_ocorrencia_registo.jsp">
+                                Tipo de Ocorrência
+                            </a>
+                        </h1>
+
+                        <%                            String message = (String) request.getAttribute("message");
+
+                            if (message != null && !message.trim().isEmpty()) {
+                        %>
                         <div class="alert alert-info">
-                            <p>${message}</p>
+                            <p><%=message%></p>
                         </div>
-                    </div>                 
+                        <% }%>
+                    </div>
                 </div>
             </div>
 
-            <!-- Linha de divisão -->
             <div class="row">
-                <!-- Área da linha -->
                 <div class="col-lg-12">
                     <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <!-- Botão Suspenso -->
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                    <span class="glyphicon glyphicon-menu-down"> Operações </span>
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a href="listaOcorrencias"> <span class="glyphicon glyphicon-print"> Imprimir </span> </a></li>
-                                    <li><a href="paginas/tipo/tipo_ocorrencia_listar_por_nome.jsp"> <span class="glyphicon glyphicon-search"> Pesquisar </span> </a></li>
-                                </ul>
-                            </div>
-                            <!-- Fim do Botão Suspenso -->
-                        </div>
-
-                        <!-- Corpo da página -->
                         <div class="panel-body">
-                            <form>
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-primary">#</th>
-                                                <th class="text-primary">Nome</th>
-                                                <th class="text-primary" colspan="4">Operações</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <%for (TipoOcorrencia tipoOcorrencia : tipoOcorrencias) {%>
-                                            <tr>
-                                                <td><%=tipoOcorrencia.getIdTipoOcorrencia()%></td>
-                                                <td><%=tipoOcorrencia.getNomeTipoOcorrencia()%></td>
 
-                                                <td>
-                                                    <a href="tipoOcorrenciaServlet?comando=detalhes&id_tipo_ocorrencia=<%=tipoOcorrencia.getIdTipoOcorrencia()%>">
-                                                        <span class="glyphicon glyphicon-print"></span>
-                                                    </a>
-                                                </td>
+                            <form action="paginas/tipo/tipo_ocorrencia_listar.jsp" method="GET">
+                                <div class="form-group input-group">
+                                    <input
+                                        type="search"
+                                        name="termo"
+                                        id="pesquisa_tipo_ocorrencia"
+                                        class="form-control"
+                                        placeholder="Pesquisar tipo de ocorrência"
+                                        autocomplete="off"
+                                        value="<%=termo%>">
 
-                                                <td>
-                                                    <a href="tipoOcorrenciaServlet?comando=detalhes&id_tipo_ocorrencia=<%=tipoOcorrencia.getIdTipoOcorrencia()%>">
-                                                        <span class="glyphicon glyphicon-zoom-in"></span>
-                                                    </a>
-                                                </td>
-
-                                                <td>
-                                                    <a href="tipoOcorrenciaServlet?comando=prepara_editar&id_tipo_ocorrencia=<%=tipoOcorrencia.getIdTipoOcorrencia()%>">
-                                                        <span class="glyphicon glyphicon-edit"></span>
-                                                    </a>
-                                                </td>
-
-                                                <td>
-                                                    <a href="tipoOcorrenciaServlet?comando=eliminar&id_tipo_ocorrencia=<%=tipoOcorrencia.getIdTipoOcorrencia()%>">
-                                                        <span class="glyphicon glyphicon-trash"></span>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            <%}%>
-                                        </tbody>
-                                    </table>
-                                    <!-- Paginação -->
-                                    <ul class="pagination"> 
-                                        <li><a href="#">&laquo;</a></li> 
-                                        <li><a href="#">1</a></li>
-                                        <li><a href="#">2</a></li> 
-                                        <li><a href="#">3</a></li> 
-                                        <li><a href="#">4</a></li> 
-                                        <li><a href="#">5</a></li> 
-                                        <li><a href="#">&raquo;</a></li> 
-                                    </ul>
-                                    <!-- Fim da Paginação-->
-                                </div> 
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="glyphicon glyphicon-search"></i>
+                                        </button>
+                                    </span>
+                                </div>
                             </form>
+
+                            <div class="table-responsive">
+                                <div id="resultado-tipos-ocorrencia-wrapper">
+                                    <%@include file="tipo_ocorrencia_tabela.jsp" %>
+
+                                    <%  request.setAttribute("paginaActual", paginaActual);
+                                        request.setAttribute("quantidadePaginas", quantidadePaginas);
+                                        request.setAttribute("urlBase", "paginas/tipo/tipo_ocorrencia_listar.jsp");
+                                        request.setAttribute("queryStringExtra", "termo=" + termoUrl);
+                                    %>
+
+                                    <%@include file="../../components/paginacao.jsp" %>
+                                </div>
+                            </div>
+
                         </div>
-                    </div>                   
-                </div> 
-                <!-- Fim da área da linha-->
+                    </div>
+                </div>
 
-                <!-- Rodapé -->
-                <%@include file="../../menus/rodape.jsp" %>
-                <!-- Fim do Rodapé-->
-
+                <%@include file="../../components/rodape.jsp" %>
             </div>
-            <!-- Fim da linha de divisão -->
         </div>
-        <!-- Fim do Container -->
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var tempoEspera = null;
+
+                function pesquisarTiposOcorrencia(pagina) {
+                    var termo = $("#pesquisa_tipo_ocorrencia").val();
+
+                    $("#resultado-tipos-ocorrencia-wrapper").load(
+                            "paginas/tipo/tipo_ocorrencia_listar.jsp?termo="
+                            + encodeURIComponent(termo)
+                            + "&pagina=" + encodeURIComponent(pagina)
+                            + " #resultado-tipos-ocorrencia-wrapper > *"
+                            );
+                }
+
+                $("#pesquisa_tipo_ocorrencia").keyup(function () {
+                    clearTimeout(tempoEspera);
+
+                    tempoEspera = setTimeout(function () {
+                        pesquisarTiposOcorrencia(1);
+                    }, 300);
+                });
+            });
+        </script>
     </body>
 </html>

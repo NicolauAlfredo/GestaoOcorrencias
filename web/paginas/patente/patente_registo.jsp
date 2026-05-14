@@ -4,7 +4,8 @@
     Author     : user
 --%>
 
-<%@page contentType="text/html" pageEncoding="ISO-8859-1"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -32,9 +33,9 @@
                 </div>
             </div>
 
-            <!-- Linha de divisão -->
+            <!-- Linha de divisÃ£o -->
             <div class="row">
-                <!-- Área da linha -->
+                <!-- Ãrea da linha -->
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -44,12 +45,12 @@
                             <div class="alert alert-success">
                                 <p>${message}</p>
                             </div>
-                            <p class="text-info"> &lowast; Campos de preenchimento obrigatório</p>
+                            <p class="text-info"> &lowast; Campos de preenchimento obrigatÃ³rio</p>
                         </div>
 
-                        <!-- Corpo da página -->
+                        <!-- Corpo da pÃ¡gina -->
                         <div class="panel-body">
-                            <!-- Área do corpo-->
+                            <!-- Ãrea do corpo-->
                             <div class="col-lg-12">
                                 <form role="form" accept-charset="ISO-8859-1, UTF-8" action="patenteServlet?comando=guardar" method="POST">
                                     <div class="form-group">
@@ -81,19 +82,19 @@
                                     </div>
                                 </form>   
                             </div>
-                            <!-- Fim da área do Corpo -->
+                            <!-- Fim da Ã¡rea do Corpo -->
                         </div>
                         <!-- Fim do Corpo -->
                     </div>
                 </div>
-                <!-- Fim da área da linha -->
+                <!-- Fim da Ã¡rea da linha -->
 
-                <!-- Rodapé -->
+                <!-- RodapÃ© -->
                 <%@include file="../../components/rodape.jsp" %>
-                <!-- Fim do Rodapé-->
+                <!-- Fim do RodapÃ©-->
 
             </div>
-            <!-- Fim da Linha de Divisão -->
+            <!-- Fim da Linha de DivisÃ£o -->
         </div>
         <!-- Fim do Container -->
     </body>

@@ -8,7 +8,8 @@
 <%@page import="modelo.Administrador"%>
 <%@page import="java.util.List"%>
 <%@page import="dao.AdministradorDAO"%>
-<%@page contentType="text/html" pageEncoding="ISO-8859-1"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -40,9 +41,9 @@
                 </div>
             </div>
 
-            <!-- Linha de divisão -->
+            <!-- Linha de divisÃ£o -->
             <div class="row">
-                <!-- Área da linha -->
+                <!-- Ãrea da linha -->
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -52,12 +53,12 @@
                             <div class="alert alert-success">
                                 <p>${message}</p>
                             </div>
-                            <p class="text-info"> &lowast; Campos de preenchimento obrigatório</p>
+                            <p class="text-info"> &lowast; Campos de preenchimento obrigatÃ³rio</p>
                         </div>
 
-                        <!-- Corpo da página -->
+                        <!-- Corpo da pÃ¡gina -->
                         <div class="panel-body">
-                            <!-- Área do corpo-->
+                            <!-- Ãrea do corpo-->
                             <div class="col-lg-12">
                                 <form role="form" accept-charset="ISO-8859-1, UTF-8" name="form_administrador" action="administradorServlet?comando=guardar" method="POST">
                                     <div class="form-group">
@@ -93,7 +94,7 @@
 
                                     <div class="form-group"> 
                                         <div class="col-xs-6">
-                                            <label class="text-primary" for="bi_administrador"> &lowast; Bilhete de Identidade Nº: </label>
+                                            <label class="text-primary" for="bi_administrador"> &lowast; Bilhete de Identidade NÂº: </label>
                                             <input type="text" class="form-control" id="bi_administrador" name="bi_administrador" required pattern="^[0-9]{9}[A-Z]{2}[0-9]{3}$"/>
                                         </div>
                                     </div>
@@ -115,7 +116,7 @@
 
                                     <div class="form-group">
                                         <div class="col-xs-6" > 
-                                            <label class="text-primary" for="telefone_administrador"> Nº Telefone:</label>
+                                            <label class="text-primary" for="telefone_administrador"> NÂº Telefone:</label>
                                             <input type="text" class="form-control" id="telefone_administrador" name="telefone_administrador" pattern="^[9-9]{1}[1-9]{2}[0-9]{3}[0-9]{3}$"/>
                                         </div>
                                     </div>
@@ -142,19 +143,19 @@
                                     </div>
                                 </form>
                             </div>
-                            <!-- Fim da área do Corpo -->
+                            <!-- Fim da Ã¡rea do Corpo -->
                         </div>
                         <!-- Fim do Corpo -->
                     </div>
                 </div>
-                <!-- Fim da área da linha -->
+                <!-- Fim da Ã¡rea da linha -->
 
-                <!-- Rodapé -->
+                <!-- RodapÃ© -->
                 <%@include file="../../components/rodape.jsp" %>
-                <!-- Fim do Rodapé-->
+                <!-- Fim do RodapÃ©-->
 
             </div>
-            <!-- Fim da Linha de Divisão -->
+            <!-- Fim da Linha de DivisÃ£o -->
         </div>
         <!-- Fim do Container -->
     </body>

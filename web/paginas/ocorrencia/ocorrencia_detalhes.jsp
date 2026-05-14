@@ -7,6 +7,7 @@
 <%@page import="modelo.DateUtil"%>
 <%@page import="modelo.Ocorrencia"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>

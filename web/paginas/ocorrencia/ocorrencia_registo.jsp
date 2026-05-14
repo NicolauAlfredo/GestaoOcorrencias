@@ -18,7 +18,8 @@
 <%@page import="modelo.Municipio"%>
 <%@page import="dao.MunicipioDAO"%>
 <%@page import="modelo.Municipio"%>
-<%@page contentType="text/html" pageEncoding="ISO-8859-1"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -26,7 +27,7 @@
 
         <base href="<%=request.getContextPath()%>/"> 
 
-        <title>Ocorrência</title>
+        <title>OcorrÃªncia</title>
 
         <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -60,62 +61,62 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <%@include file="../../components/cabecalho.jsp" %>
-                        <h1 class="page-header text-primary" title="Ver registos"><a href="paginas/ocorrencia/ocorrencia_listar.jsp">Ocorrência</a></h1>
+                        <h1 class="page-header text-primary" title="Ver registos"><a href="paginas/ocorrencia/ocorrencia_listar.jsp">OcorrÃªncia</a></h1>
                     </div>
                 </div>
             </div>
 
-            <!-- Linha de divisão -->
+            <!-- Linha de divisÃ£o -->
             <div class="row">
-                <!-- Área da linha -->
+                <!-- Ãrea da linha -->
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <p class="text-primary"> 
-                                Registo de Ocorrência 
+                                Registo de OcorrÃªncia 
                             </p>
                             <div class="alert alert-success">
                                 <p>${message}</p>
                             </div>
-                            <p class="text-info"> &lowast; Campos de preenchimento obrigatório</p>
+                            <p class="text-info"> &lowast; Campos de preenchimento obrigatÃ³rio</p>
                         </div>
 
-                        <!-- Corpo da página -->
+                        <!-- Corpo da pÃ¡gina -->
                         <div class="panel-body">
-                            <!-- Área do corpo-->
+                            <!-- Ãrea do corpo-->
                             <div class="col-lg-12">
                                 <form role="form" accept-charset="ISO-8859-1, UTF-8" action="ocorrenciaServlet?comando=guardar" method="POST">
                                     <div class="form-group">
                                         <div class="col-xs-6" > 
-                                            <label class="text-primary" for="data_ocorrencia"> &lowast; Data da Ocorrência:</label>
+                                            <label class="text-primary" for="data_ocorrencia"> &lowast; Data da OcorrÃªncia:</label>
                                             <input type="text" class="form-control" id="data_ocorrencia" name="data_ocorrencia" placeholder="dd/MM/yyyy" required/>
                                         </div>
                                     </div>
 
                                     <div class="form-group">                                                 
                                         <div class="col-xs-6">
-                                            <label class="text-primary" for="hora_ocorrencia"> &lowast; Hora da Ocorrência: </label>
+                                            <label class="text-primary" for="hora_ocorrencia"> &lowast; Hora da OcorrÃªncia: </label>
                                             <input type="time" class="form-control" id="hora_ocorrencia" name="hora_ocorrencia" required/>
                                         </div>
                                     </div>
 
                                     <div class="form-group">                                                 
                                         <div class="col-xs-6">
-                                            <label class="text-primary" for="rua_ocorrencia"> &lowast; Rua da Ocorrência: </label>
+                                            <label class="text-primary" for="rua_ocorrencia"> &lowast; Rua da OcorrÃªncia: </label>
                                             <input type="text" class="form-control" id="rua_ocorrencia" name="rua_ocorrencia" required/>
                                         </div>
                                     </div>   
 
                                     <div class="form-group"> 
                                         <div class="col-xs-6">
-                                            <label class="text-primary" for="cidade_ocorrencia"> &lowast; Cidade da Ocorrência: </label>
+                                            <label class="text-primary" for="cidade_ocorrencia"> &lowast; Cidade da OcorrÃªncia: </label>
                                             <input type="text" class="form-control" id="cidade_ocorrencia" name="cidade_ocorrencia" spellcheck="true" required/>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <div class="col-xs-6" >
-                                            <label class="text-primary" for="descricao_ocorrencia"> &lowast; Descrição:</label>
+                                            <label class="text-primary" for="descricao_ocorrencia"> &lowast; DescriÃ§Ã£o:</label>
                                             <textarea class="form-control" rows="3" id="descricao_ocorrencia" name="descricao_ocorrencia" required></textarea>
                                         </div>
                                     </div>
@@ -135,7 +136,7 @@
 
                                     <div class="form-group">                                                
                                         <div class="col-xs-6" >
-                                            <label class="text-primary"  for="select_tipo_ocorrencia"> &lowast; Tipo de Ocorrência:</label>
+                                            <label class="text-primary"  for="select_tipo_ocorrencia"> &lowast; Tipo de OcorrÃªncia:</label>
                                             <select class="form-control" id="select_tipo_ocorrencia" name="select_tipo_ocorrencia">
                                                 <% for (TipoOcorrencia tipoOcorrencia : tipoOcorrencias) {%>
                                                 <option value="<%=tipoOcorrencia.getIdTipoOcorrencia()%>">
@@ -161,21 +162,21 @@
 
                                     <div class="form-group">                                                 
                                         <div class="col-xs-6">
-                                            <label class="text-primary" for="bairro_ocorrencia"> &lowast; Bairro da Ocorrência: </label>
+                                            <label class="text-primary" for="bairro_ocorrencia"> &lowast; Bairro da OcorrÃªncia: </label>
                                             <input type="text" class="form-control" id="bairro_ocorrencia" name="bairro_ocorrencia" required/>
                                         </div>
                                     </div>  
 
                                     <div class="form-group">                                                 
                                         <div class="col-xs-6">
-                                            <label class="text-primary" for="proximidade_ocorrencia"> &lowast; Proximidade de localização: </label>
+                                            <label class="text-primary" for="proximidade_ocorrencia"> &lowast; Proximidade de localizaÃ§Ã£o: </label>
                                             <input type="text" class="form-control" id="proximidade_ocorrencia" name="proximidade_ocorrencia" required/>
                                         </div>
                                     </div>  
 
                                     <div class="form-group">                                               
                                         <div class="col-xs-6" >
-                                            <label class="text-primary" for="select_municipio"> &lowast; Município:</label>
+                                            <label class="text-primary" for="select_municipio"> &lowast; MunicÃ­pio:</label>
                                             <select class="form-control" id="select_municipio" name="select_municipio">
                                                 <% for (Municipio municipio : municipios) {%>
                                                 <option value="<%=municipio.getIdMunicipio()%>">
@@ -188,7 +189,7 @@
 
                                     <div class="form-group">                                                
                                         <div class="col-xs-6" >
-                                            <label class="text-primary"  for="select_testemunha"> &lowast; 1º Testemunha:</label>
+                                            <label class="text-primary"  for="select_testemunha"> &lowast; 1Âº Testemunha:</label>
                                             <select class="form-control" id="select_testemunha" name="select_testemunha">
                                                 <% for (Testemunha testemunha : testemunhas) {%>
                                                 <option value="<%=testemunha.getIdTestemunha()%>">
@@ -201,7 +202,7 @@
 
                                     <div class="form-group">                                                
                                         <div class="col-xs-6" >
-                                            <label class="text-primary"  for="select_testemunha_sec">2º Testemunha:</label>
+                                            <label class="text-primary"  for="select_testemunha_sec">2Âº Testemunha:</label>
                                             <select class="form-control" id="select_testemunha_sec" name="select_testemunha_sec">
                                                 <% for (Testemunha testemunha1 : testemunhas) {%>
                                                 <option value="<%=testemunha1.getIdTestemunha()%>">
@@ -227,19 +228,19 @@
                                     </div>
                                 </form>    
                             </div>
-                            <!-- Fim da área do Corpo -->
+                            <!-- Fim da Ã¡rea do Corpo -->
                         </div>
                         <!-- Fim do Corpo -->
                     </div>
                 </div>
-                <!-- Fim da área da linha -->
+                <!-- Fim da Ã¡rea da linha -->
 
-                <!-- Rodapé -->
+                <!-- RodapÃ© -->
                 <%@include file="../../components/rodape.jsp" %>
-                <!-- Fim do Rodapé-->
+                <!-- Fim do RodapÃ©-->
 
             </div>
-            <!-- Fim da Linha de Divisão -->
+            <!-- Fim da Linha de DivisÃ£o -->
         </div>
         <!-- Fim do Container -->
     </body>

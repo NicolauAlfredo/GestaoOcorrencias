@@ -2,7 +2,7 @@
 <%@page import="modelo.Testemunha"%>
 <%@page import="java.util.List"%>
 <%@page import="dao.TestemunhaDAO"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%> 
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <!DOCTYPE html>
 <html>
