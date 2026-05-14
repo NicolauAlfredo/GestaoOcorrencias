@@ -113,80 +113,33 @@
             </div>
 
             <div class="row">
-
                 <div class="col-lg-12">
-
                     <div class="panel panel-default">
-
-                        <div class="panel-heading">
-
-                            <div class="btn-group">
-
-                                <button type="button"
-                                        class="btn btn-primary dropdown-toggle"
-                                        data-toggle="dropdown">
-
-                                    <span class="glyphicon glyphicon-menu-down">
-                                        Operações
-                                    </span>
-
-                                    <span class="caret"></span>
-
-                                </button>
-
-                                <ul class="dropdown-menu">
-
-                                    <li>
-                                        <a href="testemunhas">
-                                            <span class="glyphicon glyphicon-print">
-                                                Imprimir
-                                            </span>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="paginas/testemunha/testemunha_listar_por_nome.jsp">
-                                            <span class="glyphicon glyphicon-search">
-                                                Pesquisar
-                                            </span>
-                                        </a>
-                                    </li>
-
-                                </ul>
-
-                            </div>
-
-                        </div>
-
                         <div class="panel-body">
-
-                            <form action="paginas/testemunha/testemunha_listar.jsp"
-                                  method="GET">
+                            <form action="paginas/testemunha/testemunha_listar.jsp" method="GET">
+                                <div class="form-group">
+                                    <select name="tipo_pesquisa" id="tipo_pesquisa_testemunha" class="form-control">
+                                        <option value="nome">Nome</option>
+                                        <option value="bi">B.I.</option>
+                                        <option value="data">Data de Nascimento</option>
+                                    </select>
+                                </div>
 
                                 <div class="form-group input-group">
-
                                     <input
                                         type="search"
-                                        name="nome_testemunha"
+                                        name="termo"
                                         id="pesquisa_testemunha"
                                         class="form-control"
                                         placeholder="Pesquisar testemunha"
-                                        autocomplete="off"
-                                        value="<%=nome%>">
+                                        autocomplete="off">
 
                                     <span class="input-group-btn">
-
-                                        <button class="btn btn-primary"
-                                                type="submit">
-
+                                        <button class="btn btn-primary" type="submit">
                                             <i class="glyphicon glyphicon-search"></i>
-
                                         </button>
-
                                     </span>
-
                                 </div>
-
                             </form>
 
                             <div class="table-responsive">
@@ -254,13 +207,9 @@
                                 </div>
 
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
-
                 <%@include file="../../menus/rodape.jsp" %>
 
             </div>
@@ -270,20 +219,30 @@
         <script type="text/javascript">
             $(document).ready(function () {
                 var tempoEspera = null;
-                $("#resultado-testemunhas").load(
-                        "testemunhaServlet?comando=pesquisar_ajax&tipo_pesquisa=nome&termo="
-                        + encodeURIComponent(termo)
-                        + "&pagina=1"
-                        );
 
-                var termo = $(this).val();
-                tempoEspera = setTimeout(function () {
+                function pesquisarTestemunhas(pagina) {
+                    var tipoPesquisa = $("#tipo_pesquisa_testemunha").val();
+                    var termo = $("#pesquisa_testemunha").val();
+
                     $("#resultado-testemunhas").load(
-                            "testemunhaServlet?comando=pesquisar_ajax&tipo_pesquisa=nome&termo="
-                            + encodeURIComponent(termo)
-                            + "&pagina=1"
+                            "testemunhaServlet?comando=pesquisar_ajax"
+                            + "&tipo_pesquisa=" + encodeURIComponent(tipoPesquisa)
+                            + "&termo=" + encodeURIComponent(termo)
+                            + "&pagina=" + encodeURIComponent(pagina)
                             );
-                }, 300);
+                }
+
+                $("#pesquisa_testemunha").keyup(function () {
+                    clearTimeout(tempoEspera);
+
+                    tempoEspera = setTimeout(function () {
+                        pesquisarTestemunhas(1);
+                    }, 300);
+                });
+
+                $("#tipo_pesquisa_testemunha").change(function () {
+                    pesquisarTestemunhas(1);
+                });
             });
         </script>
 

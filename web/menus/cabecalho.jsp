@@ -128,16 +128,16 @@
                 </a>
 
                 <ul class="dropdown-menu">
-                    <li><a href="<%=request.getContextPath()%>/paginas/autuado/autuado_listar_por_nome.jsp">Autuado</a></li>
-                    <li><a href="<%=request.getContextPath()%>/paginas/autuante/autuante_listar_por_nome.jsp">Autuante</a></li>
-                    <li><a href="<%=request.getContextPath()%>/paginas/municipio/municipio_listar_por_nome.jsp">Município</a></li>
+                    <li><a href="<%=request.getContextPath()%>/paginas/autuado/autuado_listar.jsp">Autuado</a></li>
+                    <li><a href="<%=request.getContextPath()%>/paginas/autuante/autuante_listar.jsp">Autuante</a></li>
+                    <li><a href="<%=request.getContextPath()%>/paginas/municipio/municipio_listar.jsp">Município</a></li>
                     <li><a href="<%=request.getContextPath()%>/paginas/ocorrencia/ocorrencia_listar_por_autuado.jsp">Ocorrência</a></li>
-                    <li><a href="<%=request.getContextPath()%>/paginas/patente/patente_listar_por_nome.jsp">Patente</a></li>
-                    <li><a href="<%=request.getContextPath()%>/paginas/posto/posto_trabalho_listar_por_nome.jsp">Posto de Trabalho</a></li>
-                    <li><a href="<%=request.getContextPath()%>/paginas/profissao/profissao_listar_por_nome.jsp">Profissão</a></li>
-                    <li><a href="<%=request.getContextPath()%>/paginas/provincia/provincia_listar_por_nome.jsp">Província</a></li>
-                    <li><a href="<%=request.getContextPath()%>/paginas/testemunha/testemunha_listar_por_nome.jsp">Testemunha</a></li>
-                    <li><a href="<%=request.getContextPath()%>/paginas/tipo/tipo_ocorrencia_listar_por_nome.jsp">Tipo de Ocorrência</a></li>
+                    <li><a href="<%=request.getContextPath()%>/paginas/patente/patente_listar.jsp">Patente</a></li>
+                    <li><a href="<%=request.getContextPath()%>/paginas/posto/posto_trabalho_listar.jsp">Posto de Trabalho</a></li>
+                    <li><a href="<%=request.getContextPath()%>/paginas/profissao/profissao_listar.jsp">Profissão</a></li>
+                    <li><a href="<%=request.getContextPath()%>/paginas/provincia/provincia_listar.jsp">Província</a></li>
+                    <li><a href="<%=request.getContextPath()%>/paginas/testemunha/testemunha_listar.jsp">Testemunha</a></li>
+                    <li><a href="<%=request.getContextPath()%>/paginas/tipo/tipo_ocorrencia_listar.jsp">Tipo de Ocorrência</a></li>
                 </ul>
             </li>
 
