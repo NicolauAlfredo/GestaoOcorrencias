@@ -8,6 +8,7 @@ package controlo;
 import dao.OcorrenciaDAO;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -61,7 +62,10 @@ public class OcorrenciaServlet extends HttpServlet {
         }
         try {
             ocorrenciaDAO = new OcorrenciaDAO();
-            if (comando.equalsIgnoreCase("guardar")) {
+            if (comando.equalsIgnoreCase("pesquisar_ajax")) {
+                pesquisarAjax(request, response, ocorrenciaDAO);
+                return;
+            } else if (comando.equalsIgnoreCase("guardar")) {
                 ocorrencia.setDataOcorrencia(DateUtil.strToDate(request.getParameter("data_ocorrencia")));
                 ocorrencia.setHoraOcorrencia(request.getParameter("hora_ocorrencia"));
                 ocorrencia.setDescricaoOcorrencia(request.getParameter("descricao_ocorrencia"));
@@ -167,6 +171,63 @@ public class OcorrenciaServlet extends HttpServlet {
             System.err.println("Erro na leitura dos dados: " + ex.getMessage());
         }
 
+    }
+
+    private void pesquisarAjax(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            OcorrenciaDAO ocorrenciaDAO
+    ) throws IOException, ServletException {
+
+        response.setContentType("text/html;charset=UTF-8");
+
+        String tipoPesquisa = request.getParameter("tipo_pesquisa");
+        String termo = request.getParameter("termo");
+
+        if (tipoPesquisa == null) {
+            tipoPesquisa = "autuado";
+        }
+
+        if (termo == null) {
+            termo = "";
+        }
+
+        List<Ocorrencia> ocorrencias;
+
+        if (tipoPesquisa.equalsIgnoreCase("autuante")) {
+            ocorrencias = ocorrenciaDAO.findByAutuante(termo);
+
+        } else if (tipoPesquisa.equalsIgnoreCase("cidade")) {
+            ocorrencias = ocorrenciaDAO.findByCidade(termo);
+
+        } else if (tipoPesquisa.equalsIgnoreCase("testemunha")) {
+            ocorrencias = ocorrenciaDAO.findByTestemunha(termo);
+
+        } else if (tipoPesquisa.equalsIgnoreCase("tipo")) {
+            ocorrencias = ocorrenciaDAO.findByTipo(termo);
+
+        } else if (tipoPesquisa.equalsIgnoreCase("data")) {
+            try {
+                if (termo.trim().isEmpty()) {
+                    ocorrencias = ocorrenciaDAO.findAll();
+                } else {
+                    ocorrencias = ocorrenciaDAO.findByData(DateUtil.strToDate(termo));
+                }
+            } catch (Exception ex) {
+                ocorrencias = new java.util.ArrayList<Ocorrencia>();
+            }
+
+        } else {
+            ocorrencias = ocorrenciaDAO.findByAutuado(termo);
+        }
+
+        request.setAttribute("ocorrencias", ocorrencias);
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher(
+                "paginas/ocorrencia/ocorrencia_tabela.jsp"
+        );
+
+        dispatcher.forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
