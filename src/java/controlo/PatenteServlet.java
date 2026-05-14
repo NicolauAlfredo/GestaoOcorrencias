@@ -130,12 +130,23 @@ public class PatenteServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         String termo = request.getParameter("termo");
+        String pagina = request.getParameter("pagina");
 
         if (termo == null) {
             termo = "";
         }
 
-        List<Patente> patentes = patenteDAO.findByNome(termo);
+        if (pagina == null || pagina.trim().isEmpty()) {
+            pagina = "1";
+        }
+
+        List<Patente> patentes;
+
+        if (termo.trim().isEmpty()) {
+            patentes = patenteDAO.consultarPagina(pagina);
+        } else {
+            patentes = patenteDAO.consultarPaginaPorNome(termo, pagina);
+        }
 
         PrintWriter out = response.getWriter();
 

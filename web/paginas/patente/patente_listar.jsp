@@ -4,16 +4,18 @@
     Author     : user
 --%>
 
+<%@page import="java.net.URLEncoder"%>
 <%@page import="modelo.Patente"%>
 <%@page import="java.util.List"%>
 <%@page import="dao.PatenteDAO"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-        <base href="<%=request.getContextPath()%>/"> 
+        <base href="<%=request.getContextPath()%>/">
 
         <title>Patente</title>
 
@@ -22,11 +24,17 @@
         <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
         <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
+
     <body>
         <%
             PatenteDAO patenteDAO = new PatenteDAO();
 
+            String termo = request.getParameter("termo");
             String paginaParametro = request.getParameter("pagina");
+
+            if (termo == null) {
+                termo = "";
+            }
 
             int paginaActual = 1;
 
@@ -42,118 +50,115 @@
                 paginaActual = 1;
             }
 
-            int quantidadePaginas = patenteDAO.quantidadePaginas();
+            int quantidadePaginas;
+            List<Patente> patentes;
+
+            if (termo.trim().isEmpty()) {
+                quantidadePaginas = patenteDAO.quantidadePaginas();
+                patentes = patenteDAO.consultarPagina(String.valueOf(paginaActual));
+            } else {
+                quantidadePaginas = patenteDAO.quantidadePaginasPorNome(termo);
+                patentes = patenteDAO.consultarPaginaPorNome(termo, String.valueOf(paginaActual));
+            }
 
             if (paginaActual > quantidadePaginas) {
                 paginaActual = quantidadePaginas;
             }
 
-            List<Patente> patentes = patenteDAO.consultarPagina(
-                    String.valueOf(paginaActual)
-            );
-
             request.setAttribute("patentes", patentes);
 
-            int paginaAnterior = paginaActual - 1;
-            int proximaPagina = paginaActual + 1;
+            String termoUrl = URLEncoder.encode(termo, "UTF-8");
         %>
 
-        <!-- Container principal do Bootstrap -->
         <div class="container">
             <div id="page-wrapper">
                 <div class="row">
                     <div class="col-lg-12">
-                        <%@include file="../../menus/cabecalho.jsp" %>
-                        <h1 class="page-header text-primary" title="Registar patente"><a href="paginas/patente/patente_registo.jsp">Patente</a></h1>
+                        <%@include file="../../components/cabecalho.jsp" %>
+
+                        <h1 class="page-header text-primary" title="Registar patente">
+                            <a href="paginas/patente/patente_registo.jsp">
+                                Patente
+                            </a>
+                        </h1>
+
+                        <% String message = (String) request.getAttribute("message");
+                            if (message != null && !message.trim().isEmpty()) {
+                        %>
                         <div class="alert alert-info">
-                            <p>${message}</p>
+                            <p><%=message%></p>
                         </div>
-                    </div>                 
+                        <% }%>
+                    </div>
                 </div>
             </div>
 
-            <!-- Linha de divisão -->
             <div class="row">
-                <!-- Área da linha -->
                 <div class="col-lg-12">
                     <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <!-- Botão Suspenso -->
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                    <span class="glyphicon glyphicon-menu-down"> Operações </span>
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a href="listaPatentes"> <span class="glyphicon glyphicon-print"> Imprimir </span> </a></li>
-                                    <li><a href="paginas/patente/patente_listar_por_nome.jsp"> <span class="glyphicon glyphicon-search"> Pesquisar </span> </a></li>
-                                </ul>
-                            </div>
-                            <!-- Fim do Botão Suspenso -->
-                        </div>
-
-                        <!-- Corpo da página -->
                         <div class="panel-body">
-                            <form>
-                                <div id="resultado-patentes-wrapper">
-                                    <%@include file="patente_tabela.jsp" %>
 
+                            <form action="paginas/patente/patente_listar.jsp" method="GET">
+                                <div class="form-group input-group">
+                                    <input
+                                        type="search"
+                                        name="termo"
+                                        id="pesquisa_patente"
+                                        class="form-control"
+                                        placeholder="Pesquisar patente"
+                                        autocomplete="off"
+                                        value="<%=termo%>">
 
-                                    <div class="text-center">
-
-                                        <ul class="pagination">
-
-                                            <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
-                                                <a href="<%=paginaActual <= 1
-                                                        ? "javascript:void(0)"
-                                                        : "paginas/patente/patente_listar.jsp?pagina=" + paginaAnterior%>">
-                                                    &laquo;
-                                                </a>
-                                            </li>
-
-                                            <%
-                                                for (int i = 1; i <= quantidadePaginas; i++) {
-                                            %>
-
-                                            <li class="<%=i == paginaActual ? "active" : ""%>">
-                                                <a href="paginas/patente/patente_listar.jsp?pagina=<%=i%>">
-                                                    <%=i%>
-                                                </a>
-                                            </li>
-
-                                            <%
-                                                }
-                                            %>
-
-                                            <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-                                                <a href="<%=paginaActual >= quantidadePaginas
-                                                        ? "javascript:void(0)"
-                                                        : "paginas/patente/patente_listar.jsp?pagina=" + proximaPagina%>">
-                                                    &raquo;
-                                                </a>
-                                            </li>
-
-                                        </ul>
-
-                                        <p class="text-muted">
-                                            Página <%=paginaActual%> de <%=quantidadePaginas%>
-                                        </p>
-
-                                    </div>
-                                </div> 
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="glyphicon glyphicon-search"></i>
+                                        </button>
+                                    </span>
+                                </div>
                             </form>
+
+                            <div class="table-responsive">
+                                <%@include file="patente_tabela.jsp" %>
+
+                                <%  request.setAttribute("paginaActual", paginaActual);
+                                    request.setAttribute("quantidadePaginas", quantidadePaginas);
+                                    request.setAttribute("urlBase", "paginas/patente/patente_listar.jsp");
+                                    request.setAttribute("queryStringExtra", "termo=" + termoUrl);
+                                %>
+
+                                <%@include file="../../components/paginacao.jsp" %>
+                            </div>
+
                         </div>
-                    </div>                   
-                </div> 
-                <!-- Fim da área da linha-->
+                    </div>
+                </div>
 
-                <!-- Rodapé -->
-                <%@include file="../../menus/rodape.jsp" %>
-                <!-- Fim do Rodapé-->
-
+                <%@include file="../../components/rodape.jsp" %>
             </div>
-            <!-- Fim da linha de divisão -->
         </div>
-        <!-- Fim do Container -->
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var tempoEspera = null;
+
+                function pesquisarPatentes(pagina) {
+                    var termo = $("#pesquisa_patente").val();
+
+                    $("#resultado-patentes").load(
+                            "patenteServlet?comando=pesquisar_ajax"
+                            + "&termo=" + encodeURIComponent(termo)
+                            + "&pagina=" + encodeURIComponent(pagina)
+                            );
+                }
+
+                $("#pesquisa_patente").keyup(function () {
+                    clearTimeout(tempoEspera);
+
+                    tempoEspera = setTimeout(function () {
+                        pesquisarPatentes(1);
+                    }, 300);
+                });
+            });
+        </script>
     </body>
 </html>
