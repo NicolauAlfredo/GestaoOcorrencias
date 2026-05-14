@@ -4,10 +4,12 @@
     Author     : user
 --%>
 
+<%@page import="java.net.URLEncoder"%>
 <%@page import="java.util.List"%>
 <%@page import="modelo.PostoTrabalho"%>
 <%@page import="dao.PostoTrabalhoDAO"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -22,14 +24,71 @@
         <script src="Bootstrap/js/jquery-1.12.3.min.js"></script>
         <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
+
     <body>
-        <!-- Container principal do Bootstrap -->
+        <%
+            PostoTrabalhoDAO postoTrabalhoDAO = new PostoTrabalhoDAO();
+
+            String numeroTexto = request.getParameter("numero_posto");
+            String paginaParametro = request.getParameter("pagina");
+
+            if (numeroTexto == null) {
+                numeroTexto = "";
+            }
+
+            Integer numero = null;
+
+            if (!numeroTexto.trim().isEmpty()) {
+                try {
+                    numero = Integer.parseInt(numeroTexto.trim());
+                } catch (NumberFormatException ex) {
+                    numero = null;
+                }
+            }
+
+            int paginaActual = 1;
+
+            if (paginaParametro != null && !paginaParametro.trim().isEmpty()) {
+                try {
+                    paginaActual = Integer.parseInt(paginaParametro);
+                } catch (NumberFormatException ex) {
+                    paginaActual = 1;
+                }
+            }
+
+            if (paginaActual < 1) {
+                paginaActual = 1;
+            }
+
+            int quantidadePaginas = postoTrabalhoDAO.quantidadePaginasPorNumero(numero);
+
+            if (paginaActual > quantidadePaginas) {
+                paginaActual = quantidadePaginas;
+            }
+
+            List<PostoTrabalho> postoTrabalhos = postoTrabalhoDAO.consultarPaginaPorNumero(
+                    numero,
+                    String.valueOf(paginaActual)
+            );
+
+            request.setAttribute("postoTrabalhos", postoTrabalhos);
+
+            int paginaAnterior = paginaActual - 1;
+            int proximaPagina = paginaActual + 1;
+
+            String numeroUrl = URLEncoder.encode(numeroTexto, "UTF-8");
+        %>
+
         <div class="container">
             <div id="page-wrapper">
                 <div class="row">
                     <div class="col-lg-12">
                         <%@include file="../../menus/cabecalho.jsp" %>
-                        <h1 class="page-header text-primary">Posto de Trabalho</h1>
+
+                        <h1 class="page-header text-primary">
+                            Posto de Trabalho
+                        </h1>
+
                         <div class="alert alert-info">
                             <p>${message}</p>
                         </div>
@@ -37,119 +96,135 @@
                 </div>
             </div>
 
-            <!-- Linha de divisão -->
             <div class="row">
-                <!-- Área da linha -->
                 <div class="col-lg-12">
                     <div class="panel panel-default">
+
                         <div class="panel-heading">
-                            <!-- Botão Suspenso -->
                             <div class="btn-group">
                                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                                     <span class="glyphicon glyphicon-search"> Pesquisar </span>
                                     <span class="caret"></span>
                                 </button>
+
                                 <ul class="dropdown-menu">
-                                    <li><a href="paginas/posto/posto_trabalho_listar_por_municipio.jsp">Nome Município</a></li>
-                                    <li><a href="#">Número do Posto</a></li>                                        
+                                    <li>
+                                        <a href="paginas/posto/posto_trabalho_listar.jsp">
+                                            Listar Todos
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="paginas/posto/posto_trabalho_listar_por_nome.jsp">
+                                            Nome Posto
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="paginas/posto/posto_trabalho_listar_por_municipio.jsp">
+                                            Nome Município
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
-                            <!-- Fim do Botão Suspenso -->
                         </div>
 
-                        <!-- Corpo da página -->   
                         <div class="panel-body">
 
-                            <form action="posto_trabalho_listar_por_numero.jsp" method="post">
-                                <!-- Div com o campo de pesquisa -->
+                            <form action="paginas/posto/posto_trabalho_listar_por_numero.jsp" method="get">
                                 <div class="form-group input-group">
-                                    <input type="search" name="numero_posto" class="form-control" required placeholder="Número">
+                                    <input
+                                        type="search"
+                                        id="pesquisa_posto_numero"
+                                        name="numero_posto"
+                                        class="form-control"
+                                        placeholder="Número"
+                                        value="<%=numeroTexto%>"
+                                        >
+
                                     <span class="input-group-btn">
                                         <button class="btn btn-primary" type="submit">
                                             <i class="glyphicon glyphicon-search"></i>
                                         </button>
                                     </span>
                                 </div>
-                                <!-- Fim da div com o campo de pesquisa -->
                             </form>
-                            <%                                PostoTrabalhoDAO postoTrabalhoDAO = new PostoTrabalhoDAO();
-                                int numeroPosto = 0;
-                                List<PostoTrabalho> postoTrabalhos = postoTrabalhoDAO.findByNumero(numeroPosto);
-                                if (request.getParameter("numero_posto") == null) {
-                                    postoTrabalhoDAO.findByNumero(numeroPosto);
-                                } else {
-                                    try {
-                                        numeroPosto = Integer.parseInt(request.getParameter("numero_posto"));
-                                        postoTrabalhos = postoTrabalhoDAO.findByNumero(numeroPosto);
-                                    } catch (NumberFormatException ex) {
-                                        System.out.println("Não foi passado nenum número do posto passado: " + ex.getMessage());
-                                    }
-
-                                }
-                            %>
 
                             <form>
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-primary">#</th>
-                                                <th class="text-primary">Nome</th>
-                                                <th class="text-primary">Número</th>
-                                                <th class="text-primary">Município</th>
-                                                <th class="text-primary" colspan="4">Operações</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <%for (PostoTrabalho postoTrabalho : postoTrabalhos) {%>
-                                            <tr>
-                                                <td><%=postoTrabalho.getIdPostoTrabalho()%></td>
-                                                <td><%=postoTrabalho.getNomePostoTrabalho()%></td>
-                                                <td><%=postoTrabalho.getNumeroPostoTrabalho()%></td>
-                                                <td><%=postoTrabalho.getMunicipio().getNomeMunicipio()%></td>
+                                <div id="resultado-postos-wrapper">
+                                    <%@include file="posto_trabalho_tabela.jsp" %>
 
-                                                <td>
-                                                    <a href="postoTrabalhoServlet?comando=detalhes&id_posto_trabalho=<%=postoTrabalho.getIdPostoTrabalho()%>">
-                                                        <span class="glyphicon glyphicon-print"></span>
-                                                    </a>
-                                                </td>
+                                    <div class="text-center">
+                                        <ul class="pagination">
 
-                                                <td>
-                                                    <a href="postoTrabalhoServlet?comando=detalhes&id_posto_trabalho=<%=postoTrabalho.getIdPostoTrabalho()%>">
-                                                        <span class="glyphicon glyphicon-zoom-in"></span>
-                                                    </a>
-                                                </td>
+                                            <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
+                                                <a href="<%=paginaActual <= 1
+                                                        ? "javascript:void(0)"
+                                                        : "paginas/posto/posto_trabalho_listar_por_numero.jsp?numero_posto="
+                                                        + numeroUrl
+                                                        + "&pagina="
+                                                        + paginaAnterior%>">
+                                                    &laquo;
+                                                </a>
+                                            </li>
 
-                                                <td>
-                                                    <a href="postoTrabalhoServlet?comando=prepara_editar&id_posto_trabalho=<%=postoTrabalho.getIdPostoTrabalho()%>">
-                                                        <span class="glyphicon glyphicon-edit"></span>
-                                                    </a>
-                                                </td>
+                                            <%
+                                                for (int i = 1; i <= quantidadePaginas; i++) {
+                                            %>
+                                            <li class="<%=i == paginaActual ? "active" : ""%>">
+                                                <a href="paginas/posto/posto_trabalho_listar_por_numero.jsp?numero_posto=<%=numeroUrl%>&pagina=<%=i%>">
+                                                    <%=i%>
+                                                </a>
+                                            </li>
+                                            <%
+                                                }
+                                            %>
 
-                                                <td>
-                                                    <a href="postoTrabalhoServlet?comando=eliminar&id_posto_trabalho=<%=postoTrabalho.getIdPostoTrabalho()%>">
-                                                        <span class="glyphicon glyphicon-trash"></span>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            <%}%>
-                                        </tbody>
-                                    </table>
-                                </div> 
+                                            <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
+                                                <a href="<%=paginaActual >= quantidadePaginas
+                                                        ? "javascript:void(0)"
+                                                        : "paginas/posto/posto_trabalho_listar_por_numero.jsp?numero_posto="
+                                                        + numeroUrl
+                                                        + "&pagina="
+                                                        + proximaPagina%>">
+                                                    &raquo;
+                                                </a>
+                                            </li>
+
+                                        </ul>
+
+                                        <p class="text-muted">
+                                            Página <%=paginaActual%> de <%=quantidadePaginas%>
+                                        </p>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>                   
                 </div> 
-                <!-- Fim da área da linha-->
 
-                <!-- Rodapé -->
                 <%@include file="../../menus/rodape.jsp" %>
-                <!-- Fim do Rodapé-->
-
             </div>
-            <!-- Fim da linha de divisão -->
         </div>
-        <!-- Fim do Container -->
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var tempoEspera = null;
+
+                $("#pesquisa_posto_numero").keyup(function () {
+                    clearTimeout(tempoEspera);
+
+                    var termo = $(this).val();
+
+                    tempoEspera = setTimeout(function () {
+                        $("#resultado-postos-wrapper").load(
+                                "paginas/posto/posto_trabalho_listar_por_numero.jsp?numero_posto="
+                                + encodeURIComponent(termo)
+                                + " #resultado-postos-wrapper > *"
+                                );
+                    }, 300);
+                });
+            });
+        </script>
     </body>
 </html>
-
