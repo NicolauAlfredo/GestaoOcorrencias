@@ -171,8 +171,9 @@ public class AutuanteServlet extends HttpServlet {
 
         String tipoPesquisa = request.getParameter("tipo_pesquisa");
         String termo = request.getParameter("termo");
+        String pagina = request.getParameter("pagina");
 
-        if (tipoPesquisa == null) {
+        if (tipoPesquisa == null || tipoPesquisa.trim().isEmpty()) {
             tipoPesquisa = "nome";
         }
 
@@ -180,17 +181,22 @@ public class AutuanteServlet extends HttpServlet {
             termo = "";
         }
 
+        if (pagina == null || pagina.trim().isEmpty()) {
+            pagina = "1";
+        }
+
         List<Autuante> autuantes;
 
         if (tipoPesquisa.equalsIgnoreCase("bi")) {
-            autuantes = autuanteDAO.findByBi(termo);
+            autuantes = autuanteDAO.consultarPaginaPorBi(termo, pagina);
 
         } else if (tipoPesquisa.equalsIgnoreCase("data")) {
             try {
                 if (termo.trim().isEmpty()) {
-                    autuantes = autuanteDAO.findAll();
+                    autuantes = autuanteDAO.consultarPagina(pagina);
                 } else {
-                    autuantes = autuanteDAO.findByData(DateUtil.strToDate(termo));
+                    java.sql.Date data = DateUtil.strToDate(termo);
+                    autuantes = autuanteDAO.consultarPaginaPorData(data, pagina);
                 }
             } catch (Exception ex) {
                 autuantes = new java.util.ArrayList<Autuante>();
@@ -199,16 +205,19 @@ public class AutuanteServlet extends HttpServlet {
         } else if (tipoPesquisa.equalsIgnoreCase("nip")) {
             try {
                 if (termo.trim().isEmpty()) {
-                    autuantes = autuanteDAO.findAll();
+                    autuantes = autuanteDAO.consultarPagina(pagina);
                 } else {
-                    autuantes = autuanteDAO.findByNip(Integer.parseInt(termo.trim()));
+                    autuantes = autuanteDAO.consultarPaginaPorNip(
+                            Integer.parseInt(termo.trim()),
+                            pagina
+                    );
                 }
             } catch (Exception ex) {
                 autuantes = new java.util.ArrayList<Autuante>();
             }
 
         } else {
-            autuantes = autuanteDAO.findByNome(termo);
+            autuantes = autuanteDAO.consultarPaginaPorNome(termo, pagina);
         }
 
         PrintWriter out = response.getWriter();
