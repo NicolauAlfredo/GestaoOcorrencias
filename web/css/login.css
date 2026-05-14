@@ -1,0 +1,177 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/css.css to edit this template
+*/
+/* 
+    Created on : 15 mag 2026, 01:18:23
+    Author     : Nicolau Alfredo
+*/
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f2f57 0%, #1f5f9f 50%, #eef4fb 50%);
+    font-family: Arial, sans-serif;
+}
+
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 15px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 900px;
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+}
+
+.login-brand {
+    min-height: 500px;
+    background: #0f3d70;
+    color: #fff;
+    padding: 50px 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-brand .brand-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin-bottom: 25px;
+}
+
+.login-brand h1 {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.login-brand p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #dceeff;
+}
+
+.login-social-links {
+    margin-top: 30px;
+}
+
+.login-social-links a {
+    display: inline-block;
+    width: 38px;
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+    border-radius: 50%;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    margin-right: 8px;
+    text-decoration: none;
+}
+
+.login-social-links a:hover {
+    background: #fff;
+    color: #0f3d70;
+}
+
+.login-form-area {
+    padding: 50px 40px;
+}
+
+.login-form-area h2 {
+    margin-top: 0;
+    font-weight: bold;
+    color: #0f3d70;
+}
+
+.login-form-area .subtitle {
+    color: #777;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    margin-bottom: 18px;
+}
+
+.input-group-addon {
+    background: #f5f8fb;
+    color: #0f3d70;
+    border-color: #d9e2ec;
+}
+
+.form-control {
+    height: 44px;
+    border-color: #d9e2ec;
+    box-shadow: none;
+}
+
+.form-control:focus {
+    border-color: #337ab7;
+    box-shadow: 0 0 0 2px rgba(51, 122, 183, 0.15);
+}
+
+.btn-login {
+    height: 46px;
+    font-weight: bold;
+    border-radius: 4px;
+}
+
+.login-extra {
+    margin-top: 18px;
+    font-size: 13px;
+}
+
+.login-extra a {
+    color: #337ab7;
+    text-decoration: none;
+}
+
+.login-extra a:hover {
+    text-decoration: underline;
+}
+
+.social-login-title {
+    margin: 25px 0 15px;
+    text-align: center;
+    color: #999;
+    font-size: 13px;
+}
+
+.btn-social {
+    margin-bottom: 10px;
+    text-align: left;
+    font-weight: bold;
+}
+
+.btn-social .glyphicon {
+    margin-right: 8px;
+}
+
+@media (max-width: 767px) {
+    .login-brand {
+        min-height: auto;
+        padding: 35px 25px;
+        text-align: center;
+    }
+
+    .login-brand .brand-icon {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .login-form-area {
+        padding: 35px 25px;
+    }
+} 
