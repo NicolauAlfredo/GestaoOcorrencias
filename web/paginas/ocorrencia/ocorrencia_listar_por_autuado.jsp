@@ -7,7 +7,6 @@
 <%@page import="modelo.DateUtil"%>
 <%@page import="modelo.Ocorrencia"%>
 <%@page import="java.util.List"%>
-<%@page import="java.util.List"%>
 <%@page import="dao.OcorrenciaDAO"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -64,7 +63,7 @@
             int paginaAnterior = paginaActual - 1;
             int proximaPagina = paginaActual + 1;
 
-            String autuadoUrl = java.net.URLEncoder.encode(autuado, "UTF-8");
+            String dataUrl = java.net.URLEncoder.encode(autuado, "UTF-8");
         %>
 
         <!-- Container principal do Bootstrap -->
@@ -127,48 +126,47 @@
                             </form>
 
                             <form>
-                                <div class="table-responsive">
-                                    <%
-                                        request.setAttribute("ocorrencias", ocorrencias);
-                                    %>
+                                <%
+                                    request.setAttribute("ocorrencias", ocorrencias);
+                                %>
 
+                                <div id="resultado-ocorrencias-wrapper">
                                     <%@include file="ocorrencia_tabela.jsp" %>
-                                </div> 
 
-                                <div class="text-center">
-                                    <ul class="pagination">
+                                    <div class="text-center">
+                                        <ul class="pagination">
 
-                                        <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
-                                            <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_autuado.jsp?autuado_ocorrencia=" + autuadoUrl + "&pagina=" + paginaAnterior%>">
-                                                &laquo;
-                                            </a>
-                                        </li>
+                                            <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
+                                                <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_autuado.jsp?autuado_ocorrencia=" + dataUrl + "&pagina=" + paginaAnterior%>">
+                                                    &laquo;
+                                                </a>
+                                            </li>
 
-                                        <%
-                                            for (int i = 1; i <= quantidadePaginas; i++) {
-                                        %>
-                                        <li class="<%=i == paginaActual ? "active" : ""%>">
-                                            <a href="paginas/ocorrencia/ocorrencia_listar_por_autuado.jsp?autuado_ocorrencia=<%=autuadoUrl%>&pagina=<%=i%>">
-                                                <%=i%>
-                                            </a>
-                                        </li>
-                                        <%
-                                            }
-                                        %>
+                                            <%
+                                                for (int i = 1; i <= quantidadePaginas; i++) {
+                                            %>
+                                            <li class="<%=i == paginaActual ? "active" : ""%>">
+                                                <a href="paginas/ocorrencia/ocorrencia_listar_por_autuado.jsp?autuado_ocorrencia=<%=dataUrl%>&pagina=<%=i%>">
+                                                    <%=i%>
+                                                </a>
+                                            </li>
+                                            <%
+                                                }
+                                            %>
 
-                                        <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-                                            <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_autuado.jsp?autuado_ocorrencia=" + autuadoUrl + "&pagina=" + proximaPagina%>">
-                                                &raquo;
-                                            </a>
-                                        </li>
+                                            <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
+                                                <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_autuado.jsp?autuado_ocorrencia=" + dataUrl + "&pagina=" + proximaPagina%>">
+                                                    &raquo;
+                                                </a>
+                                            </li>
 
-                                    </ul>
+                                        </ul>
 
-                                    <p class="text-muted">
-                                        Página <%=paginaActual%> de <%=quantidadePaginas%>
-                                    </p>
+                                        <p class="text-muted">
+                                            Página <%=paginaActual%> de <%=quantidadePaginas%>
+                                        </p>
+                                    </div>
                                 </div>
-
                             </form>
                         </div>
                     </div>                   
@@ -186,30 +184,20 @@
 
         <script type="text/javascript">
             $(document).ready(function () {
+                var tempoEspera = null;
+
                 $("#pesquisa_ocorrencia_autuado").keyup(function () {
+                    clearTimeout(tempoEspera);
+
                     var termo = $(this).val();
 
-                    $.ajax({
-                        url: "ocorrenciaServlet",
-                        type: "GET",
-                        data: {
-                            comando: "pesquisar_ajax",
-                            tipo_pesquisa: "autuado",
-                            termo: termo
-                        },
-                        success: function (resultado) {
-                            $(".table-responsive").html(resultado);
-                        },
-                        error: function () {
-                            $("#resultado-ocorrencias").html(
-                                    "<tr>" +
-                                    "<td colspan='12' class='text-center text-danger'>" +
-                                    "Erro ao pesquisar ocorrências." +
-                                    "</td>" +
-                                    "</tr>"
-                                    );
-                        }
-                    });
+                    tempoEspera = setTimeout(function () {
+                        $("#resultado-ocorrencias-wrapper").load(
+                                "paginas/ocorrencia/ocorrencia_listar_por_autuado.jsp?autuado_ocorrencia="
+                                + encodeURIComponent(termo)
+                                + " #resultado-ocorrencias-wrapper > *"
+                                );
+                    }, 300);
                 });
             });
         </script>
