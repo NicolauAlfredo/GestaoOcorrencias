@@ -57,6 +57,12 @@
                                             Id: <strong> <%=patente.getIdPatente()%> </strong>
                                         </p>
                                     </li>
+
+                                    <li>
+                                        <p class="text-primary">
+                                            Nome: <strong><%=patente.getNomePatente()%></strong>
+                                        </p>
+                                    </li>
                                 </ul>
                             </div>
                             <!-- Fim da área do Corpo -->
