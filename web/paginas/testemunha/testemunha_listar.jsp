@@ -278,9 +278,9 @@
 
                     tempoEspera = setTimeout(function () {
                         $("#resultado-testemunhas").load(
-                                "paginas/testemunha/testemunha_listar_por_nome.jsp?nome_testemunha="
+                                "testemunhaServlet?comando=pesquisar_ajax&tipo_pesquisa=nome&termo="
                                 + encodeURIComponent(termo)
-                                + " #resultado-testemunhas > *"
+                                + "&pagina=1"
                                 );
                     }, 300);
                 });
