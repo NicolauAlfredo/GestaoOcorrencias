@@ -44,7 +44,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <p class="text-primary"> 
-                                Detalhes da Testemunha: <strong> <%=testemunha.getNomeTestemunha()%> </strong> 
+                                Detalhes da Testemunha: <strong> <%= testemunha.getMunicipio() != null ? testemunha.getMunicipio().getNomeMunicipio() : ""%> </strong> 
                             </p>
                         </div>
 
@@ -97,7 +97,7 @@
 
                                     <li>
                                         <p class="text-primary">
-                                            Sexo: <strong> <%=testemunha.getSexo().getExtensao()%> </strong>
+                                            Sexo: <strong> <%= testemunha.getSexo() != null ? testemunha.getSexo().getExtensao() : ""%> </strong>
                                         </p>
                                     </li>
 
@@ -133,7 +133,7 @@
 
                                     <li>
                                         <p class="text-primary">
-                                            Profissão: <strong> <%=testemunha.getProfissao().getNomeProfissao()%> </strong>
+                                            Profissão: <strong> <%= testemunha.getProfissao() != null ? testemunha.getProfissao().getNomeProfissao() : ""%> </strong>
                                         </p>
                                     </li>
                                 </ul>
