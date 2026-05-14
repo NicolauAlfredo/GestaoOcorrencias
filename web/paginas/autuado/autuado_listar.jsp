@@ -124,7 +124,7 @@
 
                             <form action="paginas/autuado/autuado_listar.jsp" method="GET">
                                 <div class="form-group">
-                                    <select name="tipo_pesquisa" id="tipo_pesquisa_autuado" class="form-control input-sm" style="max-width: 220px; background-color: #337ab7; color: white; border: none">>
+                                    <select name="tipo_pesquisa" id="tipo_pesquisa_autuado" class="form-control input-sm" style="max-width: 220px; background-color: #337ab7; color: white; border: none">
                                         <option value="nome" <%= "nome".equalsIgnoreCase(tipoPesquisa) ? "selected" : ""%>>Nome</option>
                                         <option value="bi" <%= "bi".equalsIgnoreCase(tipoPesquisa) ? "selected" : ""%>>B.I.</option>
                                         <option value="data" <%= "data".equalsIgnoreCase(tipoPesquisa) ? "selected" : ""%>>Data de Nascimento</option>
