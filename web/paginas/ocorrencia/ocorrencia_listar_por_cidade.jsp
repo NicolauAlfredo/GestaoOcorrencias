@@ -65,7 +65,7 @@
             int paginaAnterior = paginaActual - 1;
             int proximaPagina = paginaActual + 1;
 
-            String dataUrl = URLEncoder.encode(cidade, "UTF-8");
+            String cidadeUrl = URLEncoder.encode(cidade, "UTF-8");
         %>
 
         <!-- Container principal do Bootstrap -->
@@ -143,7 +143,7 @@
                                             <a href="<%=paginaActual <= 1
                                                     ? "javascript:void(0)"
                                                     : "paginas/ocorrencia/ocorrencia_listar_por_cidade.jsp?cidade_ocorrencia="
-                                                    + dataUrl
+                                                    + cidadeUrl
                                                     + "&pagina="
                                                     + paginaAnterior%>">
 
@@ -159,12 +159,9 @@
 
                                         <li class="<%=i == paginaActual ? "active" : ""%>">
 
-                                            <a href="paginas/ocorrencia/ocorrencia_listar_por_cidade.jsp?cidade_ocorrencia=<%=dataUrl%>&pagina=<%=i%>">
-
+                                            <a href="paginas/ocorrencia/ocorrencia_listar_por_cidade.jsp?cidade_ocorrencia=<%=cidadeUrl%>&pagina=<%=i%>">
                                                 <%=i%>
-
                                             </a>
-
                                         </li>
 
                                         <%
@@ -172,14 +169,12 @@
                                         %>
 
                                         <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-
                                             <a href="<%=paginaActual >= quantidadePaginas
                                                     ? "javascript:void(0)"
                                                     : "paginas/ocorrencia/ocorrencia_listar_por_cidade.jsp?cidade_ocorrencia="
-                                                    + dataUrl
+                                                    + cidadeUrl
                                                     + "&pagina="
                                                     + proximaPagina%>">
-
                                                 &raquo;
 
                                             </a>
