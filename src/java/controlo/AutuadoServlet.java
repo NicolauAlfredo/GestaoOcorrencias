@@ -145,8 +145,9 @@ public class AutuadoServlet extends HttpServlet {
 
         String tipoPesquisa = request.getParameter("tipo_pesquisa");
         String termo = request.getParameter("termo");
+        String pagina = request.getParameter("pagina");
 
-        if (tipoPesquisa == null) {
+        if (tipoPesquisa == null || tipoPesquisa.trim().isEmpty()) {
             tipoPesquisa = "nome";
         }
 
@@ -154,24 +155,29 @@ public class AutuadoServlet extends HttpServlet {
             termo = "";
         }
 
+        if (pagina == null || pagina.trim().isEmpty()) {
+            pagina = "1";
+        }
+
         List<Autuado> autuados;
 
         if (tipoPesquisa.equalsIgnoreCase("bi")) {
-            autuados = autuadoDAO.findByBi(termo);
+            autuados = autuadoDAO.consultarPaginaPorBi(termo, pagina);
 
         } else if (tipoPesquisa.equalsIgnoreCase("data")) {
             try {
                 if (termo.trim().isEmpty()) {
-                    autuados = autuadoDAO.findAll();
+                    autuados = autuadoDAO.consultarPagina(pagina);
                 } else {
-                    autuados = autuadoDAO.findByData(DateUtil.strToDate(termo));
+                    java.sql.Date data = DateUtil.strToDate(termo);
+                    autuados = autuadoDAO.consultarPaginaPorData(data, pagina);
                 }
             } catch (Exception ex) {
                 autuados = new java.util.ArrayList<Autuado>();
             }
 
         } else {
-            autuados = autuadoDAO.findByNome(termo);
+            autuados = autuadoDAO.consultarPaginaPorNome(termo, pagina);
         }
 
         PrintWriter out = response.getWriter();

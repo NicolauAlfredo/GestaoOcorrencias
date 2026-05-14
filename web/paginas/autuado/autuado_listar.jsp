@@ -59,7 +59,7 @@
             <div id="page-wrapper">
                 <div class="row">
                     <div class="col-lg-12">
-                        <%@include file="../../menus/cabecalho.jsp" %>
+                        <%@include file="../../components/cabecalho.jsp" %>
 
                         <h1 class="page-header text-primary" title="Registar autuado">
                             <a href="paginas/autuado/autuado_registo.jsp">Autuado</a>
@@ -139,7 +139,7 @@
                     </div>
                 </div>
 
-                <%@include file="../../menus/rodape.jsp" %>
+                <%@include file="../../components/rodape.jsp" %>
             </div>
         </div>
     </body>
