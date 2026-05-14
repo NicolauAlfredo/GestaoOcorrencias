@@ -64,7 +64,7 @@
             int paginaAnterior = paginaActual - 1;
             int proximaPagina = paginaActual + 1;
 
-            String autuanteUrl = URLEncoder.encode(autuante, "UTF-8");
+            String dataUrl = URLEncoder.encode(autuante, "UTF-8");
         %>
 
         <div class="container">
@@ -92,6 +92,7 @@
                 </div>
 
                 <div class="panel-body">
+
                     <form action="paginas/ocorrencia/ocorrencia_listar_por_autuante.jsp" method="get">
                         <div class="form-group input-group">
                             <input
@@ -111,43 +112,49 @@
                         </div>
                     </form>
 
-                    <div id="resultado-ocorrencias-wrapper">
-                        <div class="table-responsive">
+                    <form>
+                        <%
+                            request.setAttribute("ocorrencias", ocorrencias);
+                        %>
+
+                        <div id="resultado-ocorrencias-wrapper">
                             <%@include file="ocorrencia_tabela.jsp" %>
-
-                            <div class="text-center">
-                                <ul class="pagination">
-                                    <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
-                                        <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_autuante.jsp?autuante_ocorrencia=" + autuanteUrl + "&pagina=" + paginaAnterior%>">
-                                            &laquo;
-                                        </a>
-                                    </li>
-
-                                    <%
-                                        for (int i = 1; i <= quantidadePaginas; i++) {
-                                    %>
-                                    <li class="<%=i == paginaActual ? "active" : ""%>">
-                                        <a href="paginas/ocorrencia/ocorrencia_listar_por_autuante.jsp?autuante_ocorrencia=<%=autuanteUrl%>&pagina=<%=i%>">
-                                            <%=i%>
-                                        </a>
-                                    </li>
-                                    <%
-                                        }
-                                    %>
-
-                                    <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-                                        <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_autuante.jsp?autuante_ocorrencia=" + autuanteUrl + "&pagina=" + proximaPagina%>">
-                                            &raquo;
-                                        </a>
-                                    </li>
-                                </ul>
-
-                                <p class="text-muted">
-                                    Página <%=paginaActual%> de <%=quantidadePaginas%>
-                                </p>
-                            </div>
                         </div>
-                    </div>
+
+                        <div class="text-center">
+                            <ul class="pagination">
+
+                                <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
+                                    <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_data.jsp?data_ocorrencia=" + dataUrl + "&pagina=" + paginaAnterior%>">
+                                        &laquo;
+                                    </a>
+                                </li>
+
+                                <%
+                                    for (int i = 1; i <= quantidadePaginas; i++) {
+                                %>
+                                <li class="<%=i == paginaActual ? "active" : ""%>">
+                                    <a href="paginas/ocorrencia/ocorrencia_listar_por_data.jsp?data_ocorrencia=<%=dataUrl%>&pagina=<%=i%>">
+                                        <%=i%>
+                                    </a>
+                                </li>
+                                <%
+                                    }
+                                %>
+
+                                <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
+                                    <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_data.jsp?data_ocorrencia=" + dataUrl + "&pagina=" + proximaPagina%>">
+                                        &raquo;
+                                    </a>
+                                </li>
+
+                            </ul>
+
+                            <p class="text-muted">
+                                Página <%=paginaActual%> de <%=quantidadePaginas%>
+                            </p>
+                        </div>
+                    </form>
                 </div>
             </div>
 
