@@ -7,6 +7,8 @@ package controlo;
 
 import dao.ProfissaoDAO;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,6 +24,8 @@ import modelo.Profissao;
 @WebServlet(name = "ProfissaoServlet", urlPatterns = {"/profissaoServlet"})
 public class ProfissaoServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -33,29 +37,45 @@ public class ProfissaoServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
+
         String comando = request.getParameter("comando");
+
         if (comando == null) {
             comando = "principal";
         }
-        ProfissaoDAO profissaoDAO;
+
+        ProfissaoDAO profissaoDAO = new ProfissaoDAO();
+
+        if (comando.equalsIgnoreCase("pesquisar_ajax")) {
+            pesquisarAjax(request, response, profissaoDAO);
+            return;
+        }
+
         Profissao profissao = new Profissao();
-        if (comando == null || !comando.equalsIgnoreCase("principal")) {
+
+        if (!comando.equalsIgnoreCase("principal")) {
             try {
                 String idProfissao = request.getParameter("id_profissao");
-                if (idProfissao != null) {
+
+                if (idProfissao != null && !idProfissao.trim().isEmpty()) {
                     profissao.setIdProfissao(Integer.parseInt(idProfissao));
                 }
+
             } catch (NumberFormatException ex) {
-                System.err.println("Erro ao converter dado: " + ex.getMessage());
+                System.err.println("Erro ao converter id da profissão: " + ex.getMessage());
             }
         }
+
         try {
-            profissaoDAO = new ProfissaoDAO();
             if (comando.equalsIgnoreCase("guardar")) {
                 profissao.setNomeProfissao(request.getParameter("nome_profissao"));
 
                 profissaoDAO.save(profissao);
+
                 request.setAttribute("message", "Profissão cadastrada!");
                 RequestDispatcher dispatcher = request.getRequestDispatcher("paginas/profissao/profissao_registo.jsp");
                 dispatcher.forward(request, response);
@@ -65,34 +85,109 @@ public class ProfissaoServlet extends HttpServlet {
                 profissao.setNomeProfissao(request.getParameter("nome_profissao"));
 
                 profissaoDAO.update(profissao);
+
                 request.setAttribute("message", "Profissão editada!");
                 RequestDispatcher dispatcher = request.getRequestDispatcher("paginas/profissao/profissao_listar.jsp");
                 dispatcher.forward(request, response);
 
             } else if (comando.equalsIgnoreCase("eliminar")) {
                 profissaoDAO.delete(profissao);
+
                 request.setAttribute("message", "Profissão eliminada!");
                 RequestDispatcher dispatcher = request.getRequestDispatcher("paginas/profissao/profissao_listar.jsp");
                 dispatcher.forward(request, response);
 
             } else if (comando.equalsIgnoreCase("prepara_editar")) {
                 profissao = profissaoDAO.findById(profissao.getIdProfissao());
+
                 request.setAttribute("profissao", profissao);
-                RequestDispatcher rd = request.getRequestDispatcher("/paginas/profissao/profissao_editar.jsp");
-                rd.forward(request, response);
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/paginas/profissao/profissao_editar.jsp");
+                dispatcher.forward(request, response);
+
             } else if (comando.equalsIgnoreCase("listar")) {
                 response.sendRedirect("paginas/profissao/profissao_listar.jsp");
+
             } else if (comando.equalsIgnoreCase("detalhes")) {
                 profissao = profissaoDAO.findById(profissao.getIdProfissao());
+
                 request.setAttribute("profissao", profissao);
-                RequestDispatcher rd = request.getRequestDispatcher("paginas/profissao/profissao_detalhes.jsp");
-                rd.forward(request, response);
+                RequestDispatcher dispatcher = request.getRequestDispatcher("paginas/profissao/profissao_detalhes.jsp");
+                dispatcher.forward(request, response);
+
             } else if (comando.equalsIgnoreCase("principal")) {
                 response.sendRedirect("paginas/index.jsp");
             }
+
         } catch (IOException | ServletException ex) {
             System.err.println("Erro na leitura dos dados: " + ex.getMessage());
         }
+    }
+
+    private void pesquisarAjax(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            ProfissaoDAO profissaoDAO
+    ) throws IOException {
+
+        response.setContentType("text/html;charset=UTF-8");
+
+        String termo = request.getParameter("termo");
+
+        if (termo == null) {
+            termo = "";
+        }
+
+        List<Profissao> profissoes = profissaoDAO.findByNome(termo);
+
+        PrintWriter out = response.getWriter();
+
+        if (profissoes == null || profissoes.isEmpty()) {
+            out.println("<tr>");
+            out.println("<td colspan='6' class='text-center text-muted'>Nenhuma profissão encontrada.</td>");
+            out.println("</tr>");
+            return;
+        }
+
+        for (Profissao profissao : profissoes) {
+            out.println("<tr>");
+
+            out.println("<td>" + profissao.getIdProfissao() + "</td>");
+            out.println("<td>" + valorSeguro(profissao.getNomeProfissao()) + "</td>");
+
+            out.println("<td>");
+            out.println("<a href='" + request.getContextPath() + "/profissaoServlet?comando=detalhes&id_profissao=" + profissao.getIdProfissao() + "'>");
+            out.println("<span class='glyphicon glyphicon-print'></span>");
+            out.println("</a>");
+            out.println("</td>");
+
+            out.println("<td>");
+            out.println("<a href='" + request.getContextPath() + "/profissaoServlet?comando=detalhes&id_profissao=" + profissao.getIdProfissao() + "'>");
+            out.println("<span class='glyphicon glyphicon-zoom-in'></span>");
+            out.println("</a>");
+            out.println("</td>");
+
+            out.println("<td>");
+            out.println("<a href='" + request.getContextPath() + "/profissaoServlet?comando=prepara_editar&id_profissao=" + profissao.getIdProfissao() + "'>");
+            out.println("<span class='glyphicon glyphicon-edit'></span>");
+            out.println("</a>");
+            out.println("</td>");
+
+            out.println("<td>");
+            out.println("<a onclick=\"return confirm('Deseja realmente eliminar esta profissão?');\" href='" + request.getContextPath() + "/profissaoServlet?comando=eliminar&id_profissao=" + profissao.getIdProfissao() + "'>");
+            out.println("<span class='glyphicon glyphicon-trash'></span>");
+            out.println("</a>");
+            out.println("</td>");
+
+            out.println("</tr>");
+        }
+    }
+
+    private String valorSeguro(String valor) {
+        if (valor == null) {
+            return "";
+        }
+
+        return valor;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

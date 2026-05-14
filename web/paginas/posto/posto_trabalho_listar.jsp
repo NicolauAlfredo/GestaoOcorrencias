@@ -120,7 +120,7 @@
                                         name="tipo_pesquisa"
                                         id="tipo_pesquisa_posto"
                                         class="form-control input-sm"
-                                        style="max-width: 220px; background-color: #337ab7; color: white; border-color: #2e6da4;">
+                                        style="max-width: 220px; background-color: #337ab7; color: white; border: none;">
 
                                         <option value="nome" <%= "nome".equalsIgnoreCase(tipoPesquisa) ? "selected" : ""%>>Nome</option>
                                         <option value="numero" <%= "numero".equalsIgnoreCase(tipoPesquisa) ? "selected" : ""%>>Número</option>
