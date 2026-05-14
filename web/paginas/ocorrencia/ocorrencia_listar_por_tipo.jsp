@@ -182,38 +182,30 @@
         </div>
         <!-- Fim do Container -->
 
-        <div class="text-center">
-            <ul class="pagination">
+        <script type="text/javascript">
+            $(document).ready(function () {
 
-                <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
-                    <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_tipo.jsp?tipo_ocorrencia=" + tipoUrl + "&pagina=" + paginaAnterior%>">
-                        &laquo;
-                    </a>
-                </li>
+                var tempoEspera = null;
 
-                <%
-                    for (int i = 1; i <= quantidadePaginas; i++) {
-                %>
-                <li class="<%=i == paginaActual ? "active" : ""%>">
-                    <a href="paginas/ocorrencia/ocorrencia_listar_por_tipo.jsp?tipo_ocorrencia=<%=tipoUrl%>&pagina=<%=i%>">
-                        <%=i%>
-                    </a>
-                </li>
-                <%
-                    }
-                %>
+                $("#pesquisa_tipo").keyup(function () {
 
-                <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-                    <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_tipo.jsp?tipo_ocorrencia=" + tipoUrl + "&pagina=" + proximaPagina%>">
-                        &raquo;
-                    </a>
-                </li>
+                    clearTimeout(tempoEspera);
 
-            </ul>
+                    var termo = $(this).val();
 
-            <p class="text-muted">
-                Página <%=paginaActual%> de <%=quantidadePaginas%>
-            </p>
-        </div>
+                    tempoEspera = setTimeout(function () {
+
+                        $("#resultado-ocorrencias-wrapper").load(
+                                "paginas/ocorrencia/ocorrencia_listar_por_tipo.jsp?tipo_ocorrencia="
+                                + encodeURIComponent(termo)
+                                + " #resultado-ocorrencias-wrapper > *"
+                                );
+
+                    }, 300);
+
+                });
+
+            });
+        </script>
     </body>
 </html>
