@@ -21,6 +21,8 @@ import util.Conexao;
  */
 public class PostoTrabalhoDAO implements GenericoDAO<PostoTrabalho> {
 
+    private static final int TOTAL_POSTOS_POR_PAGINA = 6;
+
     private static final String CAMPOS_CONSULTA
             = "p.id_posto_trabalho, "
             + "p.nome_posto_trabalho, "
@@ -43,48 +45,79 @@ public class PostoTrabalhoDAO implements GenericoDAO<PostoTrabalho> {
     private static final String ELIMINAR
             = "DELETE FROM posto_trabalho WHERE id_posto_trabalho = ?";
 
-    private static final String BUSCAR_POR_CODIGO
+    private static final String BASE_SELECT
             = "SELECT " + CAMPOS_CONSULTA + " "
             + "FROM posto_trabalho p "
-            + "INNER JOIN municipio m ON p.id_municipio = m.id_municipio "
+            + "INNER JOIN municipio m ON p.id_municipio = m.id_municipio ";
+
+    private static final String BUSCAR_POR_CODIGO
+            = BASE_SELECT
             + "WHERE p.id_posto_trabalho = ?";
 
     private static final String LISTAR_TUDO
-            = "SELECT " + CAMPOS_CONSULTA + " "
-            + "FROM posto_trabalho p "
-            + "INNER JOIN municipio m ON p.id_municipio = m.id_municipio "
+            = BASE_SELECT
             + "ORDER BY p.nome_posto_trabalho";
 
     private static final String LISTAR_POR_NOME
-            = "SELECT " + CAMPOS_CONSULTA + " "
-            + "FROM posto_trabalho p "
-            + "INNER JOIN municipio m ON p.id_municipio = m.id_municipio "
+            = BASE_SELECT
             + "WHERE p.nome_posto_trabalho LIKE ? "
             + "ORDER BY p.nome_posto_trabalho";
 
     private static final String LISTAR_POR_NUMERO
-            = "SELECT " + CAMPOS_CONSULTA + " "
-            + "FROM posto_trabalho p "
-            + "INNER JOIN municipio m ON p.id_municipio = m.id_municipio "
+            = BASE_SELECT
             + "WHERE p.numero_posto_trabalho = ? "
             + "ORDER BY p.numero_posto_trabalho";
 
     private static final String LISTAR_POR_MUNICIPIO
-            = "SELECT " + CAMPOS_CONSULTA + " "
-            + "FROM posto_trabalho p "
-            + "INNER JOIN municipio m ON p.id_municipio = m.id_municipio "
+            = BASE_SELECT
             + "WHERE m.nome_municipio LIKE ? "
             + "ORDER BY m.nome_municipio, p.nome_posto_trabalho";
 
+    private static final String CONTAR_POSTOS
+            = "SELECT COUNT(1) AS total_postos FROM posto_trabalho";
+
+    private static final String CONSULTAR_PAGINA
+            = BASE_SELECT
+            + "ORDER BY p.nome_posto_trabalho "
+            + "LIMIT ? OFFSET ?";
+
+    private static final String CONTAR_POSTOS_POR_NOME
+            = "SELECT COUNT(1) AS total_postos "
+            + "FROM posto_trabalho "
+            + "WHERE nome_posto_trabalho LIKE ?";
+
+    private static final String CONSULTAR_PAGINA_POR_NOME
+            = BASE_SELECT
+            + "WHERE p.nome_posto_trabalho LIKE ? "
+            + "ORDER BY p.nome_posto_trabalho "
+            + "LIMIT ? OFFSET ?";
+
+    private static final String CONTAR_POSTOS_POR_NUMERO
+            = "SELECT COUNT(1) AS total_postos "
+            + "FROM posto_trabalho "
+            + "WHERE numero_posto_trabalho = ?";
+
+    private static final String CONSULTAR_PAGINA_POR_NUMERO
+            = BASE_SELECT
+            + "WHERE p.numero_posto_trabalho = ? "
+            + "ORDER BY p.numero_posto_trabalho "
+            + "LIMIT ? OFFSET ?";
+
+    private static final String CONTAR_POSTOS_POR_MUNICIPIO
+            = "SELECT COUNT(1) AS total_postos "
+            + "FROM posto_trabalho p "
+            + "INNER JOIN municipio m ON p.id_municipio = m.id_municipio "
+            + "WHERE m.nome_municipio LIKE ?";
+
+    private static final String CONSULTAR_PAGINA_POR_MUNICIPIO
+            = BASE_SELECT
+            + "WHERE m.nome_municipio LIKE ? "
+            + "ORDER BY m.nome_municipio, p.nome_posto_trabalho "
+            + "LIMIT ? OFFSET ?";
+
     @Override
     public void save(PostoTrabalho postoTrabalho) {
-        if (postoTrabalho == null) {
-            System.err.println("Erro ao INSERIR posto de trabalho: o objeto posto de trabalho não pode ser nulo.");
-            return;
-        }
-
-        if (postoTrabalho.getMunicipio() == null) {
-            System.err.println("Erro ao INSERIR posto de trabalho: o município não pode ser nulo.");
+        if (postoTrabalho == null || postoTrabalho.getMunicipio() == null) {
             return;
         }
 
@@ -110,13 +143,7 @@ public class PostoTrabalhoDAO implements GenericoDAO<PostoTrabalho> {
 
     @Override
     public void update(PostoTrabalho postoTrabalho) {
-        if (postoTrabalho == null) {
-            System.err.println("Erro ao ACTUALIZAR posto de trabalho: o objeto posto de trabalho não pode ser nulo.");
-            return;
-        }
-
-        if (postoTrabalho.getMunicipio() == null) {
-            System.err.println("Erro ao ACTUALIZAR posto de trabalho: o município não pode ser nulo.");
+        if (postoTrabalho == null || postoTrabalho.getMunicipio() == null) {
             return;
         }
 
@@ -144,7 +171,6 @@ public class PostoTrabalhoDAO implements GenericoDAO<PostoTrabalho> {
     @Override
     public void delete(PostoTrabalho postoTrabalho) {
         if (postoTrabalho == null) {
-            System.err.println("Erro ao ELIMINAR posto de trabalho: o objeto posto de trabalho não pode ser nulo.");
             return;
         }
 
@@ -156,7 +182,6 @@ public class PostoTrabalhoDAO implements GenericoDAO<PostoTrabalho> {
             ps = conn.prepareStatement(ELIMINAR);
 
             ps.setInt(1, postoTrabalho.getIdPostoTrabalho());
-
             ps.executeUpdate();
 
         } catch (SQLException ex) {
@@ -169,7 +194,6 @@ public class PostoTrabalhoDAO implements GenericoDAO<PostoTrabalho> {
     @Override
     public PostoTrabalho findById(Integer id) {
         if (id == null) {
-            System.err.println("Erro ao BUSCAR posto de trabalho: o id não pode ser nulo.");
             return null;
         }
 
@@ -191,8 +215,6 @@ public class PostoTrabalhoDAO implements GenericoDAO<PostoTrabalho> {
                 return postoTrabalho;
             }
 
-            System.err.println("Não foi encontrado nenhum posto de trabalho com id: " + id);
-
         } catch (SQLException ex) {
             System.err.println("Erro ao BUSCAR dados do posto de trabalho: " + ex.getLocalizedMessage());
         } finally {
@@ -205,129 +227,107 @@ public class PostoTrabalhoDAO implements GenericoDAO<PostoTrabalho> {
 
     @Override
     public List<PostoTrabalho> findAll() {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        List<PostoTrabalho> postosTrabalho = new ArrayList<PostoTrabalho>();
-
-        try {
-            conn = Conexao.getConnection();
-            ps = conn.prepareStatement(LISTAR_TUDO);
-
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                PostoTrabalho postoTrabalho = new PostoTrabalho();
-                popularComDados(postoTrabalho, rs);
-                postosTrabalho.add(postoTrabalho);
-            }
-
-        } catch (SQLException ex) {
-            System.err.println("Erro ao LISTAR dados dos postos de trabalho: " + ex.getLocalizedMessage());
-        } finally {
-            fecharResultSet(rs);
-            Conexao.closeConnection(conn, ps);
-        }
-
-        return postosTrabalho;
+        return consultarListaSimples(LISTAR_TUDO, null, null);
     }
 
     public List<PostoTrabalho> findByNome(String nome) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        List<PostoTrabalho> postosTrabalho = new ArrayList<PostoTrabalho>();
-
         if (nome == null) {
             nome = "";
         }
 
-        try {
-            conn = Conexao.getConnection();
-            ps = conn.prepareStatement(LISTAR_POR_NOME);
-
-            ps.setString(1, "%" + nome.trim() + "%");
-
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                PostoTrabalho postoTrabalho = new PostoTrabalho();
-                popularComDados(postoTrabalho, rs);
-                postosTrabalho.add(postoTrabalho);
-            }
-
-            if (postosTrabalho.isEmpty()) {
-                System.err.println("Não foi encontrado nenhum posto de trabalho com nome: " + nome);
-            }
-
-        } catch (SQLException ex) {
-            System.err.println("Erro ao BUSCAR dados do posto de trabalho por nome: " + ex.getLocalizedMessage());
-        } finally {
-            fecharResultSet(rs);
-            Conexao.closeConnection(conn, ps);
-        }
-
-        return postosTrabalho;
+        return consultarListaSimples(LISTAR_POR_NOME, "%" + nome.trim() + "%", null);
     }
 
     public List<PostoTrabalho> findByNumero(Integer numero) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        List<PostoTrabalho> postosTrabalho = new ArrayList<PostoTrabalho>();
-
         if (numero == null) {
-            System.err.println("Erro ao BUSCAR posto de trabalho: o número não pode ser nulo.");
-            return postosTrabalho;
+            return new ArrayList<PostoTrabalho>();
         }
 
-        try {
-            conn = Conexao.getConnection();
-            ps = conn.prepareStatement(LISTAR_POR_NUMERO);
-
-            ps.setInt(1, numero);
-
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                PostoTrabalho postoTrabalho = new PostoTrabalho();
-                popularComDados(postoTrabalho, rs);
-                postosTrabalho.add(postoTrabalho);
-            }
-
-            if (postosTrabalho.isEmpty()) {
-                System.err.println("Não foi encontrado nenhum posto de trabalho com número: " + numero);
-            }
-
-        } catch (SQLException ex) {
-            System.err.println("Erro ao BUSCAR dados do posto de trabalho por número: " + ex.getLocalizedMessage());
-        } finally {
-            fecharResultSet(rs);
-            Conexao.closeConnection(conn, ps);
-        }
-
-        return postosTrabalho;
+        return consultarListaSimples(LISTAR_POR_NUMERO, null, numero);
     }
 
     public List<PostoTrabalho> findByMunicipio(String municipio) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        List<PostoTrabalho> postosTrabalho = new ArrayList<PostoTrabalho>();
-
         if (municipio == null) {
             municipio = "";
         }
 
+        return consultarListaSimples(LISTAR_POR_MUNICIPIO, "%" + municipio.trim() + "%", null);
+    }
+
+    public int quantidadePaginas() {
+        return contarPaginas(CONTAR_POSTOS, null, null);
+    }
+
+    public List<PostoTrabalho> consultarPagina(String numeroPagina) {
+        return consultarPaginaSemFiltro(CONSULTAR_PAGINA, numeroPagina);
+    }
+
+    public int quantidadePaginasPorNome(String nome) {
+        if (nome == null) {
+            nome = "";
+        }
+
+        return contarPaginas(CONTAR_POSTOS_POR_NOME, "%" + nome.trim() + "%", null);
+    }
+
+    public List<PostoTrabalho> consultarPaginaPorNome(String nome, String numeroPagina) {
+        if (nome == null) {
+            nome = "";
+        }
+
+        return consultarPaginaComTexto(CONSULTAR_PAGINA_POR_NOME, nome, numeroPagina);
+    }
+
+    public int quantidadePaginasPorMunicipio(String municipio) {
+        if (municipio == null) {
+            municipio = "";
+        }
+
+        return contarPaginas(CONTAR_POSTOS_POR_MUNICIPIO, "%" + municipio.trim() + "%", null);
+    }
+
+    public List<PostoTrabalho> consultarPaginaPorMunicipio(String municipio, String numeroPagina) {
+        if (municipio == null) {
+            municipio = "";
+        }
+
+        return consultarPaginaComTexto(CONSULTAR_PAGINA_POR_MUNICIPIO, municipio, numeroPagina);
+    }
+
+    public int quantidadePaginasPorNumero(Integer numero) {
+        if (numero == null) {
+            return 1;
+        }
+
+        return contarPaginas(CONTAR_POSTOS_POR_NUMERO, null, numero);
+    }
+
+    public List<PostoTrabalho> consultarPaginaPorNumero(Integer numero, String numeroPagina) {
+        if (numero == null) {
+            return new ArrayList<PostoTrabalho>();
+        }
+
+        return consultarPaginaComNumero(CONSULTAR_PAGINA_POR_NUMERO, numero, numeroPagina);
+    }
+
+    private List<PostoTrabalho> consultarListaSimples(String sql, String texto, Integer numero) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        List<PostoTrabalho> postosTrabalho = new ArrayList<PostoTrabalho>();
+
         try {
             conn = Conexao.getConnection();
-            ps = conn.prepareStatement(LISTAR_POR_MUNICIPIO);
+            ps = conn.prepareStatement(sql);
 
-            ps.setString(1, "%" + municipio.trim() + "%");
+            if (texto != null) {
+                ps.setString(1, texto);
+            }
+
+            if (numero != null) {
+                ps.setInt(1, numero);
+            }
 
             rs = ps.executeQuery();
 
@@ -337,18 +337,183 @@ public class PostoTrabalhoDAO implements GenericoDAO<PostoTrabalho> {
                 postosTrabalho.add(postoTrabalho);
             }
 
-            if (postosTrabalho.isEmpty()) {
-                System.err.println("Não foi encontrado nenhum posto de trabalho no município: " + municipio);
-            }
-
         } catch (SQLException ex) {
-            System.err.println("Erro ao BUSCAR dados do posto de trabalho por município: " + ex.getLocalizedMessage());
+            System.err.println("Erro ao consultar postos de trabalho: " + ex.getLocalizedMessage());
         } finally {
             fecharResultSet(rs);
             Conexao.closeConnection(conn, ps);
         }
 
         return postosTrabalho;
+    }
+
+    private int contarPaginas(String sql, String texto, Integer numero) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        int quantidadePaginas = 1;
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(sql);
+
+            if (texto != null) {
+                ps.setString(1, texto);
+            }
+
+            if (numero != null) {
+                ps.setInt(1, numero);
+            }
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int totalPostos = rs.getInt("total_postos");
+
+                quantidadePaginas = (int) Math.ceil(
+                        totalPostos / (double) TOTAL_POSTOS_POR_PAGINA
+                );
+
+                if (quantidadePaginas < 1) {
+                    quantidadePaginas = 1;
+                }
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao calcular páginas dos postos de trabalho: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return quantidadePaginas;
+    }
+
+    private List<PostoTrabalho> consultarPaginaSemFiltro(String sql, String numeroPagina) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        List<PostoTrabalho> postosTrabalho = new ArrayList<PostoTrabalho>();
+
+        int pagina = converterNumeroPagina(numeroPagina);
+        int offset = (pagina * TOTAL_POSTOS_POR_PAGINA) - TOTAL_POSTOS_POR_PAGINA;
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(sql);
+
+            ps.setInt(1, TOTAL_POSTOS_POR_PAGINA);
+            ps.setInt(2, offset);
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                PostoTrabalho postoTrabalho = new PostoTrabalho();
+                popularComDados(postoTrabalho, rs);
+                postosTrabalho.add(postoTrabalho);
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao consultar página dos postos de trabalho: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return postosTrabalho;
+    }
+
+    private List<PostoTrabalho> consultarPaginaComTexto(String sql, String texto, String numeroPagina) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        List<PostoTrabalho> postosTrabalho = new ArrayList<PostoTrabalho>();
+
+        int pagina = converterNumeroPagina(numeroPagina);
+        int offset = (pagina * TOTAL_POSTOS_POR_PAGINA) - TOTAL_POSTOS_POR_PAGINA;
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(sql);
+
+            ps.setString(1, "%" + texto.trim() + "%");
+            ps.setInt(2, TOTAL_POSTOS_POR_PAGINA);
+            ps.setInt(3, offset);
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                PostoTrabalho postoTrabalho = new PostoTrabalho();
+                popularComDados(postoTrabalho, rs);
+                postosTrabalho.add(postoTrabalho);
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao consultar página filtrada dos postos de trabalho: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return postosTrabalho;
+    }
+
+    private List<PostoTrabalho> consultarPaginaComNumero(String sql, Integer numero, String numeroPagina) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        List<PostoTrabalho> postosTrabalho = new ArrayList<PostoTrabalho>();
+
+        int pagina = converterNumeroPagina(numeroPagina);
+        int offset = (pagina * TOTAL_POSTOS_POR_PAGINA) - TOTAL_POSTOS_POR_PAGINA;
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(sql);
+
+            ps.setInt(1, numero);
+            ps.setInt(2, TOTAL_POSTOS_POR_PAGINA);
+            ps.setInt(3, offset);
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                PostoTrabalho postoTrabalho = new PostoTrabalho();
+                popularComDados(postoTrabalho, rs);
+                postosTrabalho.add(postoTrabalho);
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao consultar página por número dos postos de trabalho: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return postosTrabalho;
+    }
+
+    private int converterNumeroPagina(String numeroPagina) {
+        if (numeroPagina == null || numeroPagina.trim().isEmpty()) {
+            return 1;
+        }
+
+        try {
+            int pagina = Integer.parseInt(numeroPagina.trim());
+
+            if (pagina < 1) {
+                return 1;
+            }
+
+            return pagina;
+
+        } catch (NumberFormatException ex) {
+            return 1;
+        }
     }
 
     private void popularComDados(PostoTrabalho postoTrabalho, ResultSet rs) throws SQLException {
