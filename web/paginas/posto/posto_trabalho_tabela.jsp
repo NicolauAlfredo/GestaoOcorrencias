@@ -45,7 +45,9 @@
                 <%
                     if (postoTrabalho.getMunicipio() != null) {
                 %>
-                <%=postoTrabalho.getMunicipio().getNomeMunicipio()%>
+                <%= postoTrabalho.getMunicipio() != null
+                        ? postoTrabalho.getMunicipio().getNomeMunicipio()
+                        : ""%>
                 <%
                     }
                 %>

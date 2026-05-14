@@ -8,7 +8,8 @@
 <%@page import="modelo.Municipio"%>
 <%@page import="modelo.Municipio"%>
 <%@page import="dao.MunicipioDAO"%>
-<%@page contentType="text/html" pageEncoding="ISO-8859-1"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -30,15 +31,15 @@
             <div id="page-wrapper">                
                 <div class="row">
                     <div class="col-lg-12">
-                        <%@include file="../../menus/cabecalho.jsp" %>
+                        <%@include file="../../components/cabecalho.jsp" %>
                         <h1 class="page-header text-primary" title="Ver registos"><a href="posto_trabalho_listar.jsp">Posto de Trabalho</a></h1>
                     </div>
                 </div>
             </div>
 
-            <!-- Linha de divisão -->
+            <!-- Linha de divisÃ£o -->
             <div class="row">
-                <!-- Área da linha -->
+                <!-- Ãrea da linha -->
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -48,12 +49,12 @@
                             <div class="alert alert-success">
                                 <p>${message}</p>
                             </div>
-                            <p class="text-info"> &lowast; Campos de preenchimento obrigatório</p>
+                            <p class="text-info"> &lowast; Campos de preenchimento obrigatÃ³rio</p>
                         </div>
 
-                        <!-- Corpo da página -->
+                        <!-- Corpo da pÃ¡gina -->
                         <div class="panel-body">
-                            <!-- Área do corpo-->
+                            <!-- Ãrea do corpo-->
                             <div class="col-lg-12">
                                 <form role="form" accept-charset="ISO-8859-1, UTF-8" action="<%=request.getContextPath()%>/postoTrabalhoServlet?comando=guardar" method="POST">
                                     <div class="form-group">
@@ -72,14 +73,14 @@
 
                                     <div class="form-group">                                                 
                                         <div class="col-xs-6">
-                                            <label class="text-primary" for="numero_posto_trabalho"> &lowast; Número do Posto de Trabalho: </label>
+                                            <label class="text-primary" for="numero_posto_trabalho"> &lowast; NÃºmero do Posto de Trabalho: </label>
                                             <input type="text" class="form-control" id="numero_posto_trabalho" name="numero_posto_trabalho" required/>
                                         </div>
                                     </div> 
 
                                     <div class="form-group">                                               
                                         <div class="col-xs-6" >
-                                            <label class="text-primary" for="select_municipio"> &lowast; Município:</label>
+                                            <label class="text-primary" for="select_municipio"> &lowast; MunicÃ­pio:</label>
                                             <select class="form-control" id="select_municipio" name="select_municipio">
                                                 <% for (Municipio municipio : municipios) {%>
                                                 <option value="<%=municipio.getIdMunicipio()%>">
@@ -105,19 +106,19 @@
                                     </div>
                                 </form>  
                             </div>
-                            <!-- Fim da área do Corpo -->
+                            <!-- Fim da Ã¡rea do Corpo -->
                         </div>
                         <!-- Fim do Corpo -->
                     </div>
                 </div>
-                <!-- Fim da área da linha -->
+                <!-- Fim da Ã¡rea da linha -->
 
-                <!-- Rodapé -->
-                <%@include file="../../menus/rodape.jsp" %>
-                <!-- Fim do Rodapé-->
+                <!-- RodapÃ© -->
+                <%@include file="../../components/rodape.jsp" %>
+                <!-- Fim do RodapÃ©-->
 
             </div>
-            <!-- Fim da Linha de Divisão -->
+            <!-- Fim da Linha de DivisÃ£o -->
         </div>
         <!-- Fim do Container -->
     </body>

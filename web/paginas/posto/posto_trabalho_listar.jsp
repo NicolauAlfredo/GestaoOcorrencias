@@ -80,6 +80,10 @@
                 postoTrabalhos = postoTrabalhoDAO.consultarPaginaPorNome(termo, String.valueOf(paginaActual));
             }
 
+            if (quantidadePaginas < 1) {
+                quantidadePaginas = 1;
+            }
+
             if (paginaActual > quantidadePaginas) {
                 paginaActual = quantidadePaginas;
             }
