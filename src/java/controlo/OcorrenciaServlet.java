@@ -7,6 +7,7 @@ package controlo;
 
 import dao.OcorrenciaDAO;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.List;
 import java.util.logging.Level;
@@ -177,14 +178,15 @@ public class OcorrenciaServlet extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response,
             OcorrenciaDAO ocorrenciaDAO
-    ) throws IOException, ServletException {
+    ) throws IOException {
 
         response.setContentType("text/html;charset=UTF-8");
 
         String tipoPesquisa = request.getParameter("tipo_pesquisa");
         String termo = request.getParameter("termo");
+        String pagina = request.getParameter("pagina");
 
-        if (tipoPesquisa == null) {
+        if (tipoPesquisa == null || tipoPesquisa.trim().isEmpty()) {
             tipoPesquisa = "autuado";
         }
 
@@ -192,42 +194,121 @@ public class OcorrenciaServlet extends HttpServlet {
             termo = "";
         }
 
+        if (pagina == null || pagina.trim().isEmpty()) {
+            pagina = "1";
+        }
+
         List<Ocorrencia> ocorrencias;
 
         if (tipoPesquisa.equalsIgnoreCase("autuante")) {
-            ocorrencias = ocorrenciaDAO.findByAutuante(termo);
+            ocorrencias = ocorrenciaDAO.consultarPaginaPorAutuante(termo, pagina);
 
         } else if (tipoPesquisa.equalsIgnoreCase("cidade")) {
-            ocorrencias = ocorrenciaDAO.findByCidade(termo);
+            ocorrencias = ocorrenciaDAO.consultarPaginaPorCidade(termo, pagina);
 
         } else if (tipoPesquisa.equalsIgnoreCase("testemunha")) {
-            ocorrencias = ocorrenciaDAO.findByTestemunha(termo);
+            ocorrencias = ocorrenciaDAO.consultarPaginaPorTestemunha(termo, pagina);
 
         } else if (tipoPesquisa.equalsIgnoreCase("tipo")) {
-            ocorrencias = ocorrenciaDAO.findByTipo(termo);
+            ocorrencias = ocorrenciaDAO.consultarPaginaPorTipo(termo, pagina);
 
         } else if (tipoPesquisa.equalsIgnoreCase("data")) {
             try {
                 if (termo.trim().isEmpty()) {
-                    ocorrencias = ocorrenciaDAO.findAll();
+                    ocorrencias = ocorrenciaDAO.consultarPagina(pagina);
                 } else {
-                    ocorrencias = ocorrenciaDAO.findByData(DateUtil.strToDate(termo));
+                    java.sql.Date data = DateUtil.strToDate(termo);
+                    ocorrencias = ocorrenciaDAO.consultarPaginaPorData(data, pagina);
                 }
             } catch (Exception ex) {
                 ocorrencias = new java.util.ArrayList<Ocorrencia>();
             }
 
         } else {
-            ocorrencias = ocorrenciaDAO.findByAutuado(termo);
+            ocorrencias = ocorrenciaDAO.consultarPaginaPorAutuado(termo, pagina);
         }
 
-        request.setAttribute("ocorrencias", ocorrencias);
+        PrintWriter out = response.getWriter();
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher(
-                "paginas/ocorrencia/ocorrencia_tabela.jsp"
-        );
+        if (ocorrencias == null || ocorrencias.isEmpty()) {
+            out.println("<tr>");
+            out.println("<td colspan='12' class='text-center text-muted'>Nenhuma ocorrência encontrada.</td>");
+            out.println("</tr>");
+            return;
+        }
 
-        dispatcher.forward(request, response);
+        for (Ocorrencia ocorrencia : ocorrencias) {
+            out.println("<tr>");
+
+            out.println("<td>" + ocorrencia.getIdOcorrencia() + "</td>");
+            out.println("<td>" + DateUtil.formataData(ocorrencia.getDataOcorrencia()) + "</td>");
+            out.println("<td>" + valorSeguro(ocorrencia.getHoraOcorrencia()) + "</td>");
+            out.println("<td>" + valorSeguro(ocorrencia.getCidadeOcorrencia()) + "</td>");
+
+            out.println("<td>");
+            if (ocorrencia.getAutuado() != null) {
+                out.println("<a href='" + request.getContextPath() + "/autuadoServlet?comando=detalhes&id_autuado=" + ocorrencia.getAutuado().getIdAutuado() + "'>");
+                out.println(valorSeguro(ocorrencia.getAutuado().getNomeAutuado()));
+                out.println("</a>");
+            }
+            out.println("</td>");
+
+            out.println("<td>");
+            if (ocorrencia.getAutuante() != null) {
+                out.println("<a href='" + request.getContextPath() + "/autuanteServlet?comando=detalhes&id_autuante=" + ocorrencia.getAutuante().getIdAutuante() + "'>");
+                out.println(valorSeguro(ocorrencia.getAutuante().getNomeAutuante()));
+                out.println("</a>");
+            }
+            out.println("</td>");
+
+            out.println("<td>");
+            if (ocorrencia.getTipoOcorrencia() != null) {
+                out.println(valorSeguro(ocorrencia.getTipoOcorrencia().getNomeTipoOcorrencia()));
+            }
+            out.println("</td>");
+
+            out.println("<td>");
+            if (ocorrencia.getTestemunha() != null) {
+                out.println("<a href='" + request.getContextPath() + "/testemunhaServlet?comando=detalhes&id_testemunha=" + ocorrencia.getTestemunha().getIdTestemunha() + "'>");
+                out.println(valorSeguro(ocorrencia.getTestemunha().getNomeTestemunha()));
+                out.println("</a>");
+            }
+            out.println("</td>");
+
+            out.println("<td>");
+            out.println("<a href='" + request.getContextPath() + "/ocorrenciaComParametro?id_ocorrencia=" + ocorrencia.getIdOcorrencia() + "'>");
+            out.println("<span class='glyphicon glyphicon-print'></span>");
+            out.println("</a>");
+            out.println("</td>");
+
+            out.println("<td>");
+            out.println("<a href='" + request.getContextPath() + "/ocorrenciaServlet?comando=detalhes&id_ocorrencia=" + ocorrencia.getIdOcorrencia() + "'>");
+            out.println("<span class='glyphicon glyphicon-zoom-in'></span>");
+            out.println("</a>");
+            out.println("</td>");
+
+            out.println("<td>");
+            out.println("<a href='" + request.getContextPath() + "/ocorrenciaServlet?comando=prepara_editar&id_ocorrencia=" + ocorrencia.getIdOcorrencia() + "'>");
+            out.println("<span class='glyphicon glyphicon-edit'></span>");
+            out.println("</a>");
+            out.println("</td>");
+
+            out.println("<td>");
+            out.println("<a onclick=\"return confirm('Deseja realmente eliminar esta ocorrência?');\" href='" + request.getContextPath() + "/ocorrenciaServlet?comando=eliminar&id_ocorrencia=" + ocorrencia.getIdOcorrencia() + "'>");
+            out.println("<span class='glyphicon glyphicon-trash'></span>");
+            out.println("</a>");
+            out.println("</td>");
+
+            out.println("</tr>");
+        }
+    }
+
+    private String valorSeguro(String valor) {
+        if (valor == null) {
+            return "";
+        }
+
+        return valor;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
