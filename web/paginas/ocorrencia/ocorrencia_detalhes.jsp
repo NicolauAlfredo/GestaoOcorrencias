@@ -136,10 +136,20 @@
 
                                     <li>
                                         <p class="text-primary">
-                                            2º Testemunha:
-                                            <a href="testemunhaServlet?comando=detalhes&id_testemunha=<%=ocorrencia.getTestemunha().getIdTestemunha()%>">
-                                                <strong> <%=ocorrencia.getTestemunha().getNomeTestemunha()%> </strong>
-                                            </a>                                             
+                                            2ª Testemunha:
+                                            <%
+                                                if (ocorrencia.getTestemunha1() != null) {
+                                            %>
+                                            <a href="testemunhaServlet?comando=detalhes&id_testemunha=<%=ocorrencia.getTestemunha1().getIdTestemunha()%>">
+                                                <strong><%=ocorrencia.getTestemunha1().getNomeTestemunha()%></strong>
+                                            </a>
+                                            <%
+                                            } else {
+                                            %>
+                                            <strong></strong>
+                                            <%
+                                                }
+                                            %>
                                         </p>
                                     </li>
 
