@@ -126,8 +126,9 @@ public class MunicipioServlet extends HttpServlet {
 
         String tipoPesquisa = request.getParameter("tipo_pesquisa");
         String termo = request.getParameter("termo");
+        String pagina = request.getParameter("pagina");
 
-        if (tipoPesquisa == null) {
+        if (tipoPesquisa == null || tipoPesquisa.trim().isEmpty()) {
             tipoPesquisa = "nome";
         }
 
@@ -135,12 +136,16 @@ public class MunicipioServlet extends HttpServlet {
             termo = "";
         }
 
+        if (pagina == null || pagina.trim().isEmpty()) {
+            pagina = "1";
+        }
+
         List<Municipio> municipios;
 
         if (tipoPesquisa.equalsIgnoreCase("provincia")) {
-            municipios = municipioDAO.findByProvincia(termo);
+            municipios = municipioDAO.consultarPaginaPorProvincia(termo, pagina);
         } else {
-            municipios = municipioDAO.findByNome(termo);
+            municipios = municipioDAO.consultarPaginaPorNome(termo, pagina);
         }
 
         PrintWriter out = response.getWriter();

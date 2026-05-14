@@ -1,3 +1,4 @@
+<%@page import="java.net.URLEncoder"%>
 <%@page import="modelo.Municipio"%>
 <%@page import="dao.MunicipioDAO"%>
 <%@page import="java.util.List"%>
@@ -8,7 +9,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-        <base href="<%=request.getContextPath()%>/"> 
+        <base href="<%=request.getContextPath()%>/">
 
         <title>Município</title>
 
@@ -22,7 +23,18 @@
         <%
             MunicipioDAO municipioDAO = new MunicipioDAO();
 
+            String tipoPesquisa = request.getParameter("tipo_pesquisa");
+            String termo = request.getParameter("termo");
             String paginaParametro = request.getParameter("pagina");
+
+            if (tipoPesquisa == null || tipoPesquisa.trim().isEmpty()) {
+                tipoPesquisa = "nome";
+            }
+
+            if (termo == null) {
+                termo = "";
+            }
+
             int paginaActual = 1;
 
             if (paginaParametro != null && !paginaParametro.trim().isEmpty()) {
@@ -37,28 +49,37 @@
                 paginaActual = 1;
             }
 
-            int quantidadePaginas = municipioDAO.quantidadePagina();
+            int quantidadePaginas;
+            List<Municipio> municipios;
+
+            if (tipoPesquisa.equalsIgnoreCase("provincia")) {
+                quantidadePaginas = municipioDAO.quantidadePaginasPorProvincia(termo);
+                municipios = municipioDAO.consultarPaginaPorProvincia(termo, String.valueOf(paginaActual));
+            } else {
+                quantidadePaginas = municipioDAO.quantidadePaginasPorNome(termo);
+                municipios = municipioDAO.consultarPaginaPorNome(termo, String.valueOf(paginaActual));
+            }
 
             if (paginaActual > quantidadePaginas) {
                 paginaActual = quantidadePaginas;
             }
 
-            List<Municipio> municipios = municipioDAO.consultarPagina(String.valueOf(paginaActual));
+            request.setAttribute("municipios", municipios);
 
-            int paginaAnterior = paginaActual - 1;
-            int proximaPagina = paginaActual + 1;
-
-            String urlListar = request.getContextPath() + "/paginas/municipio/municipio_listar.jsp";
+            String tipoPesquisaUrl = URLEncoder.encode(tipoPesquisa, "UTF-8");
+            String termoUrl = URLEncoder.encode(termo, "UTF-8");
         %>
 
         <div class="container">
             <div id="page-wrapper">
                 <div class="row">
                     <div class="col-lg-12">
-                        <%@include file="../../menus/cabecalho.jsp" %>
+                        <%@include file="../../components/cabecalho.jsp" %>
 
                         <h1 class="page-header text-primary" title="Registar município">
-                            <a href="paginas/municipio/municipio_registo.jsp">Município</a>
+                            <a href="paginas/municipio/municipio_registo.jsp">
+                                Município
+                            </a>
                         </h1>
 
                         <%                            String message = (String) request.getAttribute("message");
@@ -76,160 +97,90 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="panel panel-default">
-
-                        <div class="panel-heading">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                    <span class="glyphicon glyphicon-menu-down"> Operações </span>
-                                    <span class="caret"></span>
-                                </button>
-
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a href="/municipios">
-                                            <span class="glyphicon glyphicon-print"> Imprimir </span>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="/paginas/municipio/municipio_listar_por_nome.jsp">
-                                            <span class="glyphicon glyphicon-search"> Pesquisar por Nome </span>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="/paginas/municipio/municipio_listar_por_provincia.jsp">
-                                            <span class="glyphicon glyphicon-search"> Pesquisar por Província </span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
                         <div class="panel-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th class="text-primary">#</th>
-                                            <th class="text-primary">Nome</th>
-                                            <th class="text-primary">Província</th>
-                                            <th class="text-primary" colspan="4">Operações</th>
-                                        </tr>
-                                    </thead>
 
-                                    <tbody>
-                                        <%
-                                            if (municipios == null || municipios.isEmpty()) {
-                                        %>
-                                        <tr>
-                                            <td colspan="7" class="text-center text-muted">
-                                                Nenhum município encontrado.
-                                            </td>
-                                        </tr>
-                                        <%
-                                        } else {
-                                            for (Municipio municipio : municipios) {
-                                        %>
-                                        <tr>
-                                            <td><%=municipio.getIdMunicipio()%></td>
-                                            <td><%=municipio.getNomeMunicipio()%></td>
-                                            <td>
-                                                <%
-                                                    if (municipio.getProvincia() != null) {
-                                                %>
-                                                <%=municipio.getProvincia().getNomeProvincia()%>
-                                                <%
-                                                    }
-                                                %>
-                                            </td>
+                            <form action="paginas/municipio/municipio_listar.jsp" method="GET">
+                                <div class="form-group">
+                                    <select
+                                        name="tipo_pesquisa"
+                                        id="tipo_pesquisa_municipio"
+                                        class="form-control input-sm"
+                                        style="max-width: 220px; background-color: #337ab7; color: white; border: none;">
 
-                                            <td>
-                                                <a href="municipioServlet?comando=detalhes&id_municipio=<%=municipio.getIdMunicipio()%>">
-                                                    <span class="glyphicon glyphicon-print"></span>
-                                                </a>
-                                            </td>
-
-                                            <td>
-                                                <a href="municipioServlet?comando=detalhes&id_municipio=<%=municipio.getIdMunicipio()%>">
-                                                    <span class="glyphicon glyphicon-zoom-in"></span>
-                                                </a>
-                                            </td>
-
-                                            <td>
-                                                <a href="municipioServlet?comando=prepara_editar&id_municipio=<%=municipio.getIdMunicipio()%>">
-                                                    <span class="glyphicon glyphicon-edit"></span>
-                                                </a>
-                                            </td>
-
-                                            <td>
-                                                <a href="municipioServlet?comando=eliminar&id_municipio=<%=municipio.getIdMunicipio()%>"
-                                                   onclick="return confirm('Deseja realmente eliminar este município?');">
-                                                    <span class="glyphicon glyphicon-trash"></span>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        <%
-                                                }
-                                            }
-                                        %>
-                                    </tbody>
-                                </table>
-
-                                <div class="text-center">
-                                    <ul class="pagination">
-
-                                        <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
-                                            <%
-                                                if (paginaActual <= 1) {
-                                            %>
-                                            <a href="javascript:void(0);">&laquo;</a>
-                                            <%
-                                            } else {
-                                            %>
-                                            <a href="<%=urlListar%>?pagina=<%=paginaAnterior%>">&laquo;</a>
-                                            <%
-                                                }
-                                            %>
-                                        </li>
-
-                                        <%
-                                            for (int i = 1; i <= quantidadePaginas; i++) {
-                                        %>
-                                        <li class="<%=i == paginaActual ? "active" : ""%>">
-                                            <a href="<%=urlListar%>?pagina=<%=i%>"><%=i%></a>
-                                        </li>
-                                        <%
-                                            }
-                                        %>
-
-                                        <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-                                            <%
-                                                if (paginaActual >= quantidadePaginas) {
-                                            %>
-                                            <a href="javascript:void(0);">&raquo;</a>
-                                            <%
-                                            } else {
-                                            %>
-                                            <a href="<%=urlListar%>?pagina=<%=proximaPagina%>">&raquo;</a>
-                                            <%
-                                                }
-                                            %>
-                                        </li>
-
-                                    </ul>
-
-                                    <p class="text-muted">
-                                        Página <%=paginaActual%> de <%=quantidadePaginas%>
-                                    </p>
+                                        <option value="nome" <%= "nome".equalsIgnoreCase(tipoPesquisa) ? "selected" : ""%>>Nome</option>
+                                        <option value="provincia" <%= "provincia".equalsIgnoreCase(tipoPesquisa) ? "selected" : ""%>>Província</option>
+                                    </select>
                                 </div>
+
+                                <div class="form-group input-group">
+                                    <input
+                                        type="search"
+                                        name="termo"
+                                        id="pesquisa_municipio"
+                                        class="form-control"
+                                        placeholder="Pesquisar município"
+                                        autocomplete="off"
+                                        value="<%=termo%>">
+
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="glyphicon glyphicon-search"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+
+                            <div class="table-responsive">
+                                <%@include file="municipio_tabela.jsp" %>
+
+                                <%                                    request.setAttribute("paginaActual", paginaActual);
+                                    request.setAttribute("quantidadePaginas", quantidadePaginas);
+                                    request.setAttribute("urlBase", "paginas/municipio/municipio_listar.jsp");
+                                    request.setAttribute(
+                                            "queryStringExtra",
+                                            "tipo_pesquisa=" + tipoPesquisaUrl + "&termo=" + termoUrl
+                                    );
+                                %>
+
+                                <%@include file="../../components/paginacao.jsp" %>
                             </div>
+
                         </div>
                     </div>
                 </div>
 
-                <%@include file="../../menus/rodape.jsp" %>
+                <%@include file="../../components/rodape.jsp" %>
             </div>
         </div>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var tempoEspera = null;
+
+                function pesquisarMunicipios(pagina) {
+                    var tipoPesquisa = $("#tipo_pesquisa_municipio").val();
+                    var termo = $("#pesquisa_municipio").val();
+
+                    $("#resultado-municipios").load(
+                            "municipioServlet?comando=pesquisar_ajax"
+                            + "&tipo_pesquisa=" + encodeURIComponent(tipoPesquisa)
+                            + "&termo=" + encodeURIComponent(termo)
+                            + "&pagina=" + encodeURIComponent(pagina)
+                            );
+                }
+
+                $("#pesquisa_municipio").keyup(function () {
+                    clearTimeout(tempoEspera);
+
+                    tempoEspera = setTimeout(function () {
+                        pesquisarMunicipios(1);
+                    }, 300);
+                });
+
+                $("#tipo_pesquisa_municipio").change(function () {
+                    pesquisarMunicipios(1);
+                });
+            });
+        </script>
     </body>
 </html>
