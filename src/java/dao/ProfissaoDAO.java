@@ -47,10 +47,15 @@ public class ProfissaoDAO implements GenericoDAO<Profissao> {
             = "SELECT * FROM profissao ORDER BY nome_profissao LIMIT ? OFFSET ?";
 
     private static final String CONTAR_PROFISSOES_POR_NOME
-            = "SELECT COUNT(1) AS total_profissoes FROM profissao WHERE nome_profissao LIKE ?";
+            = "SELECT COUNT(1) AS total_profissoes "
+            + "FROM profissao "
+            + "WHERE nome_profissao LIKE ?";
 
     private static final String CONSULTAR_PAGINA_POR_NOME
-            = "SELECT * FROM profissao WHERE nome_profissao LIKE ? ORDER BY nome_profissao LIMIT ? OFFSET ?";
+            = "SELECT * FROM profissao "
+            + "WHERE nome_profissao LIKE ? "
+            + "ORDER BY nome_profissao "
+            + "LIMIT ? OFFSET ?";
 
     @Override
     public void save(Profissao profissao) {
@@ -67,6 +72,7 @@ public class ProfissaoDAO implements GenericoDAO<Profissao> {
             ps = conn.prepareStatement(INSERIR);
 
             ps.setString(1, profissao.getNomeProfissao());
+
             ps.executeUpdate();
 
         } catch (SQLException ex) {
@@ -92,6 +98,7 @@ public class ProfissaoDAO implements GenericoDAO<Profissao> {
 
             ps.setString(1, profissao.getNomeProfissao());
             ps.setInt(2, profissao.getIdProfissao());
+
             ps.executeUpdate();
 
         } catch (SQLException ex) {
@@ -116,6 +123,7 @@ public class ProfissaoDAO implements GenericoDAO<Profissao> {
             ps = conn.prepareStatement(ELIMINAR);
 
             ps.setInt(1, profissao.getIdProfissao());
+
             ps.executeUpdate();
 
         } catch (SQLException ex) {
@@ -141,6 +149,7 @@ public class ProfissaoDAO implements GenericoDAO<Profissao> {
             ps = conn.prepareStatement(BUSCAR_POR_CODIGO);
 
             ps.setInt(1, id);
+
             rs = ps.executeQuery();
 
             if (rs.next()) {
@@ -169,33 +178,10 @@ public class ProfissaoDAO implements GenericoDAO<Profissao> {
             nome = "";
         }
 
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        List<Profissao> profissoes = new ArrayList<Profissao>();
-
-        try {
-            conn = Conexao.getConnection();
-            ps = conn.prepareStatement(LISTAR_POR_NOME);
-
-            ps.setString(1, "%" + nome.trim() + "%");
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Profissao profissao = new Profissao();
-                popularComDados(profissao, rs);
-                profissoes.add(profissao);
-            }
-
-        } catch (SQLException ex) {
-            System.err.println("Erro ao BUSCAR dados da profissão por nome: " + ex.getLocalizedMessage());
-        } finally {
-            fecharResultSet(rs);
-            Conexao.closeConnection(conn, ps);
-        }
-
-        return profissoes;
+        return consultarListaComFiltro(
+                LISTAR_POR_NOME,
+                nome
+        );
     }
 
     public int quantidadePaginas() {
@@ -203,38 +189,10 @@ public class ProfissaoDAO implements GenericoDAO<Profissao> {
     }
 
     public List<Profissao> consultarPagina(String numeroPagina) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        List<Profissao> profissoes = new ArrayList<Profissao>();
-
-        int pagina = converterNumeroPagina(numeroPagina);
-        int offset = (pagina * TOTAL_PROFISSOES_POR_PAGINA) - TOTAL_PROFISSOES_POR_PAGINA;
-
-        try {
-            conn = Conexao.getConnection();
-            ps = conn.prepareStatement(CONSULTAR_PAGINA);
-
-            ps.setInt(1, TOTAL_PROFISSOES_POR_PAGINA);
-            ps.setInt(2, offset);
-
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Profissao profissao = new Profissao();
-                popularComDados(profissao, rs);
-                profissoes.add(profissao);
-            }
-
-        } catch (SQLException ex) {
-            System.err.println("Erro ao consultar página de profissões: " + ex.getLocalizedMessage());
-        } finally {
-            fecharResultSet(rs);
-            Conexao.closeConnection(conn, ps);
-        }
-
-        return profissoes;
+        return consultarPaginaSemFiltro(
+                CONSULTAR_PAGINA,
+                numeroPagina
+        );
     }
 
     public int quantidadePaginasPorNome(String nome) {
@@ -242,7 +200,10 @@ public class ProfissaoDAO implements GenericoDAO<Profissao> {
             nome = "";
         }
 
-        return contarPaginas(CONTAR_PROFISSOES_POR_NOME, "%" + nome.trim() + "%");
+        return contarPaginas(
+                CONTAR_PROFISSOES_POR_NOME,
+                nome
+        );
     }
 
     public List<Profissao> consultarPaginaPorNome(String nome, String numeroPagina) {
@@ -250,39 +211,11 @@ public class ProfissaoDAO implements GenericoDAO<Profissao> {
             nome = "";
         }
 
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        List<Profissao> profissoes = new ArrayList<Profissao>();
-
-        int pagina = converterNumeroPagina(numeroPagina);
-        int offset = (pagina * TOTAL_PROFISSOES_POR_PAGINA) - TOTAL_PROFISSOES_POR_PAGINA;
-
-        try {
-            conn = Conexao.getConnection();
-            ps = conn.prepareStatement(CONSULTAR_PAGINA_POR_NOME);
-
-            ps.setString(1, "%" + nome.trim() + "%");
-            ps.setInt(2, TOTAL_PROFISSOES_POR_PAGINA);
-            ps.setInt(3, offset);
-
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Profissao profissao = new Profissao();
-                popularComDados(profissao, rs);
-                profissoes.add(profissao);
-            }
-
-        } catch (SQLException ex) {
-            System.err.println("Erro ao consultar profissões por nome com paginação: " + ex.getLocalizedMessage());
-        } finally {
-            fecharResultSet(rs);
-            Conexao.closeConnection(conn, ps);
-        }
-
-        return profissoes;
+        return consultarPaginaComFiltro(
+                CONSULTAR_PAGINA_POR_NOME,
+                nome,
+                numeroPagina
+        );
     }
 
     private int contarPaginas(String sql, String filtro) {
@@ -297,7 +230,7 @@ public class ProfissaoDAO implements GenericoDAO<Profissao> {
             ps = conn.prepareStatement(sql);
 
             if (filtro != null) {
-                ps.setString(1, filtro);
+                ps.setString(1, "%" + filtro.trim() + "%");
             }
 
             rs = ps.executeQuery();
@@ -324,43 +257,6 @@ public class ProfissaoDAO implements GenericoDAO<Profissao> {
         return quantidadePaginas;
     }
 
-    private List<Profissao> consultarPaginaComFiltro(String sql, String filtro, String numeroPagina) {
-    Connection conn = null;
-    PreparedStatement ps = null;
-    ResultSet rs = null;
-
-    List<Profissao> profissoes = new ArrayList<Profissao>();
-
-    int pagina = converterNumeroPagina(numeroPagina);
-    int offset = (pagina * TOTAL_PROFISSOES_POR_PAGINA) - TOTAL_PROFISSOES_POR_PAGINA;
-
-    try {
-        conn = Conexao.getConnection();
-        ps = conn.prepareStatement(sql);
-
-        ps.setString(1, "%" + filtro.trim() + "%");
-        ps.setInt(2, TOTAL_PROFISSOES_POR_PAGINA);
-        ps.setInt(3, offset);
-
-        rs = ps.executeQuery();
-
-        while (rs.next()) {
-            Profissao profissao = new Profissao();
-            popularComDados(profissao, rs);
-            profissoes.add(profissao);
-        }
-
-    } catch (SQLException ex) {
-        System.err.println("Erro ao consultar profissões com filtro e paginação: " + ex.getLocalizedMessage());
-    } finally {
-        fecharResultSet(rs);
-        Conexao.closeConnection(conn, ps);
-    }
-
-    return profissoes;
-}
-    
-    
     private List<Profissao> consultarPaginaSemFiltro(String sql, String numeroPagina) {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -369,7 +265,13 @@ public class ProfissaoDAO implements GenericoDAO<Profissao> {
         List<Profissao> profissoes = new ArrayList<Profissao>();
 
         int pagina = converterNumeroPagina(numeroPagina);
-        int offset = (pagina * TOTAL_PROFISSOES_POR_PAGINA) - TOTAL_PROFISSOES_POR_PAGINA;
+
+        int offset = (pagina * TOTAL_PROFISSOES_POR_PAGINA)
+                - TOTAL_PROFISSOES_POR_PAGINA;
+
+        if (offset < 0) {
+            offset = 0;
+        }
 
         try {
             conn = Conexao.getConnection();
@@ -396,6 +298,53 @@ public class ProfissaoDAO implements GenericoDAO<Profissao> {
         return profissoes;
     }
 
+    private List<Profissao> consultarPaginaComFiltro(
+            String sql,
+            String filtro,
+            String numeroPagina
+    ) {
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        List<Profissao> profissoes = new ArrayList<Profissao>();
+
+        int pagina = converterNumeroPagina(numeroPagina);
+
+        int offset = (pagina * TOTAL_PROFISSOES_POR_PAGINA)
+                - TOTAL_PROFISSOES_POR_PAGINA;
+
+        if (offset < 0) {
+            offset = 0;
+        }
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(sql);
+
+            ps.setString(1, "%" + filtro.trim() + "%");
+            ps.setInt(2, TOTAL_PROFISSOES_POR_PAGINA);
+            ps.setInt(3, offset);
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Profissao profissao = new Profissao();
+                popularComDados(profissao, rs);
+                profissoes.add(profissao);
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao consultar profissões com filtro e paginação: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return profissoes;
+    }
+
     private List<Profissao> consultarListaSemParametros(String sql) {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -406,6 +355,7 @@ public class ProfissaoDAO implements GenericoDAO<Profissao> {
         try {
             conn = Conexao.getConnection();
             ps = conn.prepareStatement(sql);
+
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -416,6 +366,37 @@ public class ProfissaoDAO implements GenericoDAO<Profissao> {
 
         } catch (SQLException ex) {
             System.err.println("Erro ao LISTAR dados das profissões: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return profissoes;
+    }
+
+    private List<Profissao> consultarListaComFiltro(String sql, String filtro) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        List<Profissao> profissoes = new ArrayList<Profissao>();
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(sql);
+
+            ps.setString(1, "%" + filtro.trim() + "%");
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Profissao profissao = new Profissao();
+                popularComDados(profissao, rs);
+                profissoes.add(profissao);
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao BUSCAR dados da profissão por nome: " + ex.getLocalizedMessage());
         } finally {
             fecharResultSet(rs);
             Conexao.closeConnection(conn, ps);
