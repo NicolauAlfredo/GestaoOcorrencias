@@ -132,61 +132,61 @@
 
                                 <div id="resultado-ocorrencias-wrapper">
                                     <%@include file="ocorrencia_tabela.jsp" %>
-                                </div>
 
-                                <div class="text-center">
+                                    <div class="text-center">
 
-                                    <ul class="pagination">
+                                        <ul class="pagination">
 
-                                        <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
+                                            <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
 
-                                            <a href="<%=paginaActual <= 1
-                                                    ? "javascript:void(0)"
-                                                    : "paginas/ocorrencia/ocorrencia_listar_por_cidade.jsp?cidade_ocorrencia="
-                                                    + cidadeUrl
-                                                    + "&pagina="
-                                                    + paginaAnterior%>">
+                                                <a href="<%=paginaActual <= 1
+                                                        ? "javascript:void(0)"
+                                                        : "paginas/ocorrencia/ocorrencia_listar_por_cidade.jsp?cidade_ocorrencia="
+                                                        + cidadeUrl
+                                                        + "&pagina="
+                                                        + paginaAnterior%>">
 
-                                                &laquo;
+                                                    &laquo;
 
-                                            </a>
+                                                </a>
 
-                                        </li>
+                                            </li>
 
-                                        <%
-                                            for (int i = 1; i <= quantidadePaginas; i++) {
-                                        %>
+                                            <%
+                                                for (int i = 1; i <= quantidadePaginas; i++) {
+                                            %>
 
-                                        <li class="<%=i == paginaActual ? "active" : ""%>">
+                                            <li class="<%=i == paginaActual ? "active" : ""%>">
 
-                                            <a href="paginas/ocorrencia/ocorrencia_listar_por_cidade.jsp?cidade_ocorrencia=<%=cidadeUrl%>&pagina=<%=i%>">
-                                                <%=i%>
-                                            </a>
-                                        </li>
+                                                <a href="paginas/ocorrencia/ocorrencia_listar_por_cidade.jsp?cidade_ocorrencia=<%=cidadeUrl%>&pagina=<%=i%>">
+                                                    <%=i%>
+                                                </a>
+                                            </li>
 
-                                        <%
-                                            }
-                                        %>
+                                            <%
+                                                }
+                                            %>
 
-                                        <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-                                            <a href="<%=paginaActual >= quantidadePaginas
-                                                    ? "javascript:void(0)"
-                                                    : "paginas/ocorrencia/ocorrencia_listar_por_cidade.jsp?cidade_ocorrencia="
-                                                    + cidadeUrl
-                                                    + "&pagina="
-                                                    + proximaPagina%>">
-                                                &raquo;
+                                            <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
+                                                <a href="<%=paginaActual >= quantidadePaginas
+                                                        ? "javascript:void(0)"
+                                                        : "paginas/ocorrencia/ocorrencia_listar_por_cidade.jsp?cidade_ocorrencia="
+                                                        + cidadeUrl
+                                                        + "&pagina="
+                                                        + proximaPagina%>">
+                                                    &raquo;
 
-                                            </a>
+                                                </a>
 
-                                        </li>
+                                            </li>
 
-                                    </ul>
+                                        </ul>
 
-                                    <p class="text-muted">
-                                        Página <%=paginaActual%> de <%=quantidadePaginas%>
-                                    </p>
+                                        <p class="text-muted">
+                                            Página <%=paginaActual%> de <%=quantidadePaginas%>
+                                        </p>
 
+                                    </div>
                                 </div>
                             </form>
                         </div>

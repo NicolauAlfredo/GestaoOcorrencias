@@ -64,7 +64,7 @@
             int paginaAnterior = paginaActual - 1;
             int proximaPagina = paginaActual + 1;
 
-            String dataUrl = URLEncoder.encode(autuante, "UTF-8");
+            String autuanteUrl = URLEncoder.encode(autuante, "UTF-8");
         %>
 
         <div class="container">
@@ -119,40 +119,40 @@
 
                         <div id="resultado-ocorrencias-wrapper">
                             <%@include file="ocorrencia_tabela.jsp" %>
-                        </div>
 
-                        <div class="text-center">
-                            <ul class="pagination">
+                            <div class="text-center">
+                                <ul class="pagination">
 
-                                <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
-                                    <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_data.jsp?data_ocorrencia=" + dataUrl + "&pagina=" + paginaAnterior%>">
-                                        &laquo;
-                                    </a>
-                                </li>
+                                    <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
+                                        <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_data.jsp?data_ocorrencia=" + autuanteUrl + "&pagina=" + paginaAnterior%>">
+                                            &laquo;
+                                        </a>
+                                    </li>
 
-                                <%
-                                    for (int i = 1; i <= quantidadePaginas; i++) {
-                                %>
-                                <li class="<%=i == paginaActual ? "active" : ""%>">
-                                    <a href="paginas/ocorrencia/ocorrencia_listar_por_data.jsp?data_ocorrencia=<%=dataUrl%>&pagina=<%=i%>">
-                                        <%=i%>
-                                    </a>
-                                </li>
-                                <%
-                                    }
-                                %>
+                                    <%
+                                        for (int i = 1; i <= quantidadePaginas; i++) {
+                                    %>
+                                    <li class="<%=i == paginaActual ? "active" : ""%>">
+                                        <a href="paginas/ocorrencia/ocorrencia_listar_por_data.jsp?data_ocorrencia=<%=autuanteUrl%>&pagina=<%=i%>">
+                                            <%=i%>
+                                        </a>
+                                    </li>
+                                    <%
+                                        }
+                                    %>
 
-                                <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-                                    <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_data.jsp?data_ocorrencia=" + dataUrl + "&pagina=" + proximaPagina%>">
-                                        &raquo;
-                                    </a>
-                                </li>
+                                    <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
+                                        <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_data.jsp?data_ocorrencia=" + autuanteUrl + "&pagina=" + proximaPagina%>">
+                                            &raquo;
+                                        </a>
+                                    </li>
 
-                            </ul>
+                                </ul>
 
-                            <p class="text-muted">
-                                Página <%=paginaActual%> de <%=quantidadePaginas%>
-                            </p>
+                                <p class="text-muted">
+                                    Página <%=paginaActual%> de <%=quantidadePaginas%>
+                                </p>
+                            </div>
                         </div>
                     </form>
                 </div>

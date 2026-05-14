@@ -63,7 +63,7 @@
             int paginaAnterior = paginaActual - 1;
             int proximaPagina = paginaActual + 1;
 
-            String dataUrl = java.net.URLEncoder.encode(autuado, "UTF-8");
+            String autuadoUrl = java.net.URLEncoder.encode(autuado, "UTF-8");
         %>
 
         <!-- Container principal do Bootstrap -->
@@ -137,7 +137,7 @@
                                         <ul class="pagination">
 
                                             <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
-                                                <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_autuante.jsp?autuante_ocorrencia=" + dataUrl + "&pagina=" + paginaAnterior%>">
+                                                <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_autuante.jsp?autuante_ocorrencia=" + autuadoUrl + "&pagina=" + paginaAnterior%>">
                                                     &laquo;
                                                 </a>
                                             </li>
@@ -146,7 +146,7 @@
                                                 for (int i = 1; i <= quantidadePaginas; i++) {
                                             %>
                                             <li class="<%=i == paginaActual ? "active" : ""%>">
-                                                <a href="paginas/ocorrencia/ocorrencia_listar_por_autuante.jsp?autuante_ocorrencia=<%=dataUrl%>&pagina=<%=i%>">
+                                                <a href="paginas/ocorrencia/ocorrencia_listar_por_autuante.jsp?autuante_ocorrencia=<%=autuadoUrl%>&pagina=<%=i%>">
                                                     <%=i%>
                                                 </a>
                                             </li>
@@ -155,7 +155,7 @@
                                             %>
 
                                             <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-                                                <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_autuante.jsp?autuante_ocorrencia=" + dataUrl + "&pagina=" + proximaPagina%>">
+                                                <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_autuante.jsp?autuante_ocorrencia=" + autuadoUrl + "&pagina=" + proximaPagina%>">
                                                     &raquo;
                                                 </a>
                                             </li>
