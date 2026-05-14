@@ -43,27 +43,53 @@
         <tr>
             <td><%=ocorrencia.getIdOcorrencia()%></td>
             <td><%=DateUtil.formataData(ocorrencia.getDataOcorrencia())%></td>
-            <td><%=ocorrencia.getHoraOcorrencia()%></td>
-            <td><%=ocorrencia.getCidadeOcorrencia()%></td>
+            <td><%=ocorrencia.getHoraOcorrencia() != null ? ocorrencia.getHoraOcorrencia() : ""%></td>
+            <td><%=ocorrencia.getCidadeOcorrencia() != null ? ocorrencia.getCidadeOcorrencia() : ""%></td>
 
             <td>
+                <%
+                    if (ocorrencia.getAutuado() != null) {
+                %>
                 <a href="autuadoServlet?comando=detalhes&id_autuado=<%=ocorrencia.getAutuado().getIdAutuado()%>">
-                    <%=ocorrencia.getAutuado().getNomeAutuado()%>
+                    <%=ocorrencia.getAutuado().getNomeAutuado() != null ? ocorrencia.getAutuado().getNomeAutuado() : ""%>
                 </a>
+                <%
+                    }
+                %>
             </td>
 
             <td>
+                <%
+                    if (ocorrencia.getAutuante() != null) {
+                %>
                 <a href="autuanteServlet?comando=detalhes&id_autuante=<%=ocorrencia.getAutuante().getIdAutuante()%>">
-                    <%=ocorrencia.getAutuante().getNomeAutuante()%>
+                    <%=ocorrencia.getAutuante().getNomeAutuante() != null ? ocorrencia.getAutuante().getNomeAutuante() : ""%>
                 </a>
+                <%
+                    }
+                %>
             </td>
 
-            <td><%=ocorrencia.getTipoOcorrencia().getNomeTipoOcorrencia()%></td>
+            <td>
+                <%
+                    if (ocorrencia.getTipoOcorrencia() != null) {
+                %>
+                <%=ocorrencia.getTipoOcorrencia().getNomeTipoOcorrencia() != null ? ocorrencia.getTipoOcorrencia().getNomeTipoOcorrencia() : ""%>
+                <%
+                    }
+                %>
+            </td>
 
             <td>
+                <%
+                    if (ocorrencia.getTestemunha() != null) {
+                %>
                 <a href="testemunhaServlet?comando=detalhes&id_testemunha=<%=ocorrencia.getTestemunha().getIdTestemunha()%>">
-                    <%=ocorrencia.getTestemunha().getNomeTestemunha()%>
+                    <%=ocorrencia.getTestemunha().getNomeTestemunha() != null ? ocorrencia.getTestemunha().getNomeTestemunha() : ""%>
                 </a>
+                <%
+                    }
+                %>
             </td>
 
             <td>
