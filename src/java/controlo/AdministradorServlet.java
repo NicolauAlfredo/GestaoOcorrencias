@@ -193,13 +193,18 @@ public class AdministradorServlet extends HttpServlet {
 
         response.setContentType("text/html;charset=UTF-8");
 
-        String nome = request.getParameter("nome_administrador");
+        String termo = request.getParameter("termo");
+        String pagina = request.getParameter("pagina");
 
-        if (nome == null) {
-            nome = "";
+        if (termo == null) {
+            termo = "";
         }
 
-        List<Administrador> administradores = administradorDAO.consultarPaginaPorNome(nome, nome);
+        if (pagina == null || pagina.trim().isEmpty()) {
+            pagina = "1";
+        }
+
+        List<Administrador> administradores = administradorDAO.consultarPaginaPorNome(termo, pagina);
 
         PrintWriter out = response.getWriter();
 

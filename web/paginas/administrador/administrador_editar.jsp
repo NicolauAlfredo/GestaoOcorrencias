@@ -36,7 +36,7 @@
             <div id="page-wrapper">                
                 <div class="row">
                     <div class="col-lg-12">
-                        <%@include file="../../menus/cabecalho.jsp" %>
+                        <%@include file="../../components/cabecalho.jsp" %>
                         <h1 class="page-header text-primary" title="Ver registos"><a href="paginas/administrador/login_listar.jsp">Administrador</a></h1>
                         <div class="alert alert-success">
                             <p>${message}</p>
@@ -157,7 +157,7 @@
                 <!-- Fim da área da linha -->
 
                 <!-- Rodapé -->
-                <%@include file="../../menus/rodape.jsp" %>
+                <%@include file="../../components/rodape.jsp" %>
                 <!-- Fim do Rodapé-->
 
             </div>

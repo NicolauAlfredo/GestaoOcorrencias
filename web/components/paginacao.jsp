@@ -8,47 +8,47 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <%
-    Integer paginaActual = (Integer) request.getAttribute("paginaActual");
-    Integer quantidadePaginas = (Integer) request.getAttribute("quantidadePaginas");
-    String urlBase = (String) request.getAttribute("urlBase");
-    String queryStringExtra = (String) request.getAttribute("queryStringExtra");
+    Integer componentePaginaActual = (Integer) request.getAttribute("paginaActual");
+    Integer componenteQuantidadePaginas = (Integer) request.getAttribute("quantidadePaginas");
+    String componenteUrlBase = (String) request.getAttribute("urlBase");
+    String componenteQueryStringExtra = (String) request.getAttribute("queryStringExtra");
 
-    if (paginaActual == null) {
-        paginaActual = 1;
+    if (componentePaginaActual == null) {
+        componentePaginaActual = 1;
     }
 
-    if (quantidadePaginas == null || quantidadePaginas < 1) {
-        quantidadePaginas = 1;
+    if (componentePaginaActual == null || componenteQuantidadePaginas < 1) {
+        componenteQuantidadePaginas = 1;
     }
 
-    if (urlBase == null) {
-        urlBase = "";
+    if (componenteUrlBase == null) {
+        componenteUrlBase = "";
     }
 
-    if (queryStringExtra == null) {
-        queryStringExtra = "";
+    if (componenteQueryStringExtra == null) {
+        componenteQueryStringExtra = "";
     }
 
-    int paginaAnterior = paginaActual - 1;
-    int proximaPagina = paginaActual + 1;
+    int paginaAnterior = componentePaginaActual - 1;
+    int proximaPagina = componentePaginaActual + 1;
 
-    String separador = queryStringExtra.trim().isEmpty() ? "?" : "?" + queryStringExtra + "&";
+    String separador = componenteQueryStringExtra.trim().isEmpty() ? "?" : "?" + componenteQueryStringExtra + "&";
 %>
 
 <div class="text-center">
     <ul class="pagination">
 
-        <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
-            <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : urlBase + separador + "pagina=" + paginaAnterior%>">
+        <li class="<%=componentePaginaActual <= 1 ? "disabled" : ""%>">
+            <a href="<%=componentePaginaActual <= 1 ? "javascript:void(0)" : componenteUrlBase + separador + "pagina=" + paginaAnterior%>">
                 &laquo;
             </a>
         </li>
 
         <%
-            for (int i = 1; i <= quantidadePaginas; i++) {
+            for (int i = 1; i <= componenteQuantidadePaginas; i++) {
         %>
-        <li class="<%=i == paginaActual ? "active" : ""%>">
-            <a href="<%=urlBase + separador + "pagina=" + i%>">
+        <li class="<%=i == componentePaginaActual ? "active" : ""%>">
+            <a href="<%=componenteUrlBase + separador + "pagina=" + i%>">
                 <%=i%>
             </a>
         </li>
@@ -56,8 +56,8 @@
             }
         %>
 
-        <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-            <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : urlBase + separador + "pagina=" + proximaPagina%>">
+        <li class="<%=componentePaginaActual >= componenteQuantidadePaginas ? "disabled" : ""%>">
+            <a href="<%=componentePaginaActual >= componenteQuantidadePaginas ? "javascript:void(0)" : componenteUrlBase + separador + "pagina=" + proximaPagina%>">
                 &raquo;
             </a>
         </li>
@@ -65,6 +65,6 @@
     </ul>
 
     <p class="text-muted">
-        Página <%=paginaActual%> de <%=quantidadePaginas%>
+        Página <%=componentePaginaActual%> de <%=componenteQuantidadePaginas%>
     </p>
 </div>

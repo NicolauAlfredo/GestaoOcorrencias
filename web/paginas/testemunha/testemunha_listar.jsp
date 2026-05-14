@@ -94,6 +94,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <%@include file="../../components/cabecalho.jsp" %>
+                        
                         <h1 class="page-header text-primary"
                             title="Registar testemunha">
                             <a href="paginas/testemunha/testemunha_registo.jsp">
