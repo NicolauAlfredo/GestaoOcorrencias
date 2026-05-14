@@ -4,6 +4,7 @@
     Author     : user
 --%>
 
+<%@page import="java.net.URLEncoder"%>
 <%@page import="dao.OcorrenciaDAO"%>
 <%@page import="java.util.List"%>
 <%@page import="modelo.Ocorrencia"%>
@@ -59,10 +60,12 @@
                     String.valueOf(paginaActual)
             );
 
+            request.setAttribute("ocorrencias", ocorrencias);
+
             int paginaAnterior = paginaActual - 1;
             int proximaPagina = paginaActual + 1;
 
-            String cidadeUrl = java.net.URLEncoder.encode(cidade, "UTF-8");
+            String cidadeUrl = URLEncoder.encode(cidade, "UTF-8");
         %>
 
         <!-- Container principal do Bootstrap -->
@@ -109,6 +112,7 @@
                                 <div class="form-group input-group">
                                     <input
                                         type="search"
+                                        id="pesquisa_cidade"
                                         name="cidade_ocorrencia"
                                         class="form-control"
                                         placeholder="Cidade da ocorrência"
@@ -123,7 +127,11 @@
                             </form>
 
                             <form>
-                                <div class="table-responsive">
+                                <div
+                                    class="table-responsive"
+                                    id="resultado-ocorrencias-wrapper"
+                                    >
+
                                     <table class="table table-hover">
                                         <thead>
                                             <tr>
@@ -138,29 +146,44 @@
                                                 <th class="text-primary" colspan="4">Operações</th>
                                             </tr>
                                         </thead>
+
                                         <tbody>
                                             <%for (Ocorrencia ocorrencia : ocorrencias) {%>
                                             <tr>
                                                 <td><%=ocorrencia.getIdOcorrencia()%></td>
-                                                <td><%=DateUtil.formataData(ocorrencia.getDataOcorrencia())%></td>
+
+                                                <td>
+                                                    <%=DateUtil.formataData(
+                                                            ocorrencia.getDataOcorrencia()
+                                                    )%>
+                                                </td>
+
                                                 <td><%=ocorrencia.getHoraOcorrencia()%></td>
+
                                                 <td><%=ocorrencia.getCidadeOcorrencia()%></td>
+
                                                 <td>
                                                     <a href="autuadoServlet?comando=detalhes&id_autuado=<%=ocorrencia.getAutuado().getIdAutuado()%>">
                                                         <%=ocorrencia.getAutuado().getNomeAutuado()%>
-                                                    </a>                                                  
+                                                    </a>
                                                 </td>
+
                                                 <td>
                                                     <a href="autuanteServlet?comando=detalhes&id_autuante=<%=ocorrencia.getAutuante().getIdAutuante()%>">
-                                                        <%=ocorrencia.getAutuante().getNomeAutuante()%>     
-                                                    </a>                                                  
+                                                        <%=ocorrencia.getAutuante().getNomeAutuante()%>
+                                                    </a>
                                                 </td>
-                                                <td><%=ocorrencia.getTipoOcorrencia().getNomeTipoOcorrencia()%></td>
+
+                                                <td>
+                                                    <%=ocorrencia.getTipoOcorrencia().getNomeTipoOcorrencia()%>
+                                                </td>
+
                                                 <td>
                                                     <a href="testemunhaServlet?comando=detalhes&id_testemunha=<%=ocorrencia.getTestemunha().getIdTestemunha()%>">
                                                         <%=ocorrencia.getTestemunha().getNomeTestemunha()%>
-                                                    </a>                                                  
+                                                    </a>
                                                 </td>
+
                                                 <td>
                                                     <a href="ocorrenciaServlet?comando=detalhes&id_ocorrencia=<%=ocorrencia.getIdOcorrencia()%>">
                                                         <span class="glyphicon glyphicon-print"></span>
@@ -190,30 +213,55 @@
                                     </table>
 
                                     <div class="text-center">
+
                                         <ul class="pagination">
 
                                             <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
-                                                <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_cidade.jsp?cidade_ocorrencia=" + cidadeUrl + "&pagina=" + paginaAnterior%>">
+
+                                                <a href="<%=paginaActual <= 1
+                                                        ? "javascript:void(0)"
+                                                        : "paginas/ocorrencia/ocorrencia_listar_por_cidade.jsp?cidade_ocorrencia="
+                                                        + cidadeUrl
+                                                        + "&pagina="
+                                                        + paginaAnterior%>">
+
                                                     &laquo;
+
                                                 </a>
+
                                             </li>
 
                                             <%
                                                 for (int i = 1; i <= quantidadePaginas; i++) {
                                             %>
+
                                             <li class="<%=i == paginaActual ? "active" : ""%>">
+
                                                 <a href="paginas/ocorrencia/ocorrencia_listar_por_cidade.jsp?cidade_ocorrencia=<%=cidadeUrl%>&pagina=<%=i%>">
+
                                                     <%=i%>
+
                                                 </a>
+
                                             </li>
+
                                             <%
                                                 }
                                             %>
 
                                             <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-                                                <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_cidade.jsp?cidade_ocorrencia=" + cidadeUrl + "&pagina=" + proximaPagina%>">
+
+                                                <a href="<%=paginaActual >= quantidadePaginas
+                                                        ? "javascript:void(0)"
+                                                        : "paginas/ocorrencia/ocorrencia_listar_por_cidade.jsp?cidade_ocorrencia="
+                                                        + cidadeUrl
+                                                        + "&pagina="
+                                                        + proximaPagina%>">
+
                                                     &raquo;
+
                                                 </a>
+
                                             </li>
 
                                         </ul>
@@ -221,8 +269,10 @@
                                         <p class="text-muted">
                                             Página <%=paginaActual%> de <%=quantidadePaginas%>
                                         </p>
+
                                     </div>
-                                </div> 
+
+                                </div>
                             </form>
                         </div>
                     </div>                   
@@ -237,6 +287,32 @@
             <!-- Fim da linha de divisão -->
         </div>
         <!-- Fim do Container -->
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                var tempoEspera = null;
+
+                $("#pesquisa_cidade").keyup(function () {
+
+                    clearTimeout(tempoEspera);
+
+                    var termo = $(this).val();
+
+                    tempoEspera = setTimeout(function () {
+
+                        $("#resultado-ocorrencias-wrapper").load(
+                                "paginas/ocorrencia/ocorrencia_listar_por_cidade.jsp?cidade_ocorrencia="
+                                + encodeURIComponent(termo)
+                                + " #resultado-ocorrencias-wrapper > *"
+                                );
+
+                    }, 300);
+
+                });
+
+            });
+        </script>
     </body>
 </html>
 
