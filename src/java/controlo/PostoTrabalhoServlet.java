@@ -7,6 +7,8 @@ package controlo;
 
 import dao.PostoTrabalhoDAO;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -34,13 +36,26 @@ public class PostoTrabalhoServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         response.setContentType("text/html;charset=UTF-8");
+
         String comando = request.getParameter("comando");
+
         if (comando == null) {
             comando = "principal";
         }
+
         PostoTrabalhoDAO postoTrabalhoDAO;
+
+        postoTrabalhoDAO = new PostoTrabalhoDAO();
+
+        if (comando.equalsIgnoreCase("pesquisar_ajax")) {
+            pesquisarAjax(request, response, postoTrabalhoDAO);
+            return;
+        }
+
         PostoTrabalho postoTrabalho = new PostoTrabalho();
+
         if (comando == null || !comando.equalsIgnoreCase("principal")) {
             try {
                 String idPostoTrabalho = request.getParameter("id_posto_trabalho");
@@ -106,6 +121,84 @@ public class PostoTrabalhoServlet extends HttpServlet {
         } catch (IOException | ServletException ex) {
             System.err.println("Erro na leitura dos dados: " + ex.getMessage());
         }
+    }
+
+    private void pesquisarAjax(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            PostoTrabalhoDAO postoTrabalhoDAO
+    ) throws IOException {
+
+        response.setContentType("text/html;charset=UTF-8");
+
+        String tipoPesquisa = request.getParameter("tipo_pesquisa");
+        String termo = request.getParameter("termo");
+        String pagina = request.getParameter("pagina");
+
+        if (tipoPesquisa == null || tipoPesquisa.trim().isEmpty()) {
+            tipoPesquisa = "nome";
+        }
+
+        if (termo == null) {
+            termo = "";
+        }
+
+        if (pagina == null || pagina.trim().isEmpty()) {
+            pagina = "1";
+        }
+
+        List<PostoTrabalho> postosTrabalho;
+
+        if (tipoPesquisa.equalsIgnoreCase("municipio")) {
+            postosTrabalho = postoTrabalhoDAO.consultarPaginaPorMunicipio(termo, pagina);
+
+        } else if (tipoPesquisa.equalsIgnoreCase("numero")) {
+            try {
+                if (termo.trim().isEmpty()) {
+                    postosTrabalho = postoTrabalhoDAO.consultarPagina(pagina);
+                } else {
+                    Integer numero = Integer.parseInt(termo.trim());
+                    postosTrabalho = postoTrabalhoDAO.consultarPaginaPorNumero(numero, pagina);
+                }
+            } catch (NumberFormatException ex) {
+                postosTrabalho = new java.util.ArrayList<PostoTrabalho>();
+            }
+
+        } else {
+            postosTrabalho = postoTrabalhoDAO.consultarPaginaPorNome(termo, pagina);
+        }
+
+        PrintWriter out = response.getWriter();
+
+        if (postosTrabalho == null || postosTrabalho.isEmpty()) {
+            out.println("<tr>");
+            out.println("<td colspan='8' class='text-center text-muted'>Nenhum posto de trabalho encontrado.</td>");
+            out.println("</tr>");
+            return;
+        }
+
+        for (PostoTrabalho postoTrabalho : postosTrabalho) {
+            out.println("<tr>");
+            out.println("<td>" + postoTrabalho.getIdPostoTrabalho() + "</td>");
+            out.println("<td>" + valorSeguro(postoTrabalho.getNomePostoTrabalho()) + "</td>");
+            out.println("<td>" + postoTrabalho.getNumeroPostoTrabalho() + "</td>");
+
+            if (postoTrabalho.getMunicipio() != null) {
+                out.println("<td>" + valorSeguro(postoTrabalho.getMunicipio().getNomeMunicipio()) + "</td>");
+            } else {
+                out.println("<td></td>");
+            }
+
+            out.println("<td><a href='" + request.getContextPath() + "/postoTrabalhoServlet?comando=detalhes&id_posto_trabalho=" + postoTrabalho.getIdPostoTrabalho() + "'><span class='glyphicon glyphicon-print'></span></a></td>");
+            out.println("<td><a href='" + request.getContextPath() + "/postoTrabalhoServlet?comando=detalhes&id_posto_trabalho=" + postoTrabalho.getIdPostoTrabalho() + "'><span class='glyphicon glyphicon-zoom-in'></span></a></td>");
+            out.println("<td><a href='" + request.getContextPath() + "/postoTrabalhoServlet?comando=prepara_editar&id_posto_trabalho=" + postoTrabalho.getIdPostoTrabalho() + "'><span class='glyphicon glyphicon-edit'></span></a></td>");
+            out.println("<td><a onclick=\"return confirm('Deseja realmente eliminar este posto de trabalho?');\" href='" + request.getContextPath() + "/postoTrabalhoServlet?comando=eliminar&id_posto_trabalho=" + postoTrabalho.getIdPostoTrabalho() + "'><span class='glyphicon glyphicon-trash'></span></a></td>");
+            out.println("</tr>");
+        }
+    }
+
+    private String valorSeguro(String valor) {
+        return valor == null ? "" : valor;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

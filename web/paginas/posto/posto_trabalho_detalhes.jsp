@@ -30,7 +30,7 @@
             <div id="page-wrapper">                
                 <div class="row">
                     <div class="col-lg-12">
-                        <%@include file="../../menus/cabecalho.jsp" %>
+                        <%@include file="../../components/cabecalho.jsp" %>
                         <h1 class="page-header text-primary">Posto de Trabalho</h1>
                     </div>
                 </div>
@@ -79,7 +79,7 @@
                 <!-- Fim da área da linha -->
 
                 <!-- Rodapé -->
-                <%@include file="../../menus/rodape.jsp" %>
+                <%@include file="../../components/rodape.jsp" %>
                 <!-- Fim do Rodapé-->
 
             </div>   
