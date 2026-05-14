@@ -8,8 +8,7 @@
 <%@page import="dao.ProfissaoDAO"%>
 <%@page import="modelo.Profissao"%>
 <%@page import="dao.MunicipioDAO"%>
-<%@page import="modelo.Municipio"%>
-<%@page import="modelo.Municipio"%>
+<%@page import="modelo.Municipio"%> 
 <%@page import="modelo.DateUtil"%>
 <%@page import="modelo.Sexo"%>
 <%@page import="modelo.Testemunha"%>
@@ -117,8 +116,9 @@
                                             <label class="text-primary" for="select_municipio_testemunha"> &lowast; Natural de:</label>
                                             <select class="form-control" id="select_municipio_testemunha" name="select_municipio_testemunha">
                                                 <% for (Municipio municipio : municipios) {%>
-                                                <option value="<%=municipio.getIdMunicipio()%>">
-                                                    <%=municipio.getNomeMunicipio()%>
+                                                <option 
+                                                    value="<%=municipio.getIdMunicipio()%>"
+                                                    <%= testemunha.getMunicipio().getIdMunicipio().equals(municipio.getIdMunicipio()) ? "selected" : ""%>>
                                                 </option>
                                                 <%}%>
                                             </select>
@@ -130,8 +130,9 @@
                                             <label class="text-primary" for="select_profissao_testemunha"> &lowast; Profissão:</label>
                                             <select class="form-control" id="select_profissao_testemunha" name="select_profissao_testemunha">
                                                 <% for (Profissao profissao : profissoes) {%>
-                                                <option value="<%=profissao.getIdProfissao()%>">
-                                                    <%=profissao.getNomeProfissao()%>
+                                                <option
+                                                    value="<%=profissao.getIdProfissao()%>"
+                                                    <%= testemunha.getProfissao().getIdProfissao().equals(profissao.getIdProfissao()) ? "selected" : ""%>>
                                                 </option>
                                                 <%}%>
                                             </select>
@@ -143,12 +144,22 @@
                                             <label class="text-primary" for="sexo_testemunha"> &lowast; Sexo:</label>
                                             <div class="radio">
                                                 <label>
-                                                    <input type="radio" name="sexo_testemunha" id="sexo_testemunha" value="<%= Sexo.FEMININO.getExtensao()%>"/><%=Sexo.FEMININO.getExtensao()%>       
+                                                    <input 
+                                                        type="radio"
+                                                        name="sexo_testemunha"
+                                                        value="<%= Sexo.FEMININO.getExtensao()%>"
+                                                        <%= testemunha.getSexo() == Sexo.FEMININO ? "checked" : ""%>/>
+                                                    <%=Sexo.FEMININO.getExtensao()%>       
                                                 </label>
                                             </div>
                                             <div class="radio">
                                                 <label>
-                                                    <input type="radio" name="sexo_testemunha" id="sexo_testemunha" value="<%= Sexo.MASCULINO.getExtensao()%>" checked/><%=Sexo.MASCULINO.getExtensao()%>
+                                                    <input 
+                                                        type="radio"
+                                                        name="sexo_testemunha"
+                                                        value="<%= Sexo.MASCULINO.getExtensao()%>"
+                                                        <%= testemunha.getSexo() == Sexo.MASCULINO ? "checked" : ""%>/>
+                                                    <%=Sexo.MASCULINO.getExtensao()%>    
                                                 </label>
                                             </div>
                                         </div>
