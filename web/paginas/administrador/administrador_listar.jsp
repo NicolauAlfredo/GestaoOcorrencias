@@ -114,7 +114,7 @@
                             <div class="table-responsive">
                                 <%@include file="administrador_tabela.jsp" %>
 
-                                <%                                    request.setAttribute("paginaActual", paginaActual);
+                                <%  request.setAttribute("paginaActual", paginaActual);
                                     request.setAttribute("quantidadePaginas", quantidadePaginas);
                                     request.setAttribute("urlBase", "paginas/administrador/administrador_listar.jsp");
                                     request.setAttribute("queryStringExtra", "termo=" + termoUrl);
