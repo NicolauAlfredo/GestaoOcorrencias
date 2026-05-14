@@ -324,6 +324,78 @@ public class ProfissaoDAO implements GenericoDAO<Profissao> {
         return quantidadePaginas;
     }
 
+    private List<Profissao> consultarPaginaComFiltro(String sql, String filtro, String numeroPagina) {
+    Connection conn = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+
+    List<Profissao> profissoes = new ArrayList<Profissao>();
+
+    int pagina = converterNumeroPagina(numeroPagina);
+    int offset = (pagina * TOTAL_PROFISSOES_POR_PAGINA) - TOTAL_PROFISSOES_POR_PAGINA;
+
+    try {
+        conn = Conexao.getConnection();
+        ps = conn.prepareStatement(sql);
+
+        ps.setString(1, "%" + filtro.trim() + "%");
+        ps.setInt(2, TOTAL_PROFISSOES_POR_PAGINA);
+        ps.setInt(3, offset);
+
+        rs = ps.executeQuery();
+
+        while (rs.next()) {
+            Profissao profissao = new Profissao();
+            popularComDados(profissao, rs);
+            profissoes.add(profissao);
+        }
+
+    } catch (SQLException ex) {
+        System.err.println("Erro ao consultar profissões com filtro e paginação: " + ex.getLocalizedMessage());
+    } finally {
+        fecharResultSet(rs);
+        Conexao.closeConnection(conn, ps);
+    }
+
+    return profissoes;
+}
+    
+    
+    private List<Profissao> consultarPaginaSemFiltro(String sql, String numeroPagina) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        List<Profissao> profissoes = new ArrayList<Profissao>();
+
+        int pagina = converterNumeroPagina(numeroPagina);
+        int offset = (pagina * TOTAL_PROFISSOES_POR_PAGINA) - TOTAL_PROFISSOES_POR_PAGINA;
+
+        try {
+            conn = Conexao.getConnection();
+            ps = conn.prepareStatement(sql);
+
+            ps.setInt(1, TOTAL_PROFISSOES_POR_PAGINA);
+            ps.setInt(2, offset);
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Profissao profissao = new Profissao();
+                popularComDados(profissao, rs);
+                profissoes.add(profissao);
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro ao consultar página de profissões: " + ex.getLocalizedMessage());
+        } finally {
+            fecharResultSet(rs);
+            Conexao.closeConnection(conn, ps);
+        }
+
+        return profissoes;
+    }
+
     private List<Profissao> consultarListaSemParametros(String sql) {
         Connection conn = null;
         PreparedStatement ps = null;
