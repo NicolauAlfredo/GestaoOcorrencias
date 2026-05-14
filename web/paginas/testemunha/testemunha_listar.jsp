@@ -143,27 +143,23 @@
                             </form>
 
                             <div class="table-responsive">
-                                <%@include file="testemunha_tabela.jsp" %>
+                                <div id="resultado-provincias-wrapper">
+                                    <%@include file="testemunha_tabela.jsp" %>
 
-                                <%    request.setAttribute("paginaActual", paginaActual);
-                                    request.setAttribute("quantidadePaginas", quantidadePaginas);
-                                    request.setAttribute("urlBase", "paginas/testemunha/testemunha_listar.jsp");
-                                    request.setAttribute(
-                                            "queryStringExtra",
-                                            "tipo_pesquisa=" + tipoPesquisaUrl + "&termo=" + termoUrl
-                                    );
-                                %>
+                                    <%  request.setAttribute("paginaActual", paginaActual);
+                                        request.setAttribute("quantidadePaginas", quantidadePaginas);
+                                        request.setAttribute("urlBase", "paginas/testemunha/testemunha_listar.jsp");
+                                        request.setAttribute("queryStringExtra", "tipo_pesquisa=" + tipoPesquisaUrl + "&termo=" + termoUrl);
+                                    %>
 
-                                <%@include file="../../components/paginacao.jsp" %>
-
+                                    <%@include file="../../components/paginacao.jsp" %>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <%@include file="../../components/rodape.jsp" %>
-
             </div>
-
         </div>
 
         <script type="text/javascript">
@@ -174,11 +170,11 @@
                     var tipoPesquisa = $("#tipo_pesquisa_testemunha").val();
                     var termo = $("#pesquisa_testemunha").val();
 
-                    $("#resultado-testemunhas").load(
-                            "testemunhaServlet?comando=pesquisar_ajax"
-                            + "&tipo_pesquisa=" + encodeURIComponent(tipoPesquisa)
-                            + "&termo=" + encodeURIComponent(termo)
+                    $("#resultado-testemunhas-wrapper").load(
+                            "paginas/testemunha/testemunha_listar.jsp?termo="
+                            + encodeURIComponent(termo)
                             + "&pagina=" + encodeURIComponent(pagina)
+                            + " #resultado-testemunhas-wrapper > *"
                             );
                 }
 
