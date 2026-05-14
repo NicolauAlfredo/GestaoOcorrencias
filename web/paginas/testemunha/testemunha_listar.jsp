@@ -269,22 +269,24 @@
 
         <script type="text/javascript">
             $(document).ready(function () {
-                var tempoEspera = null;
-
-                $("#pesquisa_testemunha").keyup(function () {
-                    clearTimeout(tempoEspera);
-
+            var tempoEspera = null;
+                    $("#resultado-testemunhas").load(
+                    "testemunhaServlet?comando=pesquisar_ajax&tipo_pesquisa=nome&termo="
+                    + encodeURIComponent(termo)
+                    + "&pagina=1"
+                    );
+            
                     var termo = $(this).val();
-
                     tempoEspera = setTimeout(function () {
-                        $("#resultado-testemunhas").load(
-                                "testemunhaServlet?comando=pesquisar_ajax&tipo_pesquisa=nome&termo="
-                                + encodeURIComponent(termo)
-                                + "&pagina=1"
-                                );
+                    $("#resultado-testemunhas").load(
+                            "testemunhaServlet?comando=pesquisar_ajax&tipo_pesquisa=nome&termo="
+                            + encodeURIComponent(termo)
+                            + "&pagina=1"
+                            );
                     }, 300);
-                });
             });
+            }
+            );
         </script>
 
 
