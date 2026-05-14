@@ -2,13 +2,7 @@
     Document   : patente_tabela
     Created on : 14 mag 2026, 15:34:30
     Author     : Nicolau Alfredo
---%>
-
-<%-- 
-    Document   : patente_tabela
-    Created on : 14 mag 2026
-    Author     : Nicolau Alfredo
---%>
+--%> 
 
 <%@page import="modelo.Patente"%>
 <%@page import="java.util.List"%>
