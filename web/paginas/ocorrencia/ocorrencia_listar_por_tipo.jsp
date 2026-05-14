@@ -6,8 +6,7 @@
 
 <%@page import="java.util.List"%>
 <%@page import="dao.OcorrenciaDAO"%>
-<%@page import="modelo.Ocorrencia"%>
-<%@page import="modelo.DateUtil"%>
+<%@page import="modelo.Ocorrencia"%> 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -109,7 +108,8 @@
                             <form action="paginas/ocorrencia/ocorrencia_listar_por_tipo.jsp" method="get">
                                 <div class="form-group input-group">
                                     <input
-                                        type="search"
+                                        type="search" 
+                                        id="pesquisa_tipo"
                                         name="tipo_ocorrencia"
                                         class="form-control"
                                         placeholder="Tipo de ocorrência"
@@ -125,7 +125,7 @@
                             </form> 
 
                             <form>
-                                 <%
+                                <%
                                     request.setAttribute("ocorrencias", ocorrencias);
                                 %>
 
@@ -137,7 +137,7 @@
                                         <ul class="pagination">
 
                                             <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
-                                                <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_testemunha.jsp?testemunha_ocorrencia=" + testemunhaUrl + "&pagina=" + paginaAnterior%>">
+                                                <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_tipo.jsp?tipo_ocorrencia=" + tipoUrl + "&pagina=" + paginaAnterior%>">
                                                     &laquo;
                                                 </a>
                                             </li>
@@ -146,7 +146,7 @@
                                                 for (int i = 1; i <= quantidadePaginas; i++) {
                                             %>
                                             <li class="<%=i == paginaActual ? "active" : ""%>">
-                                                <a href="paginas/ocorrencia/ocorrencia_listar_por_testemunha.jsp?testemunha_ocorrencia=<%=testemunhaUrl%>&pagina=<%=i%>">
+                                                <a href="paginas/ocorrencia/ocorrencia_listar_por_tipo.jsp?tipo_ocorrencia=<%=tipoUrl%>&pagina=<%=i%>">
                                                     <%=i%>
                                                 </a>
                                             </li>
@@ -155,7 +155,7 @@
                                             %>
 
                                             <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-                                                <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_testemunha.jsp?testemunha_ocorrencia=" + testemunhaUrl + "&pagina=" + proximaPagina%>">
+                                                <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_tipo.jsp?tipo_ocorrencia=" + tipoUrl + "&pagina=" + proximaPagina%>">
                                                     &raquo;
                                                 </a>
                                             </li>
@@ -181,5 +181,39 @@
             <!-- Fim da linha de divisão -->
         </div>
         <!-- Fim do Container -->
+
+        <div class="text-center">
+            <ul class="pagination">
+
+                <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
+                    <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_tipo.jsp?tipo_ocorrencia=" + tipoUrl + "&pagina=" + paginaAnterior%>">
+                        &laquo;
+                    </a>
+                </li>
+
+                <%
+                    for (int i = 1; i <= quantidadePaginas; i++) {
+                %>
+                <li class="<%=i == paginaActual ? "active" : ""%>">
+                    <a href="paginas/ocorrencia/ocorrencia_listar_por_tipo.jsp?tipo_ocorrencia=<%=tipoUrl%>&pagina=<%=i%>">
+                        <%=i%>
+                    </a>
+                </li>
+                <%
+                    }
+                %>
+
+                <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
+                    <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_tipo.jsp?tipo_ocorrencia=" + tipoUrl + "&pagina=" + proximaPagina%>">
+                        &raquo;
+                    </a>
+                </li>
+
+            </ul>
+
+            <p class="text-muted">
+                Página <%=paginaActual%> de <%=quantidadePaginas%>
+            </p>
+        </div>
     </body>
 </html>
