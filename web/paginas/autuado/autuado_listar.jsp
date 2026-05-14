@@ -4,9 +4,11 @@
     Author     : user
 --%>
 
+<%@page import="java.net.URLEncoder"%>
 <%@page import="modelo.Autuado"%>
-<%@page import="dao.AutuadoDAO"%>
+<%@page import="modelo.DateUtil"%>
 <%@page import="java.util.List"%>
+<%@page import="dao.AutuadoDAO"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <!DOCTYPE html>
@@ -14,7 +16,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-        <base href="<%=request.getContextPath()%>/"> 
+        <base href="<%=request.getContextPath()%>/">
 
         <title>Autuado</title>
 
@@ -28,7 +30,18 @@
         <%
             AutuadoDAO autuadoDAO = new AutuadoDAO();
 
+            String tipoPesquisa = request.getParameter("tipo_pesquisa");
+            String termo = request.getParameter("termo");
             String paginaParametro = request.getParameter("pagina");
+
+            if (tipoPesquisa == null || tipoPesquisa.trim().isEmpty()) {
+                tipoPesquisa = "nome";
+            }
+
+            if (termo == null) {
+                termo = "";
+            }
+
             int paginaActual = 1;
 
             if (paginaParametro != null && !paginaParametro.trim().isEmpty()) {
@@ -43,16 +56,41 @@
                 paginaActual = 1;
             }
 
-            int quantidadePaginas = autuadoDAO.quantidadePaginas();
+            int quantidadePaginas;
+            List<Autuado> autuados;
+
+            if (tipoPesquisa.equalsIgnoreCase("bi")) {
+                quantidadePaginas = autuadoDAO.quantidadePaginasPorBi(termo);
+                autuados = autuadoDAO.consultarPaginaPorBi(termo, String.valueOf(paginaActual));
+
+            } else if (tipoPesquisa.equalsIgnoreCase("data")) {
+                try {
+                    if (termo.trim().isEmpty()) {
+                        quantidadePaginas = autuadoDAO.quantidadePaginas();
+                        autuados = autuadoDAO.consultarPagina(String.valueOf(paginaActual));
+                    } else {
+                        java.sql.Date data = DateUtil.strToDate(termo);
+                        quantidadePaginas = autuadoDAO.quantidadePaginasPorData(data);
+                        autuados = autuadoDAO.consultarPaginaPorData(data, String.valueOf(paginaActual));
+                    }
+                } catch (Exception ex) {
+                    quantidadePaginas = 1;
+                    autuados = new java.util.ArrayList<Autuado>();
+                }
+
+            } else {
+                quantidadePaginas = autuadoDAO.quantidadePaginasPorNome(termo);
+                autuados = autuadoDAO.consultarPaginaPorNome(termo, String.valueOf(paginaActual));
+            }
 
             if (paginaActual > quantidadePaginas) {
                 paginaActual = quantidadePaginas;
             }
 
-            List<Autuado> autuados = autuadoDAO.consultarPagina(String.valueOf(paginaActual));
+            request.setAttribute("autuados", autuados);
 
-            int paginaAnterior = paginaActual - 1;
-            int proximaPagina = paginaActual + 1;
+            String tipoPesquisaUrl = URLEncoder.encode(tipoPesquisa, "UTF-8");
+            String termoUrl = URLEncoder.encode(termo, "UTF-8");
         %>
 
         <div class="container">
@@ -62,10 +100,13 @@
                         <%@include file="../../components/cabecalho.jsp" %>
 
                         <h1 class="page-header text-primary" title="Registar autuado">
-                            <a href="paginas/autuado/autuado_registo.jsp">Autuado</a>
+                            <a href="paginas/autuado/autuado_registo.jsp">
+                                Autuado
+                            </a>
                         </h1>
 
-                        <%                            String message = (String) request.getAttribute("message");
+                        <%
+                            String message = (String) request.getAttribute("message");
 
                             if (message != null && !message.trim().isEmpty()) {
                         %>
@@ -80,61 +121,51 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="panel panel-default">
-
-                        <div class="panel-heading">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                    <span class="glyphicon glyphicon-menu-down"> Operações </span>
-                                    <span class="caret"></span>
-                                </button>
-
-                                <ul class="dropdown-menu">
-                                    <li><a href="autuados"><span class="glyphicon glyphicon-print"> Imprimir </span></a></li>
-                                    <li><a href="paginas/autuado/autuado_listar_por_nome.jsp"><span class="glyphicon glyphicon-search"> Pesquisar por Nome </span></a></li>
-                                    <li><a href="paginas/autuado/autuado_listar_por_bi.jsp"><span class="glyphicon glyphicon-search"> Pesquisar por B.I. </span></a></li>
-                                    <li><a href="paginas/autuado/autuado_listar_por_data.jsp"><span class="glyphicon glyphicon-search"> Pesquisar por Data </span></a></li>
-                                </ul>
-                            </div>
-                        </div>
-
                         <div class="panel-body">
-                            <div class="table-responsive">
-                                <%
-                                    request.setAttribute("autuados", autuados);
-                                %>
 
+                            <form action="paginas/autuado/autuado_listar.jsp" method="GET">
+                                <div class="form-group">
+                                    <select name="tipo_pesquisa" id="tipo_pesquisa_autuado" class="form-control">
+                                        <option value="nome" <%= "nome".equalsIgnoreCase(tipoPesquisa) ? "selected" : ""%>>Nome</option>
+                                        <option value="bi" <%= "bi".equalsIgnoreCase(tipoPesquisa) ? "selected" : ""%>>B.I.</option>
+                                        <option value="data" <%= "data".equalsIgnoreCase(tipoPesquisa) ? "selected" : ""%>>Data de Nascimento</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group input-group">
+                                    <input
+                                        type="search"
+                                        name="termo"
+                                        id="pesquisa_autuado"
+                                        class="form-control"
+                                        placeholder="Pesquisar autuado"
+                                        autocomplete="off"
+                                        value="<%=termo%>">
+
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="glyphicon glyphicon-search"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+
+                            <div class="table-responsive">
                                 <%@include file="autuado_tabela.jsp" %>
 
-                                <div class="text-center">
-                                    <ul class="pagination">
-                                        <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
-                                            <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "autuado_listar.jsp?pagina=" + paginaAnterior%>">
-                                                &laquo;
-                                            </a>
-                                        </li>
+                                <%
+                                    request.setAttribute("paginaActual", paginaActual);
+                                    request.setAttribute("quantidadePaginas", quantidadePaginas);
+                                    request.setAttribute("urlBase", "paginas/autuado/autuado_listar.jsp");
+                                    request.setAttribute(
+                                            "queryStringExtra",
+                                            "tipo_pesquisa=" + tipoPesquisaUrl + "&termo=" + termoUrl
+                                    );
+                                %>
 
-                                        <%
-                                            for (int i = 1; i <= quantidadePaginas; i++) {
-                                        %>
-                                        <li class="<%=i == paginaActual ? "active" : ""%>">
-                                            <a href="autuado_listar.jsp?pagina=<%=i%>"><%=i%></a>
-                                        </li>
-                                        <%
-                                            }
-                                        %>
-
-                                        <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-                                            <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "autuado_listar.jsp?pagina=" + proximaPagina%>">
-                                                &raquo;
-                                            </a>
-                                        </li>
-                                    </ul>
-
-                                    <p class="text-muted">
-                                        Página <%=paginaActual%> de <%=quantidadePaginas%>
-                                    </p>
-                                </div>
+                                <%@include file="../../components/paginacao.jsp" %>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -142,5 +173,35 @@
                 <%@include file="../../components/rodape.jsp" %>
             </div>
         </div>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var tempoEspera = null;
+
+                function pesquisarAutuados(pagina) {
+                    var tipoPesquisa = $("#tipo_pesquisa_autuado").val();
+                    var termo = $("#pesquisa_autuado").val();
+
+                    $("#resultado-autuados").load(
+                            "autuadoServlet?comando=pesquisar_ajax"
+                            + "&tipo_pesquisa=" + encodeURIComponent(tipoPesquisa)
+                            + "&termo=" + encodeURIComponent(termo)
+                            + "&pagina=" + encodeURIComponent(pagina)
+                            );
+                }
+
+                $("#pesquisa_autuado").keyup(function () {
+                    clearTimeout(tempoEspera);
+
+                    tempoEspera = setTimeout(function () {
+                        pesquisarAutuados(1);
+                    }, 300);
+                });
+
+                $("#tipo_pesquisa_autuado").change(function () {
+                    pesquisarAutuados(1);
+                });
+            });
+        </script>
     </body>
 </html>
