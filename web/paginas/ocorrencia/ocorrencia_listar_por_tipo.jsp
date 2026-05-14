@@ -24,6 +24,48 @@
         <script src="Bootstrap/js/bootstrap.min.js"></script>
     </head>
     <body>
+
+        <%
+            OcorrenciaDAO ocorrenciaDAO = new OcorrenciaDAO();
+
+            String tipo = request.getParameter("tipo_ocorrencia");
+            String paginaParametro = request.getParameter("pagina");
+
+            if (tipo == null) {
+                tipo = "";
+            }
+
+            int paginaActual = 1;
+
+            if (paginaParametro != null && !paginaParametro.trim().isEmpty()) {
+                try {
+                    paginaActual = Integer.parseInt(paginaParametro);
+                } catch (NumberFormatException ex) {
+                    paginaActual = 1;
+                }
+            }
+
+            if (paginaActual < 1) {
+                paginaActual = 1;
+            }
+
+            int quantidadePaginas = ocorrenciaDAO.quantidadePaginasPorTipo(tipo);
+
+            if (paginaActual > quantidadePaginas) {
+                paginaActual = quantidadePaginas;
+            }
+
+            List<Ocorrencia> ocorrencias = ocorrenciaDAO.consultarPaginaPorTipo(
+                    tipo,
+                    String.valueOf(paginaActual)
+            );
+
+            int paginaAnterior = paginaActual - 1;
+            int proximaPagina = paginaActual + 1;
+
+            String tipoUrl = java.net.URLEncoder.encode(tipo, "UTF-8");
+        %>
+
         <!-- Container principal do Bootstrap -->
         <div class="container">
             <div id="page-wrapper">
@@ -64,23 +106,23 @@
                         <!-- Corpo da página -->   
                         <div class="panel-body">
 
-                            <form action="ocorrencia_listar_por_tipo.jsp" method="post">
-                                <!-- Div com o campo de pesquisa -->
+                            <form action="paginas/ocorrencia/ocorrencia_listar_por_tipo.jsp" method="get">
                                 <div class="form-group input-group">
-                                    <input type="search" name="tipo_ocorrencia" class="form-control" required placeholder="Tipo de ocorrência">
+                                    <input
+                                        type="search"
+                                        name="tipo_ocorrencia"
+                                        class="form-control"
+                                        placeholder="Tipo de ocorrência"
+                                        value="<%=tipo%>"
+                                        >
                                     <span class="input-group-btn">
                                         <button class="btn btn-primary" type="submit">
                                             <i class="glyphicon glyphicon-search"></i>
                                         </button>
                                     </span>
-                                </div>
+                                </div> 
                                 <!-- Fim da div com o campo de pesquisa -->
-                            </form>
-
-                            <%                                OcorrenciaDAO ocorrenciaDAO = new OcorrenciaDAO();
-                                String tipo = request.getParameter("tipo_ocorrencia");
-                                List<Ocorrencia> ocorrencias = ocorrenciaDAO.findByTipo(tipo);
-                            %>
+                            </form> 
 
                             <form>
                                 <div class="table-responsive">
@@ -147,8 +189,41 @@
                                             </tr>
                                             <%}%>
                                         </tbody>
-                                    </table>
+                                    </table> 
                                 </div> 
+                                <div class="text-center">
+                                    <ul class="pagination">
+
+                                        <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
+                                            <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_tipo.jsp?tipo_ocorrencia=" + tipoUrl + "&pagina=" + paginaAnterior%>">
+                                                &laquo;
+                                            </a>
+                                        </li>
+
+                                        <%
+                                            for (int i = 1; i <= quantidadePaginas; i++) {
+                                        %>
+                                        <li class="<%=i == paginaActual ? "active" : ""%>">
+                                            <a href="paginas/ocorrencia/ocorrencia_listar_por_tipo.jsp?tipo_ocorrencia=<%=tipoUrl%>&pagina=<%=i%>">
+                                                <%=i%>
+                                            </a>
+                                        </li>
+                                        <%
+                                            }
+                                        %>
+
+                                        <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
+                                            <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_tipo.jsp?tipo_ocorrencia=" + tipoUrl + "&pagina=" + proximaPagina%>">
+                                                &raquo;
+                                            </a>
+                                        </li>
+
+                                    </ul>
+
+                                    <p class="text-muted">
+                                        Página <%=paginaActual%> de <%=quantidadePaginas%>
+                                    </p>
+                                </div>
                             </form>
                         </div>
                     </div>                   

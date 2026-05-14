@@ -217,6 +217,18 @@ public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
             + "ORDER BY tt.nome_testemunha "
             + "LIMIT ? OFFSET ?";
 
+    private static final String CONTAR_OCORRENCIAS_POR_TIPO
+            = "SELECT COUNT(1) AS total_ocorrencias "
+            + "FROM ocorrencia o "
+            + "INNER JOIN tipo_ocorrencia t ON o.id_tipo_ocorrencia = t.id_tipo_ocorrencia "
+            + "WHERE t.nome_tipo_ocorrencia LIKE ?";
+
+    private static final String CONSULTAR_PAGINA_POR_TIPO
+            = BASE_SELECT
+            + "WHERE t.nome_tipo_ocorrencia LIKE ? "
+            + "ORDER BY t.nome_tipo_ocorrencia "
+            + "LIMIT ? OFFSET ?";
+
     @Override
     public void save(Ocorrencia ocorrencia) {
         if (ocorrencia == null) {
@@ -928,6 +940,29 @@ public class OcorrenciaDAO implements GenericoDAO<Ocorrencia> {
         }
 
         return consultarPaginaPorTexto(CONSULTAR_PAGINA_POR_CIDADE, cidade, numeroPagina);
+    }
+
+    public int quantidadePaginasPorTipo(String tipo) {
+        if (tipo == null) {
+            tipo = "";
+        }
+
+        return contarPaginasPorTexto(
+                CONTAR_OCORRENCIAS_POR_TIPO,
+                tipo
+        );
+    }
+
+    public List<Ocorrencia> consultarPaginaPorTipo(String tipo, String numeroPagina) {
+        if (tipo == null) {
+            tipo = "";
+        }
+
+        return consultarPaginaPorTexto(
+                CONSULTAR_PAGINA_POR_TIPO,
+                tipo,
+                numeroPagina
+        );
     }
 
     private void preencherPreparedStatement(PreparedStatement ps, Ocorrencia ocorrencia, boolean actualizar) throws SQLException {
