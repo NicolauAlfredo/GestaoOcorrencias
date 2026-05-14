@@ -27,7 +27,7 @@
             <div id="page-wrapper">
                 <div class="row">
                     <div class="col-lg-12">
-                        <%@include file="../menus/cabecalho.jsp" %>
+                        <%@include file="../components/cabecalho.jsp" %>
                     </div>
                 </div>
             </div>
@@ -156,7 +156,7 @@
                     </div>
                 </div>
 
-                <%@include file="../menus/rodape.jsp" %>
+                <%@include file="../components/rodape.jsp" %>
             </div>
         </div>
     </body>

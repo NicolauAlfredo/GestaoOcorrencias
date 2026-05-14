@@ -1,8 +1,9 @@
 <%@page import="java.net.URLEncoder"%>
 <%@page import="modelo.Testemunha"%>
-<%@page import="modelo.DateUtil"%>
 <%@page import="java.util.List"%>
 <%@page import="dao.TestemunhaDAO"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <!DOCTYPE html>
@@ -25,11 +26,16 @@
         <%
             TestemunhaDAO testemunhaDAO = new TestemunhaDAO();
 
-            String nome = request.getParameter("nome_testemunha");
+            String tipoPesquisa = request.getParameter("tipo_pesquisa");
+            String termo = request.getParameter("termo");
             String paginaParametro = request.getParameter("pagina");
 
-            if (nome == null) {
-                nome = "";
+            if (tipoPesquisa == null || tipoPesquisa.trim().isEmpty()) {
+                tipoPesquisa = "nome";
+            }
+
+            if (termo == null) {
+                termo = "";
             }
 
             int paginaActual = 1;
@@ -47,21 +53,30 @@
             }
 
             int quantidadePaginas;
-
             List<Testemunha> testemunhas;
 
-            if (nome.trim().isEmpty()) {
-                quantidadePaginas = testemunhaDAO.quantidadePaginas();
-                testemunhas = testemunhaDAO.consultarPagina(
-                        String.valueOf(paginaActual)
-                );
-            } else {
-                quantidadePaginas = testemunhaDAO.quantidadePaginasPorNome(nome);
+            if (tipoPesquisa.equalsIgnoreCase("bi")) {
+                quantidadePaginas = testemunhaDAO.quantidadePaginasPorBi(termo);
+                testemunhas = testemunhaDAO.consultarPaginaPorBi(termo, String.valueOf(paginaActual));
 
-                testemunhas = testemunhaDAO.consultarPaginaPorNome(
-                        nome,
-                        String.valueOf(paginaActual)
-                );
+            } else if (tipoPesquisa.equalsIgnoreCase("data")) {
+                try {
+                    if (termo.trim().isEmpty()) {
+                        quantidadePaginas = testemunhaDAO.quantidadePaginas();
+                        testemunhas = testemunhaDAO.consultarPagina(String.valueOf(paginaActual));
+                    } else {
+                        java.sql.Date data = DateUtil.strToDate(termo);
+                        quantidadePaginas = testemunhaDAO.quantidadePaginasPorData(data);
+                        testemunhas = testemunhaDAO.consultarPaginaPorData(data, String.valueOf(paginaActual));
+                    }
+                } catch (Exception ex) {
+                    quantidadePaginas = 1;
+                    testemunhas = new java.util.ArrayList<Testemunha>();
+                }
+
+            } else {
+                quantidadePaginas = testemunhaDAO.quantidadePaginasPorNome(termo);
+                testemunhas = testemunhaDAO.consultarPaginaPorNome(termo, String.valueOf(paginaActual));
             }
 
             if (paginaActual > quantidadePaginas) {
@@ -70,46 +85,31 @@
 
             request.setAttribute("testemunhas", testemunhas);
 
-            int paginaAnterior = paginaActual - 1;
-            int proximaPagina = paginaActual + 1;
-
-            String nomeUrl = URLEncoder.encode(nome, "UTF-8");
+            String tipoPesquisaUrl = URLEncoder.encode(tipoPesquisa, "UTF-8");
+            String termoUrl = URLEncoder.encode(termo, "UTF-8");
         %>
 
         <div class="container">
-
             <div id="page-wrapper">
-
                 <div class="row">
-
                     <div class="col-lg-12">
-
-                        <%@include file="../../menus/cabecalho.jsp" %>
-
+                        <%@include file="../../components/cabecalho.jsp" %>
                         <h1 class="page-header text-primary"
                             title="Registar testemunha">
-
                             <a href="paginas/testemunha/testemunha_registo.jsp">
                                 Testemunha
                             </a>
-
                         </h1>
 
-                        <%                            String message = (String) request.getAttribute("message");
-
+                        <% String message = (String) request.getAttribute("message");
                             if (message != null && !message.trim().isEmpty()) {
                         %>
-
                         <div class="alert alert-info">
                             <p><%=message%></p>
                         </div>
-
                         <% }%>
-
                     </div>
-
                 </div>
-
             </div>
 
             <div class="row">
@@ -119,9 +119,9 @@
                             <form action="paginas/testemunha/testemunha_listar.jsp" method="GET">
                                 <div class="form-group">
                                     <select name="tipo_pesquisa" id="tipo_pesquisa_testemunha" class="form-control">
-                                        <option value="nome">Nome</option>
-                                        <option value="bi">B.I.</option>
-                                        <option value="data">Data de Nascimento</option>
+                                        <option value="nome" <%= "nome".equalsIgnoreCase(tipoPesquisa) ? "selected" : ""%>>Nome</option>
+                                        <option value="bi" <%= "bi".equalsIgnoreCase(tipoPesquisa) ? "selected" : ""%>>B.I.</option>
+                                        <option value="data" <%= "data".equalsIgnoreCase(tipoPesquisa) ? "selected" : ""%>>Data de Nascimento</option>
                                     </select>
                                 </div>
 
@@ -132,7 +132,8 @@
                                         id="pesquisa_testemunha"
                                         class="form-control"
                                         placeholder="Pesquisar testemunha"
-                                        autocomplete="off">
+                                        autocomplete="off"
+                                        value="<%=termo%>">
 
                                     <span class="input-group-btn">
                                         <button class="btn btn-primary" type="submit">
@@ -143,74 +144,24 @@
                             </form>
 
                             <div class="table-responsive">
-
                                 <%@include file="testemunha_tabela.jsp" %>
 
-                                <div class="text-center">
+                                <%    request.setAttribute("paginaActual", paginaActual);
+                                    request.setAttribute("quantidadePaginas", quantidadePaginas);
+                                    request.setAttribute("urlBase", "paginas/testemunha/testemunha_listar.jsp");
+                                    request.setAttribute(
+                                            "queryStringExtra",
+                                            "tipo_pesquisa=" + tipoPesquisaUrl + "&termo=" + termoUrl
+                                    );
+                                %>
 
-                                    <ul class="pagination">
-
-                                        <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
-
-                                            <a href="<%=paginaActual <= 1
-                                                    ? "javascript:void(0)"
-                                                    : "paginas/testemunha/testemunha_listar.jsp?nome_testemunha="
-                                                    + nomeUrl
-                                                    + "&pagina="
-                                                    + paginaAnterior%>">
-
-                                                &laquo;
-
-                                            </a>
-
-                                        </li>
-
-                                        <%
-                                            for (int i = 1; i <= quantidadePaginas; i++) {
-                                        %>
-
-                                        <li class="<%=i == paginaActual ? "active" : ""%>">
-
-                                            <a href="paginas/testemunha/testemunha_listar.jsp?nome_testemunha=<%=nomeUrl%>&pagina=<%=i%>">
-
-                                                <%=i%>
-
-                                            </a>
-
-                                        </li>
-
-                                        <%
-                                            }
-                                        %>
-
-                                        <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-
-                                            <a href="<%=paginaActual >= quantidadePaginas
-                                                    ? "javascript:void(0)"
-                                                    : "paginas/testemunha/testemunha_listar.jsp?nome_testemunha="
-                                                    + nomeUrl
-                                                    + "&pagina="
-                                                    + proximaPagina%>">
-
-                                                &raquo;
-
-                                            </a>
-
-                                        </li>
-
-                                    </ul>
-
-                                    <p class="text-muted">
-                                        Página <%=paginaActual%> de <%=quantidadePaginas%>
-                                    </p>
-
-                                </div>
+                                <%@include file="../../components/paginacao.jsp" %>
 
                             </div>
                         </div>
                     </div>
                 </div>
-                <%@include file="../../menus/rodape.jsp" %>
+                <%@include file="../../components/rodape.jsp" %>
 
             </div>
 
