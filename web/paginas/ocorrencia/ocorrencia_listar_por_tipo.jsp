@@ -125,104 +125,47 @@
                             </form> 
 
                             <form>
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-primary">#</th>
-                                                <th class="text-primary">Data</th>
-                                                <th class="text-primary">Hora</th>
-                                                <th class="text-primary">Cidade</th>
-                                                <th class="text-primary">Autuado</th>
-                                                <th class="text-primary">Autuante</th>                                                
-                                                <th class="text-primary">Tipo de Ocorrência</th>
-                                                <th class="text-primary">Testemunha</th>
-                                                <th class="text-primary" colspan="4">Operações</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <%for (Ocorrencia ocorrencia : ocorrencias) {%>
-                                            <tr>
-                                                <td><%=ocorrencia.getIdOcorrencia()%></td>
-                                                <td><%=DateUtil.formataData(ocorrencia.getDataOcorrencia())%></td>
-                                                <td><%=ocorrencia.getHoraOcorrencia()%></td>
-                                                <td><%=ocorrencia.getCidadeOcorrencia()%></td>
-                                                <td>
-                                                    <a href="autuadoServlet?comando=detalhes&id_autuado=<%=ocorrencia.getAutuado().getIdAutuado()%>">
-                                                        <%=ocorrencia.getAutuado().getNomeAutuado()%>
-                                                    </a>                                                  
-                                                </td>
-                                                <td>
-                                                    <a href="autuanteServlet?comando=detalhes&id_autuante=<%=ocorrencia.getAutuante().getIdAutuante()%>">
-                                                        <%=ocorrencia.getAutuante().getNomeAutuante()%>     
-                                                    </a>                                                  
-                                                </td>
-                                                <td><%=ocorrencia.getTipoOcorrencia().getNomeTipoOcorrencia()%></td>
-                                                <td>
-                                                    <a href="testemunhaServlet?comando=detalhes&id_testemunha=<%=ocorrencia.getTestemunha().getIdTestemunha()%>">
-                                                        <%=ocorrencia.getTestemunha().getNomeTestemunha()%>
-                                                    </a>                                                  
-                                                </td>
-                                                <td>
-                                                    <a href="ocorrenciaServlet?comando=detalhes&id_ocorrencia=<%=ocorrencia.getIdOcorrencia()%>">
-                                                        <span class="glyphicon glyphicon-print"></span>
-                                                    </a>
-                                                </td>
+                                 <%
+                                    request.setAttribute("ocorrencias", ocorrencias);
+                                %>
 
-                                                <td>
-                                                    <a href="ocorrenciaServlet?comando=detalhes&id_ocorrencia=<%=ocorrencia.getIdOcorrencia()%>">
-                                                        <span class="glyphicon glyphicon-zoom-in"></span>
-                                                    </a>
-                                                </td>
+                                <div id="resultado-ocorrencias-wrapper">
+                                    <%@include file="ocorrencia_tabela.jsp" %>
 
-                                                <td>
-                                                    <a href="ocorrenciaServlet?comando=prepara_editar&id_ocorrencia=<%=ocorrencia.getIdOcorrencia()%>">
-                                                        <span class="glyphicon glyphicon-edit"></span>
-                                                    </a>
-                                                </td>
 
-                                                <td>
-                                                    <a href="ocorrenciaServlet?comando=eliminar&id_ocorrencia=<%=ocorrencia.getIdOcorrencia()%>">
-                                                        <span class="glyphicon glyphicon-trash"></span>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            <%}%>
-                                        </tbody>
-                                    </table> 
-                                </div> 
-                                <div class="text-center">
-                                    <ul class="pagination">
+                                    <div class="text-center">
+                                        <ul class="pagination">
 
-                                        <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
-                                            <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_tipo.jsp?tipo_ocorrencia=" + tipoUrl + "&pagina=" + paginaAnterior%>">
-                                                &laquo;
-                                            </a>
-                                        </li>
+                                            <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
+                                                <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_testemunha.jsp?testemunha_ocorrencia=" + testemunhaUrl + "&pagina=" + paginaAnterior%>">
+                                                    &laquo;
+                                                </a>
+                                            </li>
 
-                                        <%
-                                            for (int i = 1; i <= quantidadePaginas; i++) {
-                                        %>
-                                        <li class="<%=i == paginaActual ? "active" : ""%>">
-                                            <a href="paginas/ocorrencia/ocorrencia_listar_por_tipo.jsp?tipo_ocorrencia=<%=tipoUrl%>&pagina=<%=i%>">
-                                                <%=i%>
-                                            </a>
-                                        </li>
-                                        <%
-                                            }
-                                        %>
+                                            <%
+                                                for (int i = 1; i <= quantidadePaginas; i++) {
+                                            %>
+                                            <li class="<%=i == paginaActual ? "active" : ""%>">
+                                                <a href="paginas/ocorrencia/ocorrencia_listar_por_testemunha.jsp?testemunha_ocorrencia=<%=testemunhaUrl%>&pagina=<%=i%>">
+                                                    <%=i%>
+                                                </a>
+                                            </li>
+                                            <%
+                                                }
+                                            %>
 
-                                        <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-                                            <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_tipo.jsp?tipo_ocorrencia=" + tipoUrl + "&pagina=" + proximaPagina%>">
-                                                &raquo;
-                                            </a>
-                                        </li>
+                                            <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
+                                                <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_testemunha.jsp?testemunha_ocorrencia=" + testemunhaUrl + "&pagina=" + proximaPagina%>">
+                                                    &raquo;
+                                                </a>
+                                            </li>
 
-                                    </ul>
+                                        </ul>
 
-                                    <p class="text-muted">
-                                        Página <%=paginaActual%> de <%=quantidadePaginas%>
-                                    </p>
+                                        <p class="text-muted">
+                                            Página <%=paginaActual%> de <%=quantidadePaginas%>
+                                        </p>
+                                    </div>
                                 </div>
                             </form>
                         </div>

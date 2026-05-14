@@ -4,7 +4,6 @@
     Author     : user
 --%>
 
-<%@page import="modelo.DateUtil"%>
 <%@page import="modelo.Ocorrencia"%>
 <%@page import="dao.OcorrenciaDAO"%>
 <%@page import="java.util.List"%>
@@ -62,7 +61,7 @@
             int paginaAnterior = paginaActual - 1;
             int proximaPagina = paginaActual + 1;
 
-            String dataUrl = java.net.URLEncoder.encode(testemunha, "UTF-8");
+            String testemunhaUrl = java.net.URLEncoder.encode(testemunha, "UTF-8");
         %>
 
         <!-- Container principal do Bootstrap -->
@@ -130,40 +129,41 @@
 
                                 <div id="resultado-ocorrencias-wrapper">
                                     <%@include file="ocorrencia_tabela.jsp" %>
-                                </div>
 
-                                <div class="text-center">
-                                    <ul class="pagination">
 
-                                        <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
-                                            <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_testemunha.jsp?testemunha_ocorrencia=" + dataUrl + "&pagina=" + paginaAnterior%>">
-                                                &laquo;
-                                            </a>
-                                        </li>
+                                    <div class="text-center">
+                                        <ul class="pagination">
 
-                                        <%
-                                            for (int i = 1; i <= quantidadePaginas; i++) {
-                                        %>
-                                        <li class="<%=i == paginaActual ? "active" : ""%>">
-                                            <a href="paginas/ocorrencia/ocorrencia_listar_por_testemunha.jsp?testemunha_ocorrencia=<%=dataUrl%>&pagina=<%=i%>">
-                                                <%=i%>
-                                            </a>
-                                        </li>
-                                        <%
-                                            }
-                                        %>
+                                            <li class="<%=paginaActual <= 1 ? "disabled" : ""%>">
+                                                <a href="<%=paginaActual <= 1 ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_testemunha.jsp?testemunha_ocorrencia=" + testemunhaUrl + "&pagina=" + paginaAnterior%>">
+                                                    &laquo;
+                                                </a>
+                                            </li>
 
-                                        <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
-                                            <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_testemunha.jsp?testemunha_ocorrencia=" + dataUrl + "&pagina=" + proximaPagina%>">
-                                                &raquo;
-                                            </a>
-                                        </li>
+                                            <%
+                                                for (int i = 1; i <= quantidadePaginas; i++) {
+                                            %>
+                                            <li class="<%=i == paginaActual ? "active" : ""%>">
+                                                <a href="paginas/ocorrencia/ocorrencia_listar_por_testemunha.jsp?testemunha_ocorrencia=<%=testemunhaUrl%>&pagina=<%=i%>">
+                                                    <%=i%>
+                                                </a>
+                                            </li>
+                                            <%
+                                                }
+                                            %>
 
-                                    </ul>
+                                            <li class="<%=paginaActual >= quantidadePaginas ? "disabled" : ""%>">
+                                                <a href="<%=paginaActual >= quantidadePaginas ? "javascript:void(0)" : "paginas/ocorrencia/ocorrencia_listar_por_testemunha.jsp?testemunha_ocorrencia=" + testemunhaUrl + "&pagina=" + proximaPagina%>">
+                                                    &raquo;
+                                                </a>
+                                            </li>
 
-                                    <p class="text-muted">
-                                        Página <%=paginaActual%> de <%=quantidadePaginas%>
-                                    </p>
+                                        </ul>
+
+                                        <p class="text-muted">
+                                            Página <%=paginaActual%> de <%=quantidadePaginas%>
+                                        </p>
+                                    </div>
                                 </div>
                             </form>
                         </div>
