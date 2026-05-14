@@ -1,9 +1,3 @@
-<%-- 
-    Document   : testemunha_listar
-    Created on : 02/03/2019, 15:37:59
-    Author     : user
---%>
-
 <%@page import="java.net.URLEncoder"%>
 <%@page import="modelo.Testemunha"%>
 <%@page import="modelo.DateUtil"%>
@@ -274,57 +268,25 @@
         </div>
 
         <script type="text/javascript">
-
             $(document).ready(function () {
-
                 var tempoEspera = null;
 
                 $("#pesquisa_testemunha").keyup(function () {
-
                     clearTimeout(tempoEspera);
 
                     var termo = $(this).val();
 
                     tempoEspera = setTimeout(function () {
-
-                        $.ajax({
-
-                            url: "testemunhaServlet",
-
-                            type: "GET",
-
-                            data: {
-                                comando: "pesquisar_ajax",
-                                termo: termo
-                            },
-
-                            success: function (resultado) {
-
-                                $("#resultado-testemunhas").html(resultado);
-
-                            },
-
-                            error: function () {
-
-                                $("#resultado-testemunhas").html(
-                                        "<tr>" +
-                                        "<td colspan='11' class='text-center text-danger'>" +
-                                        "Erro ao pesquisar testemunhas." +
-                                        "</td>" +
-                                        "</tr>"
-                                        );
-
-                            }
-
-                        });
-
+                        $("#resultado-testemunhas").load(
+                                "paginas/testemunha/testemunha_listar_por_nome.jsp?nome_testemunha="
+                                + encodeURIComponent(termo)
+                                + " #resultado-testemunhas > *"
+                                );
                     }, 300);
-
                 });
-
             });
-
         </script>
+
 
     </body>
 </html>
