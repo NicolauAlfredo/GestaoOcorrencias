@@ -170,21 +170,21 @@
                             </form>
 
                             <div class="table-responsive">
-                                <%@include file="ocorrencia_tabela.jsp" %>
+                                <div id="resultado-ocorrencias-wrapper">
+                                    <%@include file="ocorrencia_tabela.jsp" %>
 
-                                <%
-                                    request.setAttribute("paginaActual", paginaActual);
-                                    request.setAttribute("quantidadePaginas", quantidadePaginas);
-                                    request.setAttribute("urlBase", "paginas/ocorrencia/ocorrencia_listar.jsp");
-                                    request.setAttribute(
-                                            "queryStringExtra",
-                                            "tipo_pesquisa=" + tipoPesquisaUrl + "&termo=" + termoUrl
-                                    );
-                                %>
+                                    <%                                    request.setAttribute("paginaActual", paginaActual);
+                                        request.setAttribute("quantidadePaginas", quantidadePaginas);
+                                        request.setAttribute("urlBase", "paginas/ocorrencia/ocorrencia_listar.jsp");
+                                        request.setAttribute(
+                                                "queryStringExtra",
+                                                "tipo_pesquisa=" + tipoPesquisaUrl + "&termo=" + termoUrl
+                                        );
+                                    %>
 
-                                <%@include file="../../components/paginacao.jsp" %>
+                                    <%@include file="../../components/paginacao.jsp" %>
+                                </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -201,11 +201,11 @@
                     var tipoPesquisa = $("#tipo_pesquisa_ocorrencia").val();
                     var termo = $("#pesquisa_ocorrencia").val();
 
-                    $("#resultado-ocorrencias").load(
-                            "ocorrenciaServlet?comando=pesquisar_ajax"
-                            + "&tipo_pesquisa=" + encodeURIComponent(tipoPesquisa)
-                            + "&termo=" + encodeURIComponent(termo)
+                    $("#resultado-ocorrencias-wrapper").load(
+                            "paginas/ocorrencia/ocorrencia_listar.jsp?termo="
+                            + encodeURIComponent(termo)
                             + "&pagina=" + encodeURIComponent(pagina)
+                            + " #resultado-ocorrencias-wrapper > *"
                             );
                 }
 

@@ -120,47 +120,50 @@
                             </form>
 
                             <div class="table-responsive">
-                                <%@include file="profissao_tabela.jsp" %>
+                                <div id="resultado-profissoes-wrapper">
+                                    <%@include file="profissao_tabela.jsp" %>
 
-                                <%                                    request.setAttribute("paginaActual", paginaActual);
-                                    request.setAttribute("quantidadePaginas", quantidadePaginas);
-                                    request.setAttribute("urlBase", "paginas/profissao/profissao_listar.jsp");
-                                    request.setAttribute("queryStringExtra", "termo=" + termoUrl);
-                                %>
+                                    <%                                    request.setAttribute("paginaActual", paginaActual);
+                                        request.setAttribute("quantidadePaginas", quantidadePaginas);
+                                        request.setAttribute("urlBase", "paginas/profissao/profissao_listar.jsp");
+                                        request.setAttribute("queryStringExtra", "termo=" + termoUrl);
+                                    %>
 
-                                <%@include file="../../components/paginacao.jsp" %>
+                                    <%@include file="../../components/paginacao.jsp" %>
+                                </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
-
-                <%@include file="../../components/rodape.jsp" %>
             </div>
+
+            <%@include file="../../components/rodape.jsp" %>
         </div>
+    </div>
 
-        <script type="text/javascript">
-            $(document).ready(function () {
-                var tempoEspera = null;
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var tempoEspera = null;
 
-                function pesquisarProfissoes(pagina) {
-                    var termo = $("#pesquisa_profissao").val();
+            function pesquisarProfissoes(pagina) {
+                var termo = $("#pesquisa_profissao").val();
 
-                    $("#resultado-profissoes").load(
-                            "profissaoServlet?comando=pesquisar_ajax"
-                            + "&termo=" + encodeURIComponent(termo)
-                            + "&pagina=" + encodeURIComponent(pagina)
-                            );
-                }
+                $("#resultado-profissoes-wrapper").load(
+                        "paginas/profissao/profissao_listar.jsp?termo="
+                        + encodeURIComponent(termo)
+                        + "&pagina=" + encodeURIComponent(pagina)
+                        + " #resultado-profissoes-wrapper > *"
+                        );
+            }
 
-                $("#pesquisa_profissao").keyup(function () {
-                    clearTimeout(tempoEspera);
+            $("#pesquisa_profissao").keyup(function () {
+                clearTimeout(tempoEspera);
 
-                    tempoEspera = setTimeout(function () {
-                        pesquisarProfissoes(1);
-                    }, 300);
-                });
+                tempoEspera = setTimeout(function () {
+                    pesquisarProfissoes(1);
+                }, 300);
             });
-        </script>
-    </body>
+        });
+    </script>
+</body>
 </html>

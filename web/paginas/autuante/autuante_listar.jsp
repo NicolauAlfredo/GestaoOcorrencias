@@ -171,20 +171,21 @@
                             </form>
 
                             <div class="table-responsive">
-                                <%@include file="autuante_tabela.jsp" %>
+                                <div id="resultado-autuantes-wrapper">
+                                    <%@include file="autuante_tabela.jsp" %>
 
-                                <%                                    request.setAttribute("paginaActual", paginaActual);
-                                    request.setAttribute("quantidadePaginas", quantidadePaginas);
-                                    request.setAttribute("urlBase", "paginas/autuante/autuante_listar.jsp");
-                                    request.setAttribute(
-                                            "queryStringExtra",
-                                            "tipo_pesquisa=" + tipoPesquisaUrl + "&termo=" + termoUrl
-                                    );
-                                %>
+                                    <%                                    request.setAttribute("paginaActual", paginaActual);
+                                        request.setAttribute("quantidadePaginas", quantidadePaginas);
+                                        request.setAttribute("urlBase", "paginas/autuante/autuante_listar.jsp");
+                                        request.setAttribute(
+                                                "queryStringExtra",
+                                                "tipo_pesquisa=" + tipoPesquisaUrl + "&termo=" + termoUrl
+                                        );
+                                    %>
 
-                                <%@include file="../../components/paginacao.jsp" %>
+                                    <%@include file="../../components/paginacao.jsp" %>
+                                </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -201,11 +202,11 @@
                     var tipoPesquisa = $("#tipo_pesquisa_autuante").val();
                     var termo = $("#pesquisa_autuante").val();
 
-                    $("#resultado-autuantes").load(
-                            "autuanteServlet?comando=pesquisar_ajax"
-                            + "&tipo_pesquisa=" + encodeURIComponent(tipoPesquisa)
-                            + "&termo=" + encodeURIComponent(termo)
+                    $("#resultado-autuantes-wrapper").load(
+                            "paginas/autuante/autuante_listar.jsp?termo="
+                            + encodeURIComponent(termo)
                             + "&pagina=" + encodeURIComponent(pagina)
+                            + " #resultado-autuantes-wrapper > *"
                             );
                 }
 

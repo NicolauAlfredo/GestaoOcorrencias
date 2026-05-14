@@ -10,7 +10,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        
+
         <base href="<%=request.getContextPath()%>/"> 
 
         <title>Província</title>
@@ -30,7 +30,7 @@
             <div id="page-wrapper">                
                 <div class="row">
                     <div class="col-lg-12">
-                        <%@include file="../../menus/cabecalho.jsp" %>
+                        <%@include file="../../components/cabecalho.jsp" %>
                         <h1 class="page-header text-primary">Província</h1>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                         <div class="panel-heading">
                             <p class="text-primary"> 
                                 Editar dados do Província: <strong> <%=provincia.getNomeProvincia()%> </strong>
-                            </p
+                            </p>
                             <div class="alert alert-success">
                                 <p>${message}</p>
                             </div>
@@ -93,7 +93,7 @@
                 <!-- Fim da área da linha -->
 
                 <!-- Rodapé -->
-                <%@include file="../../menus/rodape.jsp" %>
+                <%@include file="../../components/rodape.jsp" %>
                 <!-- Fim do Rodapé-->
 
             </div>

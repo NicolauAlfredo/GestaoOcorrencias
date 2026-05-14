@@ -112,17 +112,18 @@
                             </form>
 
                             <div class="table-responsive">
-                                <%@include file="administrador_tabela.jsp" %>
+                                <div id="resultado-administradores-wrapper">
+                                    <%@include file="administrador_tabela.jsp" %>
 
-                                <%  request.setAttribute("paginaActual", paginaActual);
-                                    request.setAttribute("quantidadePaginas", quantidadePaginas);
-                                    request.setAttribute("urlBase", "paginas/administrador/administrador_listar.jsp");
-                                    request.setAttribute("queryStringExtra", "termo=" + termoUrl);
-                                %>
+                                    <%  request.setAttribute("paginaActual", paginaActual);
+                                        request.setAttribute("quantidadePaginas", quantidadePaginas);
+                                        request.setAttribute("urlBase", "paginas/administrador/administrador_listar.jsp");
+                                        request.setAttribute("queryStringExtra", "termo=" + termoUrl);
+                                    %>
 
-                                <%@include file="../../components/paginacao.jsp" %>
+                                    <%@include file="../../components/paginacao.jsp" %>
+                                </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -138,10 +139,11 @@
                 function pesquisarAdministradores(pagina) {
                     var termo = $("#pesquisa_administrador").val();
 
-                    $("#resultado-administradores").load(
-                            "administradorServlet?comando=pesquisar_ajax"
-                            + "&termo=" + encodeURIComponent(termo)
+                    $("#resultado-administradores-wrapper").load(
+                            "paginas/administrador/administrador_listar.jsp?termo="
+                            + encodeURIComponent(termo)
                             + "&pagina=" + encodeURIComponent(pagina)
+                            + " #resultado-administradores-wrapper > *"
                             );
                 }
 

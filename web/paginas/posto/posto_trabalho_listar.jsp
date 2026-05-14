@@ -147,20 +147,21 @@
                             </form>
 
                             <div class="table-responsive">
-                                <%@include file="posto_trabalho_tabela.jsp" %>
+                                <div id="resultado-postos-wrapper">
+                                    <%@include file="posto_trabalho_tabela.jsp" %>
 
-                                <%                                    request.setAttribute("paginaActual", paginaActual);
-                                    request.setAttribute("quantidadePaginas", quantidadePaginas);
-                                    request.setAttribute("urlBase", "paginas/posto/posto_trabalho_listar.jsp");
-                                    request.setAttribute(
-                                            "queryStringExtra",
-                                            "tipo_pesquisa=" + tipoPesquisaUrl + "&termo=" + termoUrl
-                                    );
-                                %>
+                                    <%                                    request.setAttribute("paginaActual", paginaActual);
+                                        request.setAttribute("quantidadePaginas", quantidadePaginas);
+                                        request.setAttribute("urlBase", "paginas/posto/posto_trabalho_listar.jsp");
+                                        request.setAttribute(
+                                                "queryStringExtra",
+                                                "tipo_pesquisa=" + tipoPesquisaUrl + "&termo=" + termoUrl
+                                        );
+                                    %>
 
-                                <%@include file="../../components/paginacao.jsp" %>
+                                    <%@include file="../../components/paginacao.jsp" %>
+                                </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -177,11 +178,11 @@
                     var tipoPesquisa = $("#tipo_pesquisa_posto").val();
                     var termo = $("#pesquisa_posto").val();
 
-                    $("#resultado-postos-trabalho").load(
-                            "postoTrabalhoServlet?comando=pesquisar_ajax"
-                            + "&tipo_pesquisa=" + encodeURIComponent(tipoPesquisa)
-                            + "&termo=" + encodeURIComponent(termo)
+                    $("#resultado-postos-wrapper").load(
+                            "paginas/posto/posto_trabalho_listar.jsp?termo="
+                            + encodeURIComponent(termo)
                             + "&pagina=" + encodeURIComponent(pagina)
+                            + " #resultado-postos-wrapper > *"
                             );
                 }
 

@@ -150,20 +150,19 @@
                             </form>
 
                             <div class="table-responsive">
-                                <%@include file="autuado_tabela.jsp" %>
+                                <div id="resultado-autuados-wrapper">
+                                    <%@include file="autuado_tabela.jsp" %>
 
-                                <%                                    request.setAttribute("paginaActual", paginaActual);
-                                    request.setAttribute("quantidadePaginas", quantidadePaginas);
-                                    request.setAttribute("urlBase", "paginas/autuado/autuado_listar.jsp");
-                                    request.setAttribute(
-                                            "queryStringExtra",
-                                            "tipo_pesquisa=" + tipoPesquisaUrl + "&termo=" + termoUrl
-                                    );
-                                %>
+                                    <%  request.setAttribute("paginaActual", paginaActual);
+                                        request.setAttribute("quantidadePaginas", quantidadePaginas);
+                                        request.setAttribute("urlBase", "paginas/autuado/autuado_listar.jsp");
+                                        request.setAttribute("queryStringExtra", "tipo_pesquisa=" + tipoPesquisaUrl + "&termo=" + termoUrl
+                                        );
+                                    %>
 
-                                <%@include file="../../components/paginacao.jsp" %>
+                                    <%@include file="../../components/paginacao.jsp" %>
+                                </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -180,11 +179,11 @@
                     var tipoPesquisa = $("#tipo_pesquisa_autuado").val();
                     var termo = $("#pesquisa_autuado").val();
 
-                    $("#resultado-autuados").load(
-                            "autuadoServlet?comando=pesquisar_ajax"
-                            + "&tipo_pesquisa=" + encodeURIComponent(tipoPesquisa)
-                            + "&termo=" + encodeURIComponent(termo)
+                    $("#resultado-autuados-wrapper").load(
+                            "paginas/autuado/autuado_listar.jsp?termo="
+                            + encodeURIComponent(termo)
                             + "&pagina=" + encodeURIComponent(pagina)
+                            + " #resultado-autuados-wrapper > *"
                             );
                 }
 
