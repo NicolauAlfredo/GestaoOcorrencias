@@ -1,5 +1,4 @@
-# Traffic Occurrence Management System
-# Traffic Occurrence Management System
+# Traffic Occurrence Management System 
 
 ![Java](https://img.shields.io/badge/Java-JavaEE-orange)
 ![JSP](https://img.shields.io/badge/JSP-JavaServerPages-blue)
