@@ -1,4 +1,30 @@
 # Traffic Occurrence Management System
+# Traffic Occurrence Management System
+
+![Java](https://img.shields.io/badge/Java-JavaEE-orange)
+![JSP](https://img.shields.io/badge/JSP-JavaServerPages-blue)
+![MySQL](https://img.shields.io/badge/MySQL-Database-blue)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-UI-purple)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Status](https://img.shields.io/badge/Status-Stable-success)
+
+# Project Recovery & Refactoring
+
+This project was originally developed as an academic Java EE management system and later fully recovered, reorganized, and modernized.
+
+The recovery process included:
+
+- Refactoring legacy JSP pages
+- Reorganizing DAO architecture
+- Implementing reusable pagination
+- Adding dynamic filtering support
+- Standardizing CRUD modules
+- Improving code readability
+- Creating reusable JSP components
+- Improving UI consistency
+- Preparing the project for open-source publication
+
+The system is now publicly available for educational purposes and community contributions.
 
 ## Overview
 
@@ -128,8 +154,9 @@ web/
 │   ├── municipio/
 │   └── ...
 │
-├── menus/
+├── components/
 │   ├── cabecalho.jsp
+│   ├── paginacao.jsp
 │   └── rodape.jsp
 │
 └── Bootstrap/
@@ -166,9 +193,17 @@ LIMIT ? OFFSET ?
 
 This significantly improved performance and scalability for large datasets.
 
-## Dynamic Search Structure
+## Dynamic Search & Live Filtering
 
-The system architecture was prepared for future AJAX-based live search implementation.
+Several modules now support AJAX-based live search with real-time filtering and paginated results.
+
+Implemented features include:
+
+- Dynamic search inputs
+- Server-side filtering
+- Reusable pagination wrapper
+- Partial JSP rendering with jQuery AJAX
+- Query parameter persistence
 
 ## Code Refactoring
 
@@ -201,6 +236,12 @@ Through this project I learned:
 
 ---
 
+# Open Source
+
+This project is now open-source and available for study, improvement, and community contributions.
+
+Feel free to fork, improve, and adapt the system.
+
 # Future Improvements
 
 Planned future upgrades:
@@ -217,7 +258,38 @@ Planned future upgrades:
 
 ---
 
+# Known Limitations
+
+- Passwords are not encrypted yet
+- No REST API layer
+- No role-based permission system
+- UI still based on Bootstrap 3
+- No automated testing implemented
+
 # Screenshots
+LOGIN PAGE:
+<img width="1919" height="909" alt="Screenshot 2026-05-15 015022" src="https://github.com/user-attachments/assets/eb8ad984-08a6-463c-9e09-3fa1501add60" />
+
+HOME PAGE:
+<img width="1919" height="910" alt="image" src="https://github.com/user-attachments/assets/7505e8ed-b877-4b94-b785-d825cf294790" />
+
+OCORRÊNCIA PAGE REGISTER: 
+<img width="1918" height="910" alt="image" src="https://github.com/user-attachments/assets/a0dea921-7077-400b-b44b-9920cc66329b" />
+
+OCORRÊNCIAS PAGE:
+<img width="1919" height="909" alt="image" src="https://github.com/user-attachments/assets/c9ae04c9-84a9-4892-aafc-46ffd9efaee4" />
+
+DETALHES DE UMA OCORRÊNCIA: 
+<img width="1918" height="911" alt="image" src="https://github.com/user-attachments/assets/3ce9f636-40ca-4785-9df4-fb5f4d44275e" />
+
+ADMIN PAGE:
+<img width="1919" height="909" alt="image" src="https://github.com/user-attachments/assets/5bbd3a81-acd0-42c7-9bb6-94a9334b04dc" />
+
+PAGINA MUNICÍPIOS:
+<img width="1918" height="911" alt="image" src="https://github.com/user-attachments/assets/a8c9897a-99b8-41b5-8ec5-a0bf20aa6e6c" />
+
+OPÇÕES DE PESQUISAS DE OCORRÊNCIAS: 
+<img width="1919" height="909" alt="image" src="https://github.com/user-attachments/assets/89d5317d-7e53-4110-9bf3-57cd69e0e336" />
 
 ---
 
@@ -270,6 +342,6 @@ http://localhost:8080/project-name
 
 # Author
 
-Developed by Nicolau as part of the learning journey in Full Stack Web Development.
+Developed and maintained by Nicolau Alfredo.
 
 This project marks my first complete full-stack application using Java EE technologies.
